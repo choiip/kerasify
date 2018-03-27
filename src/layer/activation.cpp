@@ -4,9 +4,11 @@
  * MIT License, see LICENSE file.
  */
 #include "keras/layer/activation.h"
-#include <cmath>
 
-bool keras_layer_activation::load_layer(std::ifstream* file)
+namespace keras {
+namespace layers {
+
+bool Activation::load_layer(std::ifstream* file)
 {
     check(file);
 
@@ -38,7 +40,7 @@ bool keras_layer_activation::load_layer(std::ifstream* file)
     return true;
 }
 
-bool keras_layer_activation::apply(tensor* in, tensor* out)
+bool Activation::apply(Tensor* in, Tensor* out)
 {
     check(in);
     check(out);
@@ -86,3 +88,6 @@ bool keras_layer_activation::apply(tensor* in, tensor* out)
     }
     return true;
 }
+
+} // namespace layers
+} // namespace keras

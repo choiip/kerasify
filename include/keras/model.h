@@ -7,8 +7,10 @@
 
 #include "keras/layer.h"
 
-class keras_model {
-    std::vector<keras_layer*> layers_;
+namespace keras {
+
+class Model {
+    std::vector<Layer*> layers_;
 
 public:
     enum layer_type {
@@ -22,14 +24,16 @@ public:
         kEmbedding = 8
     };
 
-    keras_model() {}
+    Model() {}
 
-    virtual ~keras_model()
+    virtual ~Model()
     {
         for (size_t i = 0; i < layers_.size(); ++i)
             delete layers_[i];
     }
 
     virtual bool load_model(const std::string& filename);
-    virtual bool apply(tensor* in, tensor* out);
+    virtual bool apply(Tensor* in, Tensor* out);
 };
+
+} // namespace keras

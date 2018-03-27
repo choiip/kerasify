@@ -11,11 +11,11 @@
 #include "keras/layer/flatten.h"
 #include "keras/layer/lstm.h"
 #include "keras/layer/maxpooling2d.h"
-#include <cmath>
 #include <limits>
 #include <utility>
 
-bool keras_model::load_model(const std::string& filename)
+namespace keras {
+bool Model::load_model(const std::string& filename)
 {
     std::ifstream file(filename.c_str(), std::ios::binary);
     check(file.is_open());
@@ -27,32 +27,32 @@ bool keras_model::load_model(const std::string& filename)
         unsigned layer_type = 0;
         check(read_uint(&file, layer_type));
 
-        keras_layer* layer = nullptr;
+        Layer* layer = nullptr;
 
         switch (layer_type) {
         case kDense:
-            layer = new keras_layer_dense();
+            layer = new layers::Dense();
             break;
         case kConvolution2d:
-            layer = new keras_layer_conv2d();
+            layer = new layers::Conv2D();
             break;
         case kFlatten:
-            layer = new keras_layer_flatten();
+            layer = new layers::Flatten();
             break;
         case kElu:
-            layer = new keras_layer_elu();
+            layer = new layers::ELU();
             break;
         case kActivation:
-            layer = new keras_layer_activation();
+            layer = new layers::Activation();
             break;
         case kMaxPooling2D:
-            layer = new keras_layer_maxpooling2d();
+            layer = new layers::MaxPooling2D();
             break;
         case kLSTM:
-            layer = new keras_layer_lstm();
+            layer = new layers::LSTM();
             break;
         case kEmbedding:
-            layer = new keras_layer_embedding();
+            layer = new layers::Embedding();
             break;
         default:
             break;
@@ -69,15 +69,16 @@ bool keras_model::load_model(const std::string& filename)
     return true;
 }
 
-bool keras_model::apply(tensor* in, tensor* out)
+bool Model::apply(Tensor* in, Tensor* out)
 {
-    tensor temp_in, temp_out;
+    Tensor temp_in, temp_out;
     for (size_t i = 0; i < layers_.size(); ++i) {
         if (i == 0)
             temp_in = *in;
-        check(!layers_[i]->apply(&temp_in, &temp_out));
+        check(layers_[i]->apply(&temp_in, &temp_out));
         temp_in = temp_out;
     }
     *out = temp_out;
     return true;
 }
+} // namespace keras

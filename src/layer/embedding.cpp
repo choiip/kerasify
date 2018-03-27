@@ -5,7 +5,10 @@
  */
 #include "keras/layer/embedding.h"
 
-bool keras_layer_embedding::load_layer(std::ifstream* file)
+namespace keras {
+namespace layers {
+
+bool Embedding::load_layer(std::ifstream* file)
 {
     check(file);
 
@@ -23,7 +26,7 @@ bool keras_layer_embedding::load_layer(std::ifstream* file)
     return true;
 }
 
-bool keras_layer_embedding::apply(tensor* in, tensor* out)
+bool Embedding::apply(Tensor* in, Tensor* out)
 {
     size_t out_i = in->dims_[1];
     size_t out_j = weights_.dims_[1];
@@ -38,3 +41,6 @@ bool keras_layer_embedding::apply(tensor* in, tensor* out)
 
     return true;
 }
+
+} // namespace layers
+} // namespace keras

@@ -7,15 +7,21 @@
 
 #include "keras/layer/activation.h"
 
-class keras_layer_dense : public keras_layer {
+namespace keras {
+namespace layers {
+
+class Dense : public Layer {
 public:
-    keras_layer_dense() {}
-    virtual ~keras_layer_dense() {}
-    virtual bool load_layer(std::ifstream* file);
-    virtual bool apply(tensor* in, tensor* out);
+    Dense() {}
+    ~Dense() override {}
+    bool load_layer(std::ifstream* file) override;
+    bool apply(Tensor* in, Tensor* out) override;
 
 private:
-    tensor weights_;
-    tensor biases_;
-    keras_layer_activation activation_;
+    Tensor weights_;
+    Tensor biases_;
+    Activation activation_;
 };
+
+} // namespace layers
+} // namespace keras

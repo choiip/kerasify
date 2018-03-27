@@ -7,14 +7,20 @@
 
 #include "keras/layer.h"
 
-class keras_layer_maxpooling2d : public keras_layer {
+namespace keras {
+namespace layers {
+
+class MaxPooling2D : public Layer {
 public:
-    keras_layer_maxpooling2d() : pool_size_j_(0), pool_size_k_(0) {}
-    virtual ~keras_layer_maxpooling2d() {}
-    virtual bool load_layer(std::ifstream* file);
-    virtual bool apply(tensor* in, tensor* out);
+    MaxPooling2D() : pool_size_j_(0), pool_size_k_(0) {}
+    ~MaxPooling2D() override {}
+    bool load_layer(std::ifstream* file) override;
+    bool apply(Tensor* in, Tensor* out) override;
 
 private:
     unsigned pool_size_j_;
     unsigned pool_size_k_;
 };
+
+} // namespace layers
+} // namespace keras

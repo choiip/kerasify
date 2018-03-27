@@ -7,15 +7,21 @@
 
 #include "keras/layer/activation.h"
 
-class keras_layer_conv2d : public keras_layer {
+namespace keras {
+namespace layers {
+
+class Conv2D : public Layer {
 public:
-    keras_layer_conv2d() {}
-    virtual ~keras_layer_conv2d() {}
-    virtual bool load_layer(std::ifstream* file);
-    virtual bool apply(tensor* in, tensor* out);
+    Conv2D() {}
+    ~Conv2D() override {}
+    bool load_layer(std::ifstream* file) override;
+    bool apply(Tensor* in, Tensor* out) override;
 
 private:
-    tensor weights_;
-    tensor biases_;
-    keras_layer_activation activation_;
+    Tensor weights_;
+    Tensor biases_;
+    Activation activation_;
 };
+
+} // namespace layers
+} // namespace keras

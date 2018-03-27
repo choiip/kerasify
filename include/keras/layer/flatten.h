@@ -7,10 +7,16 @@
 
 #include "keras/layer.h"
 
-class keras_layer_flatten : public keras_layer {
+namespace keras {
+namespace layers {
+
+class Flatten : public Layer {
 public:
-    keras_layer_flatten() {}
-    virtual ~keras_layer_flatten() {}
-    virtual bool load_layer(std::ifstream* file);
-    virtual bool apply(tensor* in, tensor* out);
+    Flatten() {}
+    ~Flatten() override {}
+    bool load_layer(std::ifstream* file) override;
+    bool apply(Tensor* in, Tensor* out) override;
 };
+
+} // namespace layers
+} // namespace keras

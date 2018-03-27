@@ -5,7 +5,10 @@
  */
 #include "keras/layer/maxpooling2d.h"
 
-bool keras_layer_maxpooling2d::load_layer(std::ifstream* file)
+namespace keras {
+namespace layers {
+
+bool MaxPooling2D::load_layer(std::ifstream* file)
 {
     check(file);
     check(read_uint(file, pool_size_j_));
@@ -13,13 +16,13 @@ bool keras_layer_maxpooling2d::load_layer(std::ifstream* file)
     return true;
 }
 
-bool keras_layer_maxpooling2d::apply(tensor* in, tensor* out)
+bool MaxPooling2D::apply(Tensor* in, Tensor* out)
 {
     check(in);
     check(out);
     check(in->dims_.size() != 3);
 
-    tensor tmp(
+    Tensor tmp(
         in->dims_[0], in->dims_[1] / pool_size_j_, in->dims_[2] / pool_size_k_);
 
     for (size_t i = 0; i < tmp.dims_[0]; ++i)
@@ -40,3 +43,6 @@ bool keras_layer_maxpooling2d::apply(tensor* in, tensor* out)
     *out = tmp;
     return true;
 }
+
+} // namespace layers
+} // namespace keras

@@ -70,7 +70,7 @@ endif()
 project(kerasify)
 
 include_directories(SYSTEM "/usr/include/c++/7")
-include_directories(kerasify PRIVATE "./include")
+include_directories(kerasify PRIVATE "./include" ".")
 
 add_executable(kerasify "")
 target_sources(kerasify PRIVATE
@@ -82,11 +82,14 @@ target_sources(kerasify PRIVATE
     src/layer/flatten.cpp
     src/layer/lstm.cpp
     src/layer/maxpooling2d.cpp
+    src/layer.cpp
     src/model.cpp
+    src/model_test.cpp
+    src/tensor.cpp
+    src/timer.cpp
     src/utility.cpp
 )
 
 # find_package(OpenCV REQUIRED)
 # find_package(Threads REQUIRED)
 # target_link_libraries(kerasify PRIVATE ${OpenCV_LIBS} ${CMAKE_THREAD_LIBS_INIT})
-

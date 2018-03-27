@@ -5,13 +5,16 @@
  */
 #include "keras/layer/flatten.h"
 
-bool keras_layer_flatten::load_layer(std::ifstream* file)
+namespace keras {
+namespace layers {
+
+bool Flatten::load_layer(std::ifstream* file)
 {
     check(file);
     return true;
 }
 
-bool keras_layer_flatten::apply(tensor* in, tensor* out)
+bool Flatten::apply(Tensor* in, Tensor* out)
 {
     check(in);
     check(out);
@@ -20,3 +23,6 @@ bool keras_layer_flatten::apply(tensor* in, tensor* out)
     out->flatten();
     return true;
 }
+
+} // namespace layers
+} // namespace keras

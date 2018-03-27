@@ -5,7 +5,10 @@
  */
 #include "keras/layer/lstm.h"
 
-bool keras_layer_lstm::load_layer(std::ifstream* file)
+namespace keras {
+namespace layers {
+
+bool LSTM::load_layer(std::ifstream* file)
 {
     check(file);
 
@@ -138,19 +141,19 @@ bool keras_layer_lstm::load_layer(std::ifstream* file)
     return true;
 }
 
-bool keras_layer_lstm::apply(tensor* in, tensor* out)
+bool LSTM::apply(Tensor* in, Tensor* out)
 {
     // Assume bo always keeps the output shape and we will always receive one
     // single sample.
     size_t outputDim = bo_.dims_[1];
-    tensor ht_1 = tensor(1, outputDim);
-    tensor ct_1 = tensor(1, outputDim);
+    Tensor ht_1 = Tensor(1, outputDim);
+    Tensor ct_1 = Tensor(1, outputDim);
 
     ht_1.fill(0.f);
     ct_1.fill(0.f);
 
     size_t steps = in->dims_[0];
-    tensor outputs, lastOutput;
+    Tensor outputs, lastOutput;
 
     if (return_sequences_) {
         outputs.dims_ = {steps, outputDim};
@@ -158,7 +161,7 @@ bool keras_layer_lstm::apply(tensor* in, tensor* out)
     }
 
     for (size_t s = 0; s < steps; ++s) {
-        tensor x = in->select(s);
+        Tensor x = in->select(s);
         check(step(&x, &lastOutput, &ht_1, &ct_1));
 
         if (return_sequences_)
@@ -170,19 +173,19 @@ bool keras_layer_lstm::apply(tensor* in, tensor* out)
     return true;
 }
 
-bool keras_layer_lstm::step(tensor* x, tensor* out, tensor* ht_1, tensor* ct_1)
+bool LSTM::step(Tensor* x, Tensor* out, Tensor* ht_1, Tensor* ct_1)
 {
-    tensor xi = x->dot(Wi_) + bi_;
-    tensor xf = x->dot(Wf_) + bf_;
-    tensor xc = x->dot(Wc_) + bc_;
-    tensor xo = x->dot(Wo_) + bo_;
+    Tensor xi = x->dot(Wi_) + bi_;
+    Tensor xf = x->dot(Wf_) + bf_;
+    Tensor xc = x->dot(Wc_) + bc_;
+    Tensor xo = x->dot(Wo_) + bo_;
 
-    tensor i_ = xi + ht_1->dot(Ui_);
-    tensor f_ = xf + ht_1->dot(Uf_);
-    tensor c_ = xc + ht_1->dot(Uc_);
-    tensor o_ = xo + ht_1->dot(Uo_);
+    Tensor i_ = xi + ht_1->dot(Ui_);
+    Tensor f_ = xf + ht_1->dot(Uf_);
+    Tensor c_ = xc + ht_1->dot(Uc_);
+    Tensor o_ = xo + ht_1->dot(Uo_);
 
-    tensor i, f, cc, o;
+    Tensor i, f, cc, o;
 
     check(inner_activation_.apply(&i_, &i));
     check(inner_activation_.apply(&f_, &f));
@@ -196,3 +199,6 @@ bool keras_layer_lstm::step(tensor* x, tensor* out, tensor* ht_1, tensor* ct_1)
     *out = *ht_1 = o.multiply(cc);
     return true;
 }
+
+} // namespace layers
+} // namespace keras

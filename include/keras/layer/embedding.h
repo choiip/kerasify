@@ -7,13 +7,19 @@
 
 #include "keras/layer.h"
 
-class keras_layer_embedding : public keras_layer {
+namespace keras {
+namespace layers {
+
+class Embedding : public Layer {
 public:
-    keras_layer_embedding() {}
-    virtual ~keras_layer_embedding() {}
-    virtual bool load_layer(std::ifstream* file);
-    virtual bool apply(tensor* in, tensor* out);
+    Embedding() {}
+    ~Embedding() override {}
+    bool load_layer(std::ifstream* file) override;
+    bool apply(Tensor* in, Tensor* out) override;
 
 private:
-    tensor weights_;
+    Tensor weights_;
 };
+
+} // namespace layers
+} // namespace keras

@@ -5,7 +5,10 @@
  */
 #include "keras/layer/conv2d.h"
 
-bool keras_layer_conv2d::load_layer(std::ifstream* file)
+namespace keras {
+namespace layers {
+
+bool Conv2D::load_layer(std::ifstream* file)
 {
     check(file);
 
@@ -41,7 +44,7 @@ bool keras_layer_conv2d::load_layer(std::ifstream* file)
     return true;
 }
 
-bool keras_layer_conv2d::apply(tensor* in, tensor* out)
+bool Conv2D::apply(Tensor* in, Tensor* out)
 {
     check(in);
     check(out);
@@ -53,7 +56,7 @@ bool keras_layer_conv2d::apply(tensor* in, tensor* out)
     size_t st_nk = (weights_.dims_[3] - 1) / 2;
     size_t st_pk = (weights_.dims_[3]) / 2;
 
-    tensor tmp{weights_.dims_[0], in->dims_[1] - st_nj - st_pj,
+    Tensor tmp{weights_.dims_[0], in->dims_[1] - st_nj - st_pj,
                in->dims_[2] - st_nk - st_pk};
 
     for (size_t i = 0; i < weights_.dims_[0]; ++i) {
@@ -74,3 +77,6 @@ bool keras_layer_conv2d::apply(tensor* in, tensor* out)
     check(activation_.apply(&tmp, out));
     return true;
 }
+
+} // namespace layers
+} // namespace keras

@@ -7,7 +7,10 @@
 
 #include "keras/layer.h"
 
-class keras_layer_activation : public keras_layer {
+namespace keras {
+namespace layers {
+
+class Activation : public Layer {
 public:
     enum activation_type {
         kLinear = 1,
@@ -18,11 +21,14 @@ public:
         kHardSigmoid = 6
     };
 
-    keras_layer_activation() : activation_type_(activation_type::kLinear) {}
-    virtual ~keras_layer_activation() {}
-    virtual bool load_layer(std::ifstream* file);
-    virtual bool apply(tensor* in, tensor* out);
+    Activation() : activation_type_(activation_type::kLinear) {}
+    ~Activation() override {}
+    bool load_layer(std::ifstream* file) override;
+    bool apply(Tensor* in, Tensor* out) override;
 
 private:
     activation_type activation_type_;
 };
+
+} // namespace layers
+} // namespace keras

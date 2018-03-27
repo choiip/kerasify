@@ -7,13 +7,19 @@
 
 #include "keras/layer.h"
 
-class keras_layer_elu : public keras_layer {
+namespace keras {
+namespace layers {
+
+class ELU : public Layer {
 public:
-    keras_layer_elu() : alpha_(1.0f) {}
-    virtual ~keras_layer_elu() {}
-    virtual bool load_layer(std::ifstream* file);
-    virtual bool apply(tensor* in, tensor* out);
+    ELU() : alpha_(1.0f) {}
+    ~ELU() override {}
+    bool load_layer(std::ifstream* file) override;
+    bool apply(Tensor* in, Tensor* out) override;
 
 private:
     float alpha_;
 };
+
+} // namespace layers
+} // namespace keras

@@ -7,30 +7,36 @@
 
 #include "keras/layer/activation.h"
 
-class keras_layer_lstm : public keras_layer {
+namespace keras {
+namespace layers {
+
+class LSTM : public Layer {
 public:
-    keras_layer_lstm() : return_sequences_(false) {}
-    virtual ~keras_layer_lstm() {}
-    virtual bool load_layer(std::ifstream* file);
-    virtual bool apply(tensor* in, tensor* out);
+    LSTM() : return_sequences_(false) {}
+    ~LSTM() override {}
+    bool load_layer(std::ifstream* file) override;
+    bool apply(Tensor* in, Tensor* out) override;
 
 private:
-    bool step(tensor* x, tensor* out, tensor* ht_1, tensor* ct_1);
+    bool step(Tensor* x, Tensor* out, Tensor* ht_1, Tensor* ct_1);
 
-    tensor Wi_;
-    tensor Ui_;
-    tensor bi_;
-    tensor Wf_;
-    tensor Uf_;
-    tensor bf_;
-    tensor Wc_;
-    tensor Uc_;
-    tensor bc_;
-    tensor Wo_;
-    tensor Uo_;
-    tensor bo_;
+    Tensor Wi_;
+    Tensor Ui_;
+    Tensor bi_;
+    Tensor Wf_;
+    Tensor Uf_;
+    Tensor bf_;
+    Tensor Wc_;
+    Tensor Uc_;
+    Tensor bc_;
+    Tensor Wo_;
+    Tensor Uo_;
+    Tensor bo_;
 
-    keras_layer_activation inner_activation_;
-    keras_layer_activation activation_;
+    Activation inner_activation_;
+    Activation activation_;
     bool return_sequences_;
 };
+
+} // namespace layers
+} // namespace keras

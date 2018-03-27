@@ -5,7 +5,10 @@
  */
 #include "keras/layer/dense.h"
 
-bool keras_layer_dense::load_layer(std::ifstream* file)
+namespace keras {
+namespace layers {
+
+bool Dense::load_layer(std::ifstream* file)
 {
     check(file);
 
@@ -32,7 +35,7 @@ bool keras_layer_dense::load_layer(std::ifstream* file)
     return true;
 }
 
-bool keras_layer_dense::apply(tensor* in, tensor* out)
+bool Dense::apply(Tensor* in, Tensor* out)
 {
     check(in);
     check(out);
@@ -42,7 +45,7 @@ bool keras_layer_dense::apply(tensor* in, tensor* out)
     if (in->dims_.size() == 2)
         check(in->dims_[1] == weights_.dims_[0]);
 
-    tensor tmp{weights_.dims_[1]};
+    Tensor tmp{weights_.dims_[1]};
 
     for (size_t i = 0; i < weights_.dims_[0]; ++i)
         for (size_t j = 0; j < weights_.dims_[1]; ++j)
@@ -54,3 +57,6 @@ bool keras_layer_dense::apply(tensor* in, tensor* out)
     check(activation_.apply(&tmp, out));
     return true;
 }
+
+} // namespace layers
+} // namespace keras

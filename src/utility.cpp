@@ -5,6 +5,8 @@
  */
 #include "keras/utility.h"
 
+namespace keras {
+
 bool read_uint(std::ifstream* file, unsigned& i)
 {
     check(file);
@@ -32,3 +34,5 @@ bool read_floats(std::ifstream* file, float* f, size_t n)
     check(static_cast<size_t>(file->gcount()) == sizeof(float) * n);
     return true;
 }
+
+} // namespace keras

@@ -4,15 +4,17 @@
  * MIT License, see LICENSE file.
  */
 #include "keras/layer/elu.h"
-#include <cmath>
 
-bool keras_layer_elu::load_layer(std::ifstream* file)
+namespace keras {
+namespace layers {
+
+bool ELU::load_layer(std::ifstream* file)
 {
     check(file);
     return read_float(file, alpha_);
 }
 
-bool keras_layer_elu::apply(tensor* in, tensor* out)
+bool ELU::apply(Tensor* in, Tensor* out)
 {
     check(in);
     check(out);
@@ -23,3 +25,6 @@ bool keras_layer_elu::apply(tensor* in, tensor* out)
             out->data_[i] = alpha_ * (std::exp(out->data_[i]) - 1.0f);
     return true;
 }
+
+} // namespace layers
+} // namespace keras

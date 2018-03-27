@@ -5,12 +5,15 @@
  */
 #pragma once
 
-#include "tensor.h"
+#include "keras/tensor.h"
 
-class keras_layer {
+namespace keras {
+
+class Layer {
 public:
-    keras_layer() {}
-    virtual ~keras_layer() {}
+    virtual ~Layer();
     virtual bool load_layer(std::ifstream* file) = 0;
-    virtual bool apply(tensor* in, tensor* out) = 0;
+    virtual bool apply(Tensor* in, Tensor* out) = 0;
 };
+
+} // namespace keras
