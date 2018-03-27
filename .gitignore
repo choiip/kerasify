@@ -1,3 +1,10 @@
+bin
+build
+doc
+CMakeLists.txt.user*
+*.qbs.user
+*.qbs.user.*
+
 *.o
 *.d
 *.a
@@ -7,7 +14,4 @@
 # Ignore generated test data
 test_*.h
 test_*.model
-
-# Ignore generated binaries
-keras_model_test
 

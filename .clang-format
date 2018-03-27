@@ -1,2 +1,29 @@
-IndentWidth: 4
-PointerAlignment: Left
+﻿---
+Language: Cpp
+BasedOnStyle: WebKit
+
+AlignAfterOpenBracket: AlwaysBreak
+AlignEscapedNewlines: DontAlign
+AlignTrailingComments: true
+AllowShortBlocksOnASingleLine: true
+AlwaysBreakTemplateDeclarations: true
+
+BinPackArguments:  true
+BinPackParameters: false
+
+BraceWrapping:
+  AfterFunction: true
+  AfterUnion: true
+  SplitEmptyFunction: false
+  SplitEmptyNamespace: false
+  SplitEmptyRecord: false
+
+BreakBeforeBinaryOperators: None
+BreakBeforeBraces: Custom
+
+ColumnLimit: 80
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+Cpp11BracedListStyle: true
+
+NamespaceIndentation: None
+...
