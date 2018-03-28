@@ -16,23 +16,23 @@ bool Activation::load_layer(std::ifstream* file)
     check(read_uint(file, activation));
 
     switch (activation) {
-    case kLinear:
-        activation_type_ = kLinear;
+    case Linear:
+        activation_type_ = Linear;
         break;
-    case kRelu:
-        activation_type_ = kRelu;
+    case Relu:
+        activation_type_ = Relu;
         break;
-    case kSoftPlus:
-        activation_type_ = kSoftPlus;
+    case SoftPlus:
+        activation_type_ = SoftPlus;
         break;
-    case kHardSigmoid:
-        activation_type_ = kHardSigmoid;
+    case HardSigmoid:
+        activation_type_ = HardSigmoid;
         break;
-    case kSigmoid:
-        activation_type_ = kSigmoid;
+    case Sigmoid:
+        activation_type_ = Sigmoid;
         break;
-    case kTanh:
-        activation_type_ = kTanh;
+    case Tanh:
+        activation_type_ = Tanh;
         break;
     default:
         check(false);
@@ -45,18 +45,18 @@ bool Activation::apply(const Tensor& in, Tensor& out) const
     out = in;
 
     switch (activation_type_) {
-    case kLinear:
+    case Linear:
         break;
-    case kRelu:
+    case Relu:
         for (auto&& it : out.data_)
             if (it < 0.0f)
                 it = 0.0f;
         break;
-    case kSoftPlus:
+    case SoftPlus:
         for (auto&& it : out.data_)
             it = std::log(1.0f + std::exp(it));
         break;
-    case kHardSigmoid:
+    case HardSigmoid:
         for (auto&& it : out.data_) {
             if (it <= -2.5f)
                 it = 0.0f;
@@ -66,7 +66,7 @@ bool Activation::apply(const Tensor& in, Tensor& out) const
                 it = (it * 0.2f) + 0.5f;
         }
         break;
-    case kSigmoid:
+    case Sigmoid:
         for (auto&& it : out.data_)
             if (it >= 0) {
                 float z = std::exp(-it);
@@ -76,7 +76,7 @@ bool Activation::apply(const Tensor& in, Tensor& out) const
                 it = z / (1.0f + z);
             }
         break;
-    case kTanh:
+    case Tanh:
         for (auto&& it : out.data_)
             it = std::tanh(it);
         break;
