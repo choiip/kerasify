@@ -44,6 +44,7 @@ bool Conv2D::load_layer(std::ifstream* file)
     return true;
 }
 
+// TODO: optimize for speed
 bool Conv2D::apply(const Tensor& in, Tensor& out) const
 {
     check(in.dims_[2] == weights_.dims_[3]);
@@ -54,21 +55,48 @@ bool Conv2D::apply(const Tensor& in, Tensor& out) const
     Tensor tmp{in.dims_[0] - offset_y, in.dims_[1] - offset_x,
                weights_.dims_[0]};
 
-    // 2D convolution in x and y (k and l in Tensor dimensions).
+    auto& ww = weights_.dims_;
+    size_t ws0 = ww[1] * ww[2] * ww[3];
+    size_t ws1 = ww[2] * ww[3];
+    size_t ws2 = ww[3];
+
+    size_t is0 = in.dims_[1] * in.dims_[2];
+    size_t is1 = in.dims_[2];
+
+    size_t ts0 = tmp.dims_[1] * tmp.dims_[2];
+    size_t ts1 = tmp.dims_[2];
+
+    auto* w_ptr = &weights_.data_[0];
+    auto* b_ptr = &biases_.data_[0];
+    auto* t_ptr = &tmp.data_[0];
+    auto* i_ptr = &in.data_[0];
+
     for (size_t y = 0; y < tmp.dims_[0]; ++y)
-        for (size_t x = 0; x < tmp.dims_[1]; ++x)
-            // Iterate over each kernel
-            for (size_t k = 0; k < weights_.dims_[0]; ++k) {
-                // Iterate over kernel.
-                for (size_t ky = 0; ky < weights_.dims_[1]; ++ky)
-                    for (size_t kx = 0; kx < weights_.dims_[2]; ++kx)
-                        for (size_t c = 0; c < weights_.dims_[3]; ++c) {
-                            const float& weight = weights_(k, ky, kx, c);
-                            const float& value = in(y + ky, x + kx, c);
-                            tmp(y, x, k) += weight * value;
+        for (size_t x = 0; x < tmp.dims_[1]; ++x) {
+            auto* w0 = w_ptr;
+            auto* b_ = b_ptr;
+            auto* i_ = i_ptr + y * is0 + x * is1;
+            auto* t_ = t_ptr + y * ts0 + x * ts1;
+            for (size_t k = 0; k < ww[0]; ++k) {
+                auto* i0 = i_;
+                for (auto* w1 = w0; w1 < w0 + ws0; w1 += ws1) {
+                    auto* i1 = i0;
+                    for (auto* w2 = w1; w2 < w1 + ws1; w2 += ws2) {
+                        auto* i2 = i1;
+                        for (auto* w3 = w2; w3 < w2 + ws2; ++w3) {
+                            *t_ += (*w3) * (*i2);
+                            ++i2;
                         }
-                tmp(y, x, k) += biases_(k);
+                        i1 += is1;
+                    }
+                    i0 += is0;
+                }
+                *t_ += *b_;
+                w0 += ws0;
+                ++b_;
+                ++t_;
             }
+        }
     check(activation_.apply(tmp, out));
     return true;
 }

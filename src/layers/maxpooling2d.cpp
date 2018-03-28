@@ -16,6 +16,7 @@ bool MaxPooling2D::load_layer(std::ifstream* file)
     return true;
 }
 
+// TODO: optimize for speed
 bool MaxPooling2D::apply(const Tensor& in, Tensor& out) const
 {
     check(in.dims_.size() == 3);

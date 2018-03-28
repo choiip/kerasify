@@ -199,6 +199,7 @@ int main()
 
     if (!test::lstm_stacked64x83(load_time, apply_time))
         return 1;
+
     if (!test::embedding64(load_time, apply_time))
         return 1;
 

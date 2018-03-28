@@ -58,13 +58,12 @@ bool Activation::apply(const Tensor& in, Tensor& out) const
         break;
     case kHardSigmoid:
         for (auto&& it : out.data_) {
-            float x = (it * 0.2f) + 0.5f;
-            if (x <= 0)
+            if (it <= -2.5f)
                 it = 0.0f;
-            else if (x >= 1)
+            else if (it >= 2.5f)
                 it = 1.0f;
             else
-                it = x;
+                it = (it * 0.2f) + 0.5f;
         }
         break;
     case kSigmoid:

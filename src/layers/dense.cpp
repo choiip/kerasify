@@ -43,12 +43,25 @@ bool Dense::apply(const Tensor& in, Tensor& out) const
 
     Tensor tmp{weights_.dims_[1]};
 
-    for (size_t i = 0; i < weights_.dims_[0]; ++i)
-        for (size_t j = 0; j < weights_.dims_[1]; ++j)
-            tmp(j) += in(i)*weights_(i, j);
+    auto* w_ = &weights_.data_[0];
+    auto* t_ = &tmp.data_[0];
+    auto* i_ = &in.data_[0];
 
-    for (size_t i = 0; i < biases_.dims_[0]; ++i)
-        tmp(i) += biases_(i);
+    const size_t ws_ = weights_.dims_[0] * weights_.dims_[1];
+    const size_t ws0 = weights_.dims_[1];
+
+    for (auto* w0 = w_; w0 < w_ + ws_; w0 += ws0) {
+        auto* t0 = t_;
+        for (auto* w1 = w0; w1 < w0 + ws0; ++w1) {
+            *t0 += (*i_) * (*w1);
+            ++t0;
+        }
+        ++i_;
+    }
+    for (auto&& b : biases_.data_) {
+        *t_ += b;
+        ++t_;
+    }
 
     check(activation_.apply(tmp, out));
     return true;
