@@ -54,7 +54,7 @@ int main() {
 
     // Create a 1D Tensor on length 10 for input data.
     Tensor in{10};
-    in.data_ = {{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}};
+    in.data_ = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
     // Run prediction.
     Tensor out;
@@ -63,15 +63,6 @@ int main() {
     return 0;
 }
 ```
-
-To test:
-
-    $ python make_model.py
-    [[-1.85735667]]
-    
-    $ g++ --std=c++11 -Wall -O3 test.cc keras_model.cc
-    $ ./a.out 
-    [ -1.857357 ]
 
 # Unit tests
 
