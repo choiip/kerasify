@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2016 Robert W. Rose
  *
  * MIT License, see LICENSE file.
@@ -101,7 +101,7 @@ Tensor Tensor::dot(const Tensor& other)
 void Tensor::print()
 {
     if (dims_.size() == 1) {
-        printf("[ ");
+        printf("[");
         for (size_t i = 0; i < dims_[0]; ++i)
             printf("%f ", static_cast<double>((*this)(i)));
         printf("]\n");
@@ -110,7 +110,7 @@ void Tensor::print()
     if (dims_.size() == 2) {
         printf("[\n");
         for (size_t i = 0; i < dims_[0]; ++i) {
-            printf(" [ ");
+            printf(" [");
             for (size_t j = 0; j < dims_[1]; ++j)
                 printf("%f ", static_cast<double>((*this)(i, j)));
             printf("]\n");
@@ -123,7 +123,7 @@ void Tensor::print()
         for (size_t i = 0; i < dims_[0]; ++i) {
             printf(" [\n");
             for (size_t j = 0; j < dims_[1]; ++j) {
-                printf("  [ ");
+                printf("  [");
                 for (size_t k = 0; k < dims_[2]; ++k)
                     printf("%f ", static_cast<double>((*this)(i, j, k)));
                 printf("  ]\n");

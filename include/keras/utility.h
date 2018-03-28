@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2016 Robert W. Rose
  *
  * MIT License, see LICENSE file.
@@ -8,16 +8,20 @@
 #include <cmath>
 #include <fstream>
 
+#define stringify(x) #x
+
 #define check(x) \
     if (!(x)) { \
-        printf("CHECK: %s(%d)\n", __FILE__, __LINE__); \
+        printf( \
+            "ASSERT [%s:%d] - '%s' failed\n", __FILE__, __LINE__, \
+            stringify(x)); \
         return false; \
     }
 
 #define check_eq(x, y, eps) \
-    if (std::abs(x - y) > eps) { \
+    if (std::abs((x) - (y)) > eps) { \
         printf( \
-            "CHECK: %s(%d) - expected %f, got %f\n", __FILE__, __LINE__, \
+            "ASSERT [%s:%d] - expected %f, got %f\n", __FILE__, __LINE__, \
             static_cast<double>(y), static_cast<double>(x)); \
         return false; \
     }
@@ -25,7 +29,9 @@
 #ifdef DEBUG
 #define kassert(x) \
     if (!(x)) { \
-        printf("%s(%d)\n", __FILE__, __LINE__); \
+        printf( \
+            "ASSERT [%s:%d] - '%s' failed\n", __FILE__, __LINE__, \
+            stringify(x)); \
         exit(-1); \
     }
 #else

@@ -1,4 +1,4 @@
-#include "test/benchmark.h"
+﻿//#include "test/benchmark.h"
 #include "test/conv_2x2.h"
 #include "test/conv_3x3.h"
 #include "test/conv_3x3x3.h"
@@ -13,7 +13,7 @@
 #include "test/dense_relu_10.h"
 #include "test/dense_tanh_10.h"
 #include "test/elu_10.h"
-#include "test/embedding32.h"
+//#include "test/embedding32.h"
 #include "test/lstm_simple_7x20.h"
 #include "test/lstm_simple_stacked16x9.h"
 #include "test/lstm_stacked64x83.h"
@@ -200,6 +200,7 @@ int main()
     if (!test::lstm_stacked64x83(load_time, apply_time))
         return 1;
 
+    /*
     if (!test::embedding32(load_time, apply_time))
         return 1;
 
@@ -214,9 +215,9 @@ int main()
         total_load_time += load_time;
         total_apply_time += apply_time;
     }
-
     printf("Benchmark network loads in %fs\n", total_load_time / 5);
     printf("Benchmark network runs in %fs\n", total_apply_time / 5);
+    */
 
     return 0;
 }

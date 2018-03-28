@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2016 Robert W. Rose
  *
  * MIT License, see LICENSE file.
@@ -40,6 +40,10 @@ bool Conv2D::load_layer(std::ifstream* file)
     biases_.resize(biases_shape);
     check(read_floats(file, biases_.data_.data(), biases_shape));
 
+#ifndef NDEBUG
+    weights_.print_shape();
+    biases_.print_shape();
+#endif
     check(activation_.load_layer(file));
     return true;
 }

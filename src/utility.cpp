@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2016 Robert W. Rose
  *
  * MIT License, see LICENSE file.
@@ -30,7 +30,7 @@ bool read_floats(std::ifstream* file, float* f, size_t n)
     check(file);
     check(f);
 
-    file->read(reinterpret_cast<char*>(&f), sizeof(float) * n);
+    file->read(reinterpret_cast<char*>(f), sizeof(float) * n);
     check(static_cast<size_t>(file->gcount()) == sizeof(float) * n);
     return true;
 }
