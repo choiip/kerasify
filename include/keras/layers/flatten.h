@@ -15,7 +15,7 @@ public:
     Flatten() {}
     ~Flatten() override {}
     bool load_layer(std::ifstream* file) override;
-    bool apply(Tensor* in, Tensor* out) override;
+    bool apply(const Tensor& in, Tensor& out) const override;
 };
 
 } // namespace layers

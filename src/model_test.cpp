@@ -203,7 +203,6 @@ int main()
     if (!test::embedding32(load_time, apply_time))
         return 1;
     */
-
     // Run benchmark 5 times and report duration.
     double total_load_time = 0.0;
     double total_apply_time = 0.0;

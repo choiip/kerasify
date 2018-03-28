@@ -3,7 +3,7 @@
  *
  * MIT License, see LICENSE file.
  */
-#include "keras/layer/conv2d.h"
+#include "keras/layers/conv2d.h"
 
 namespace keras {
 namespace layers {
@@ -44,39 +44,32 @@ bool Conv2D::load_layer(std::ifstream* file)
     return true;
 }
 
-bool Conv2D::apply(Tensor* in, Tensor* out)
+bool Conv2D::apply(const Tensor& in, Tensor& out) const
 {
-    check(in);
-    check(out);
+    check(in.dims_[2] == weights_.dims_[3]);
 
-    check(in->dims_[2] == weights_.dims_[3]);
+    size_t offset_y = weights_.dims_[1] - 1;
+    size_t offset_x = weights_.dims_[2] - 1;
 
-    size_t st_nj = (weights_.dims_[1] - 1) / 2;
-    size_t st_pj = (weights_.dims_[1]) / 2;
-    size_t st_nk = (weights_.dims_[2] - 1) / 2;
-    size_t st_pk = (weights_.dims_[2]) / 2;
+    Tensor tmp{in.dims_[0] - offset_y, in.dims_[1] - offset_x,
+               weights_.dims_[0]};
 
-    Tensor tmp{in->dims_[0] - st_nj - st_pj, in->dims_[1] - st_nk - st_pk,
-               weights_.dims_[3]};
-
-    // Iterate over each kernel.
-    for (size_t k = 0; k < weights_.dims_[0]; ++k) {
-        // 2D convolution in x and y (k and l in Tensor dimensions).
-        for (size_t y = 0; y < tmp.dims_[0]; ++y)
-            for (size_t x = 0; x < tmp.dims_[1]; ++x)
+    // 2D convolution in x and y (k and l in Tensor dimensions).
+    for (size_t y = 0; y < tmp.dims_[0]; ++y)
+        for (size_t x = 0; x < tmp.dims_[1]; ++x)
+            // Iterate over each kernel
+            for (size_t k = 0; k < weights_.dims_[0]; ++k) {
                 // Iterate over kernel.
                 for (size_t ky = 0; ky < weights_.dims_[1]; ++ky)
                     for (size_t kx = 0; kx < weights_.dims_[2]; ++kx)
-                        for (size_t kd = 0; kd < weights_.dims_[3]; ++kd) {
-                            const float& weight = weights_(k, ky, kx, kd);
-                            const float& value = (*in)(y + ky, x + kx, kd);
-                            tmp(k, y, x) += weight * value;
+                        for (size_t c = 0; c < weights_.dims_[3]; ++c) {
+                            const float& weight = weights_(k, ky, kx, c);
+                            const float& value = in(y + ky, x + kx, c);
+                            tmp(y, x, k) += weight * value;
                         }
-        for (size_t y = 0; y < tmp.dims_[0]; ++y)
-            for (size_t x = 0; x < tmp.dims_[1]; ++x)
-                tmp(k, y, x) += biases_(k);
-    }
-    check(activation_.apply(&tmp, out));
+                tmp(y, x, k) += biases_(k);
+            }
+    check(activation_.apply(tmp, out));
     return true;
 }
 

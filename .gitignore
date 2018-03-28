@@ -2,7 +2,8 @@ bin
 build
 doc
 CMakeLists.txt.user*
-test
+include/test
+models
 *.qbs.user
 *.qbs.user.*
 

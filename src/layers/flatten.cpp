@@ -3,7 +3,7 @@
  *
  * MIT License, see LICENSE file.
  */
-#include "keras/layer/flatten.h"
+#include "keras/layers/flatten.h"
 
 namespace keras {
 namespace layers {
@@ -14,13 +14,10 @@ bool Flatten::load_layer(std::ifstream* file)
     return true;
 }
 
-bool Flatten::apply(Tensor* in, Tensor* out)
+bool Flatten::apply(const Tensor& in, Tensor& out) const
 {
-    check(in);
-    check(out);
-
-    *out = *in;
-    out->flatten();
+    out = in;
+    out.flatten();
     return true;
 }
 

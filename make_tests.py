@@ -16,13 +16,19 @@ from kerasify import export_model
 
 config = ConfigProto()
 config.gpu_options.per_process_gpu_memory_fraction = 0.3
+config.gpu_options.allow_growth = True
 K.tensorflow_backend.set_session(Session(config=config))
 
 np.set_printoptions(precision=25, threshold=np.nan)
 
 
-for path_ in os.listdir('test'):
-    os.remove('test/' + path_)
+os.makedirs('include/test', exist_ok=True)
+for path_ in os.listdir('include/test'):
+    os.remove('include/test/' + path_)
+
+os.makedirs('models', exist_ok=True)
+for path_ in os.listdir('models'):
+    os.remove('models/' + path_)
 
 
 def c_array(a):
@@ -72,7 +78,7 @@ bool %s(double& load_time, double& apply_time)
     load_timer.start();
 
     keras::Model model;
-    check(model.load_model("test/%s.model"));
+    check(model.load_model("models/%s.model"));
 
     load_time = load_timer.stop();
 
@@ -80,7 +86,7 @@ bool %s(double& load_time, double& apply_time)
     apply_timer.start();
 
     keras::Tensor predict = out;
-    check(model.apply(&in, &out));
+    check(model.apply(in, out));
 
     apply_time = apply_timer.stop();
 
@@ -103,9 +109,9 @@ def output_testcase(model, test_x, test_y, name, eps):
     predict_y = model.predict(test_x).astype('f')
     print(model.summary())
 
-    export_model(model, 'test/%s.model' % name)
+    export_model(model, 'models/%s.model' % name)
 
-    with open('test/%s.h' % name, 'w') as f:
+    with open('include/test/%s.h' % name, 'w') as f:
         x_shape, x_data = c_array(test_x[0])
         y_shape, y_data = c_array(predict_y[0])
 
@@ -346,7 +352,6 @@ output_testcase(model, test_x, test_y, 'lstm_stacked64x83', '1e-6')
 
 
 ''' Embedding 32 '''
-'''
 np.random.seed(10)
 test_x = np.random.randint(100, size=(32, 10)).astype('f')
 test_y = np.random.rand(32, 10).astype('f')
@@ -357,7 +362,7 @@ model = Sequential([
     Dense(10, activation='sigmoid')
 ])
 output_testcase(model, test_x, test_y, 'embedding32', '1e-6')
-'''
+
 
 ''' Benchmark '''
 test_x = np.random.rand(1, 128, 128, 3).astype('f')

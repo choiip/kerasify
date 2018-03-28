@@ -3,7 +3,7 @@
  *
  * MIT License, see LICENSE file.
  */
-#include "keras/layer/elu.h"
+#include "keras/layers/elu.h"
 
 namespace keras {
 namespace layers {
@@ -14,15 +14,12 @@ bool ELU::load_layer(std::ifstream* file)
     return read_float(file, alpha_);
 }
 
-bool ELU::apply(Tensor* in, Tensor* out)
+bool ELU::apply(const Tensor& in, Tensor& out) const
 {
-    check(in);
-    check(out);
-
-    *out = *in;
-    for (size_t i = 0; i < out->data_.size(); ++i)
-        if (out->data_[i] < 0.0f)
-            out->data_[i] = alpha_ * (std::exp(out->data_[i]) - 1.0f);
+    out = in;
+    for (auto&& it : out.data_)
+        if (it < 0.0f)
+            it = alpha_ * (std::exp(it) - 1.0f);
     return true;
 }
 

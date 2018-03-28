@@ -13,7 +13,7 @@ class Layer {
 public:
     virtual ~Layer();
     virtual bool load_layer(std::ifstream* file) = 0;
-    virtual bool apply(Tensor* in, Tensor* out) = 0;
+    virtual bool apply(const Tensor& in, Tensor& out) const = 0;
 };
 
 } // namespace keras

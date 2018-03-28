@@ -3,7 +3,7 @@
  *
  * MIT License, see LICENSE file.
  */
-#include "keras/layer/lstm.h"
+#include "keras/layers/lstm.h"
 
 namespace keras {
 namespace layers {
@@ -141,18 +141,18 @@ bool LSTM::load_layer(std::ifstream* file)
     return true;
 }
 
-bool LSTM::apply(Tensor* in, Tensor* out)
+bool LSTM::apply(const Tensor& in, Tensor& out) const
 {
-    // Assume bo always keeps the output shape and we will always receive one
-    // single sample.
+    // Assume 'bo_' always keeps the output shape and we will always
+    // receive one single sample.
     size_t outputDim = bo_.dims_[1];
-    Tensor ht_1 = Tensor(1, outputDim);
-    Tensor ct_1 = Tensor(1, outputDim);
+    Tensor ht_1{1, outputDim};
+    Tensor ct_1{1, outputDim};
 
     ht_1.fill(0.f);
     ct_1.fill(0.f);
 
-    size_t steps = in->dims_[0];
+    size_t steps = in.dims_[0];
     Tensor outputs, lastOutput;
 
     if (return_sequences_) {
@@ -161,42 +161,42 @@ bool LSTM::apply(Tensor* in, Tensor* out)
     }
 
     for (size_t s = 0; s < steps; ++s) {
-        Tensor x = in->select(s);
-        check(step(&x, &lastOutput, &ht_1, &ct_1));
+        Tensor x = in.select(s);
+        check(step(x, lastOutput, ht_1, ct_1));
 
         if (return_sequences_)
             outputs.data_.insert(
                 outputs.data_.end(), lastOutput.data_.begin(),
                 lastOutput.data_.end());
     }
-    *out = return_sequences_ ? outputs : lastOutput;
+    out = return_sequences_ ? outputs : lastOutput;
     return true;
 }
 
-bool LSTM::step(Tensor* x, Tensor* out, Tensor* ht_1, Tensor* ct_1)
+bool LSTM::step(const Tensor& x, Tensor& out, Tensor& ht_1, Tensor& ct_1) const
 {
-    Tensor xi = x->dot(Wi_) + bi_;
-    Tensor xf = x->dot(Wf_) + bf_;
-    Tensor xc = x->dot(Wc_) + bc_;
-    Tensor xo = x->dot(Wo_) + bo_;
+    Tensor xi = x.dot(Wi_) + bi_;
+    Tensor xf = x.dot(Wf_) + bf_;
+    Tensor xc = x.dot(Wc_) + bc_;
+    Tensor xo = x.dot(Wo_) + bo_;
 
-    Tensor i_ = xi + ht_1->dot(Ui_);
-    Tensor f_ = xf + ht_1->dot(Uf_);
-    Tensor c_ = xc + ht_1->dot(Uc_);
-    Tensor o_ = xo + ht_1->dot(Uo_);
+    Tensor i_ = xi + ht_1.dot(Ui_);
+    Tensor f_ = xf + ht_1.dot(Uf_);
+    Tensor c_ = xc + ht_1.dot(Uc_);
+    Tensor o_ = xo + ht_1.dot(Uo_);
 
     Tensor i, f, cc, o;
 
-    check(inner_activation_.apply(&i_, &i));
-    check(inner_activation_.apply(&f_, &f));
-    check(activation_.apply(&c_, &cc));
-    check(inner_activation_.apply(&o_, &o));
+    check(inner_activation_.apply(i_, i));
+    check(inner_activation_.apply(f_, f));
+    check(activation_.apply(c_, cc));
+    check(inner_activation_.apply(o_, o));
 
-    *ct_1 = f.multiply(*ct_1) + i.multiply(cc);
+    ct_1 = f.multiply(ct_1) + i.multiply(cc);
 
-    check(activation_.apply(ct_1, &cc));
+    check(activation_.apply(ct_1, cc));
 
-    *out = *ht_1 = o.multiply(cc);
+    out = ht_1 = o.multiply(cc);
     return true;
 }
 

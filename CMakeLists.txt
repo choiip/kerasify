@@ -70,19 +70,19 @@ endif()
 project(kerasify)
 
 include_directories(SYSTEM "/usr/include/c++/7")
-include_directories(kerasify PRIVATE "./include" ".")
+include_directories(kerasify PRIVATE "./include")
 
 add_executable(kerasify "")
 target_sources(kerasify PRIVATE
-    src/layer/activation.cpp
-    src/layer/conv2d.cpp
-    src/layer/dense.cpp
-    src/layer/elu.cpp
-    src/layer/embedding.cpp
-    src/layer/flatten.cpp
-    src/layer/lstm.cpp
-    src/layer/maxpooling2d.cpp
     src/layer.cpp
+    src/layers/activation.cpp
+    src/layers/conv2d.cpp
+    src/layers/dense.cpp
+    src/layers/elu.cpp
+    src/layers/embedding.cpp
+    src/layers/flatten.cpp
+    src/layers/lstm.cpp
+    src/layers/maxpooling2d.cpp
     src/model.cpp
     src/model_test.cpp
     src/tensor.cpp

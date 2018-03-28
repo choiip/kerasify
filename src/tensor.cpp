@@ -54,7 +54,7 @@ Tensor Tensor::select(size_t row) const
     return x;
 }
 
-Tensor Tensor::operator+(const Tensor& other)
+Tensor Tensor::operator+(const Tensor& other) const
 {
     kassert(dims_ == other.dims_);
 
@@ -69,7 +69,7 @@ Tensor Tensor::operator+(const Tensor& other)
     return result;
 }
 
-Tensor Tensor::multiply(const Tensor& other)
+Tensor Tensor::multiply(const Tensor& other) const
 {
     kassert(dims_ == other.dims_);
 
@@ -84,7 +84,7 @@ Tensor Tensor::multiply(const Tensor& other)
     return result;
 }
 
-Tensor Tensor::dot(const Tensor& other)
+Tensor Tensor::dot(const Tensor& other) const
 {
     kassert(dims_.size() == 2);
     kassert(other.dims_.size() == 2);
@@ -98,7 +98,7 @@ Tensor Tensor::dot(const Tensor& other)
     return tmp;
 }
 
-void Tensor::print()
+void Tensor::print() const
 {
     if (dims_.size() == 1) {
         printf("[");
@@ -153,7 +153,7 @@ void Tensor::print()
     }
 }
 
-void Tensor::print_shape()
+void Tensor::print_shape() const
 {
     printf("(");
     for (size_t i = 0; i < dims_.size(); ++i)

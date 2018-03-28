@@ -30,8 +30,11 @@ bool read_floats(std::ifstream* file, float* f, size_t n)
     check(file);
     check(f);
 
-    file->read(reinterpret_cast<char*>(f), sizeof(float) * n);
-    check(static_cast<size_t>(file->gcount()) == sizeof(float) * n);
+    auto pos = reinterpret_cast<char*>(f);
+    auto size = static_cast<ptrdiff_t>(sizeof(float) * n);
+
+    file->read(pos, size);
+    check(file->gcount() == size);
     return true;
 }
 

@@ -31,18 +31,21 @@ public:
     inline float& operator()(size_t i, size_t j);
     inline float& operator()(size_t i, size_t j, size_t k);
     inline float& operator()(size_t i, size_t j, size_t k, size_t l);
+    inline float operator()(size_t i) const;
     inline float operator()(size_t i, size_t j) const;
+    inline float operator()(size_t i, size_t j, size_t k) const;
+    inline float operator()(size_t i, size_t j, size_t k, size_t l) const;
 
     inline void fill(float value);
 
     Tensor unpack(size_t row) const;
     Tensor select(size_t row) const;
-    Tensor operator+(const Tensor& other);
-    Tensor multiply(const Tensor& other);
-    Tensor dot(const Tensor& other);
+    Tensor operator+(const Tensor& other) const;
+    Tensor multiply(const Tensor& other) const;
+    Tensor dot(const Tensor& other) const;
 
-    void print();
-    void print_shape();
+    void print() const;
+    void print_shape() const;
 
     std::vector<size_t> dims_;
     std::vector<float> data_;
@@ -59,6 +62,13 @@ void Tensor::flatten()
 }
 
 float& Tensor::operator()(size_t i)
+{
+    kassert(dims_.size() == 1);
+    kassert(i < dims_[0]);
+    return data_[i];
+}
+
+float Tensor::operator()(size_t i) const
 {
     kassert(dims_.size() == 1);
     kassert(i < dims_[0]);
@@ -90,7 +100,26 @@ float& Tensor::operator()(size_t i, size_t j, size_t k)
     return data_[dims_[2] * (dims_[1] * i + j) + k];
 }
 
+float Tensor::operator()(size_t i, size_t j, size_t k) const
+{
+    kassert(dims_.size() == 3);
+    kassert(i < dims_[0]);
+    kassert(j < dims_[1]);
+    kassert(k < dims_[2]);
+    return data_[dims_[2] * (dims_[1] * i + j) + k];
+}
+
 float& Tensor::operator()(size_t i, size_t j, size_t k, size_t l)
+{
+    kassert(dims_.size() == 4);
+    kassert(i < dims_[0]);
+    kassert(j < dims_[1]);
+    kassert(k < dims_[2]);
+    kassert(l < dims_[3]);
+    return data_[dims_[3] * (dims_[2] * (dims_[1] * i + j) + k) + l];
+}
+
+float Tensor::operator()(size_t i, size_t j, size_t k, size_t l) const
 {
     kassert(dims_.size() == 4);
     kassert(i < dims_[0]);

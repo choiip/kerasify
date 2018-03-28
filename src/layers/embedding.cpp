@@ -3,7 +3,7 @@
  *
  * MIT License, see LICENSE file.
  */
-#include "keras/layer/embedding.h"
+#include "keras/layers/embedding.h"
 
 namespace keras {
 namespace layers {
@@ -26,21 +26,20 @@ bool Embedding::load_layer(std::ifstream* file)
     return true;
 }
 
-bool Embedding::apply(Tensor* in, Tensor* out)
+bool Embedding::apply(const Tensor& in, Tensor& out) const
 {
-    size_t out_i = in->dims_[1];
+    size_t out_i = in.dims_[1];
     size_t out_j = weights_.dims_[1];
-    out->dims_ = {out_i, out_j};
-    out->data_.reserve(out_i * out_j);
+    out.dims_ = {out_i, out_j};
+    out.data_.reserve(out_i * out_j);
 
-    std::for_each(in->data_.begin(), in->data_.end(), [=](float i) {
+    std::for_each(in.data_.begin(), in.data_.end(), [&](float i) {
         auto first = weights_.data_.begin() + static_cast<ptrdiff_t>(i * out_j);
         auto last = first + static_cast<ptrdiff_t>(out_j);
-        out->data_.insert(out->data_.end(), first, last);
+        out.data_.insert(out.data_.end(), first, last);
     });
 
     return true;
 }
-
 } // namespace layers
 } // namespace keras

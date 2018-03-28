@@ -77,13 +77,9 @@ def export_layer_conv2d(f, layer):
     biases = layer.get_weights()[1]
     activation = layer.get_config()['activation']
 
-    # The kernel is accessed in reverse order. To simplify the C side we'll
-    # flip the weight matrix for each kernel.
-
-    # original shape: (rows, cols, depth, outputs) 
+    # shape: (rows, cols, depth, outputs)
     weights = weights.transpose(3, 0, 1, 2)
-    # original shape: (outputs, rows, cols, depth) 
-    # weights = weights[:, ::-1, ::-1, :]
+    # shape: (outputs, rows, cols, depth)
 
     f.write(struct.pack('I', LAYER_CONVOLUTION2D))
     f.write(struct.pack('I', weights.shape[0]))

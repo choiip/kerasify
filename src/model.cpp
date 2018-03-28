@@ -4,13 +4,13 @@
  * MIT License, see LICENSE file.
  */
 #include "keras/model.h"
-#include "keras/layer/conv2d.h"
-#include "keras/layer/dense.h"
-#include "keras/layer/elu.h"
-#include "keras/layer/embedding.h"
-#include "keras/layer/flatten.h"
-#include "keras/layer/lstm.h"
-#include "keras/layer/maxpooling2d.h"
+#include "keras/layers/conv2d.h"
+#include "keras/layers/dense.h"
+#include "keras/layers/elu.h"
+#include "keras/layers/embedding.h"
+#include "keras/layers/flatten.h"
+#include "keras/layers/lstm.h"
+#include "keras/layers/maxpooling2d.h"
 #include <limits>
 #include <utility>
 
@@ -30,28 +30,28 @@ bool Model::load_model(const std::string& filename)
         Layer* layer = nullptr;
 
         switch (layer_type) {
-        case kDense:
+        case Dense:
             layer = new layers::Dense();
             break;
-        case kConvolution2d:
+        case Conv2D:
             layer = new layers::Conv2D();
             break;
-        case kFlatten:
+        case Flatten:
             layer = new layers::Flatten();
             break;
-        case kElu:
+        case ELU:
             layer = new layers::ELU();
             break;
-        case kActivation:
+        case Activation:
             layer = new layers::Activation();
             break;
-        case kMaxPooling2D:
+        case MaxPooling2D:
             layer = new layers::MaxPooling2D();
             break;
-        case kLSTM:
+        case LSTM:
             layer = new layers::LSTM();
             break;
-        case kEmbedding:
+        case Embedding:
             layer = new layers::Embedding();
             break;
         default:
@@ -69,16 +69,17 @@ bool Model::load_model(const std::string& filename)
     return true;
 }
 
-bool Model::apply(Tensor* in, Tensor* out)
+bool Model::apply(const Tensor& in, Tensor& out)
 {
     Tensor temp_in, temp_out;
     for (size_t i = 0; i < layers_.size(); ++i) {
         if (i == 0)
-            temp_in = *in;
-        check(layers_[i]->apply(&temp_in, &temp_out));
+            temp_in = in;
+        check(layers_[i]->apply(temp_in, temp_out));
         temp_in = temp_out;
     }
-    *out = temp_out;
+    out = temp_out;
     return true;
 }
+
 } // namespace keras

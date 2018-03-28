@@ -15,7 +15,7 @@ public:
     MaxPooling2D() : pool_size_y_(0), pool_size_x_(0) {}
     ~MaxPooling2D() override {}
     bool load_layer(std::ifstream* file) override;
-    bool apply(Tensor* in, Tensor* out) override;
+    bool apply(const Tensor& in, Tensor& out) const override;
 
 private:
     unsigned pool_size_y_;

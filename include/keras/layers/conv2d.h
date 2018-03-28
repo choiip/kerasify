@@ -5,7 +5,7 @@
  */
 #pragma once
 
-#include "keras/layer/activation.h"
+#include "keras/layers/activation.h"
 
 namespace keras {
 namespace layers {
@@ -15,7 +15,7 @@ public:
     Conv2D() {}
     ~Conv2D() override {}
     bool load_layer(std::ifstream* file) override;
-    bool apply(Tensor* in, Tensor* out) override;
+    bool apply(const Tensor& in, Tensor& out) const override;
 
 private:
     Tensor weights_;

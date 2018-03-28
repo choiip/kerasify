@@ -24,7 +24,7 @@ public:
     Activation() : activation_type_(activation_type::kLinear) {}
     ~Activation() override {}
     bool load_layer(std::ifstream* file) override;
-    bool apply(Tensor* in, Tensor* out) override;
+    bool apply(const Tensor& in, Tensor& out) const override;
 
 private:
     activation_type activation_type_;

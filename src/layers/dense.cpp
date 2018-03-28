@@ -3,7 +3,7 @@
  *
  * MIT License, see LICENSE file.
  */
-#include "keras/layer/dense.h"
+#include "keras/layers/dense.h"
 
 namespace keras {
 namespace layers {
@@ -34,26 +34,23 @@ bool Dense::load_layer(std::ifstream* file)
     return true;
 }
 
-bool Dense::apply(Tensor* in, Tensor* out)
+bool Dense::apply(const Tensor& in, Tensor& out) const
 {
-    check(in);
-    check(out);
+    check(in.dims_.size() <= 2);
 
-    check(in->dims_.size() <= 2);
-
-    if (in->dims_.size() == 2)
-        check(in->dims_[1] == weights_.dims_[0]);
+    if (in.dims_.size() == 2)
+        check(in.dims_[1] == weights_.dims_[0]);
 
     Tensor tmp{weights_.dims_[1]};
 
     for (size_t i = 0; i < weights_.dims_[0]; ++i)
         for (size_t j = 0; j < weights_.dims_[1]; ++j)
-            tmp(j) += (*in)(i)*weights_(i, j);
+            tmp(j) += in(i)*weights_(i, j);
 
     for (size_t i = 0; i < biases_.dims_[0]; ++i)
         tmp(i) += biases_(i);
 
-    check(activation_.apply(&tmp, out));
+    check(activation_.apply(tmp, out));
     return true;
 }
 

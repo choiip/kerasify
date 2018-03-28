@@ -5,22 +5,20 @@
  */
 #pragma once
 
-#include "keras/layer/activation.h"
+#include "keras/layer.h"
 
 namespace keras {
 namespace layers {
 
-class Dense : public Layer {
+class ELU : public Layer {
 public:
-    Dense() {}
-    ~Dense() override {}
+    ELU() : alpha_(1.0f) {}
+    ~ELU() override {}
     bool load_layer(std::ifstream* file) override;
-    bool apply(Tensor* in, Tensor* out) override;
+    bool apply(const Tensor& in, Tensor& out) const override;
 
 private:
-    Tensor weights_;
-    Tensor biases_;
-    Activation activation_;
+    float alpha_;
 };
 
 } // namespace layers

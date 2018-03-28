@@ -5,7 +5,7 @@
  */
 #pragma once
 
-#include "keras/layer/activation.h"
+#include "keras/layers/activation.h"
 
 namespace keras {
 namespace layers {
@@ -15,10 +15,10 @@ public:
     LSTM() : return_sequences_(false) {}
     ~LSTM() override {}
     bool load_layer(std::ifstream* file) override;
-    bool apply(Tensor* in, Tensor* out) override;
+    bool apply(const Tensor& in, Tensor& out) const override;
 
 private:
-    bool step(Tensor* x, Tensor* out, Tensor* ht_1, Tensor* ct_1);
+    bool step(const Tensor& x, Tensor& out, Tensor& ht_1, Tensor& ct_1) const;
 
     Tensor Wi_;
     Tensor Ui_;
