@@ -26,11 +26,12 @@ from keras.layers import Dense
 test_x = np.random.rand(10, 10).astype('f')
 test_y = np.random.rand(10).astype('f')
 
-model = Sequential()
-model.add(Dense(1, input_dim=10))
+model = Sequential([
+	Dense(1, input_dim=10)
+])
 
-model.compile(loss='mean_squared_error', optimizer='adamax')
-model.fit(test_x, test_y, nb_epoch=1, verbose=False)
+model.compile(loss='mse', optimizer='adam')
+model.fit(test_x, test_y, epochs=1, verbose=False)
 
 print model.predict(np.array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]))
 
@@ -41,21 +42,24 @@ export_model(model, 'example.model')
 test.cc:
 
 ```
-#include "keras_model.h"
+#include "keras/model.h"
+
+using keras::Model;
+using keras::Tensor;
 
 int main() {
     // Initialize model.
-    KerasModel model;
-    model.LoadModel("example.model");
+    Model model;
+    model.load_model("example.model");
 
     // Create a 1D Tensor on length 10 for input data.
-    Tensor in(10);
+    Tensor in{10};
     in.data_ = {{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}};
 
     // Run prediction.
     Tensor out;
-    model.Apply(&in, &out);
-    out.Print();
+    model.apply(in, out);
+    out.print();
     return 0;
 }
 ```
@@ -64,7 +68,7 @@ To test:
 
     $ python make_model.py
     [[-1.85735667]]
-
+    
     $ g++ --std=c++11 -Wall -O3 test.cc keras_model.cc
     $ ./a.out 
     [ -1.857357 ]
@@ -74,21 +78,14 @@ To test:
 To run the unit tests, generate the unit test models and then run `keras_model_test`:
 
 ```
-$ python make_tests.py
+$ python3 make_tests.py
 ...
-
-$ make
-cppcheck --error-exitcode=1 keras_model.cc
-Checking keras_model.cc...
-Checking keras_model.cc: DEBUG...
-g++ --std=c++11 -I. -Wall -Werror -MMD -O3 -mtune=core2 -o keras_model.o -c keras_model.cc
-cppcheck --error-exitcode=1 keras_model_test.cc
-Checking keras_model_test.cc...
-Checking keras_model_test.cc: DEBUG...
-g++ --std=c++11 -I. -Wall -Werror -MMD -O3 -mtune=core2 -o keras_model_test.o -c keras_model_test.cc
-g++ -o keras_model_test keras_model_test.o keras_model.o
-
-$ ./keras_model_test
+$ mkdir build && cd build
+$ cmake ..
+...
+$ cmake --build .
+...
+$ ./build/kerasify
 TEST dense_1x1
 TEST dense_10x1
 TEST dense_2x2
