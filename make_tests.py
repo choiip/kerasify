@@ -100,7 +100,7 @@ inline bool %s(double& load_time, double& apply_time)
 
 
 def output_testcase(model, test_x, test_y, name, eps):
-    print("Processing %s" % name)
+    print('Processing %s' % name)
     model.compile(loss='mse', optimizer='adam')
     model.fit(test_x, test_y, epochs=1, verbose=False)
     predict_y = model.predict(test_x).astype('f')

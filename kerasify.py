@@ -2,7 +2,7 @@ import numpy as np
 import struct
 
 LAYER_DENSE = 1
-LAYER_CONVOLUTION2D = 2
+LAYER_CONV2D = 2
 LAYER_FLATTEN = 3
 LAYER_ELU = 4
 LAYER_ACTIVATION = 5
@@ -29,7 +29,7 @@ def write_floats(f, floats):
     for i in np.arange(0, len(floats), step):
         remaining = min(len(floats) - i, step)
         written += remaining
-        f.write(struct.pack('=%sf' % remaining, *floats[i:i+remaining]))
+        f.write(struct.pack('=%sf' % remaining, *floats[i: i + remaining]))
 
     assert written == len(floats)
 
@@ -71,17 +71,16 @@ def export_layer_dense(f, layer):
 
 
 def export_layer_conv2d(f, layer):
-    # assert layer.border_mode == 'valid', "Only border_mode=valid is implemented"
+    # only border_mode=valid is implemented
 
     weights = layer.get_weights()[0]
     biases = layer.get_weights()[1]
     activation = layer.get_config()['activation']
 
-    # shape: (rows, cols, depth, outputs)
     weights = weights.transpose(3, 0, 1, 2)
     # shape: (outputs, rows, cols, depth)
 
-    f.write(struct.pack('I', LAYER_CONVOLUTION2D))
+    f.write(struct.pack('I', LAYER_CONV2D))
     f.write(struct.pack('I', weights.shape[0]))
     f.write(struct.pack('I', weights.shape[1]))
     f.write(struct.pack('I', weights.shape[2]))
@@ -98,7 +97,7 @@ def export_layer_conv2d(f, layer):
 
 
 def export_layer_maxpooling2d(f, layer):
-    # assert layer.border_mode == 'valid', "Only border_mode=valid is implemented"
+    # only border_mode=valid is implemented
 
     pool_size = layer.get_config()['pool_size']
 
