@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2016 Robert W. Rose
  *
  * MIT License, see LICENSE file.
@@ -25,6 +25,7 @@ public:
     void resize(size_t i, size_t j, size_t k);
     void resize(size_t i, size_t j, size_t k, size_t l);
 
+    inline size_t size() const;
     inline void flatten();
 
     inline float& operator()(size_t i);
@@ -51,14 +52,18 @@ public:
     std::vector<float> data_;
 };
 
+size_t Tensor::size() const
+{
+    size_t elements = 1;
+    for (const auto& it : dims_)
+        elements *= it;
+    return elements;
+}
+
 void Tensor::flatten()
 {
     kassert(dims_.size() > 0);
-
-    size_t elements = dims_[0];
-    for (size_t i = 1; i < dims_.size(); ++i)
-        elements *= dims_[i];
-    dims_ = {elements};
+    dims_ = {size()};
 }
 
 float& Tensor::operator()(size_t i)

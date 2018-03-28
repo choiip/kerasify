@@ -36,10 +36,7 @@ bool Dense::load_layer(std::ifstream* file)
 
 bool Dense::apply(const Tensor& in, Tensor& out) const
 {
-    check(in.dims_.size() <= 2);
-
-    if (in.dims_.size() == 2)
-        check(in.dims_[1] == weights_.dims_[0]);
+    check(in.size() == weights_.dims_[0]);
 
     Tensor tmp{weights_.dims_[1]};
 

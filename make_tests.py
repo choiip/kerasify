@@ -91,7 +91,7 @@ bool %s(double& load_time, double& apply_time)
     apply_time = apply_timer.stop();
 
     for (size_t i = 0; i < out.dims_[0]; ++i) {
-        check_eq(out(i), predict(i), %sf);
+        check_eq(out(i), predict(i), %s);
     }
     return true;
 }
@@ -337,7 +337,7 @@ model = Sequential([
     Dense(3, input_dim=16, activation='tanh'),
     Dense(1)
 ])
-output_testcase(model, test_x, test_y, 'lstm_simple_stacked16x9', '1e-6')
+output_testcase(model, test_x, test_y, 'lstm_simple_stacked_16x9', '1e-6')
 
 
 ''' LSTM stacked 64x83 '''
@@ -348,7 +348,7 @@ model = Sequential([
     LSTM(16, return_sequences=False),
     Dense(1, activation='sigmoid')
 ])
-output_testcase(model, test_x, test_y, 'lstm_stacked64x83', '1e-6')
+output_testcase(model, test_x, test_y, 'lstm_stacked_64x83', '1e-6')
 
 
 ''' Embedding 64 '''
@@ -361,7 +361,7 @@ model = Sequential([
     #Dropout(0.5),
     Dense(20, activation='sigmoid')
 ])
-output_testcase(model, test_x, test_y, 'embedding64', '1e-6')
+output_testcase(model, test_x, test_y, 'embedding_64', '1e-6')
 
 
 ''' Benchmark '''

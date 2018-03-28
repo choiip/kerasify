@@ -13,10 +13,10 @@
 #include "test/dense_relu_10.h"
 #include "test/dense_tanh_10.h"
 #include "test/elu_10.h"
-#include "test/embedding64.h"
+#include "test/embedding_64.h"
 #include "test/lstm_simple_7x20.h"
-#include "test/lstm_simple_stacked16x9.h"
-#include "test/lstm_stacked64x83.h"
+#include "test/lstm_simple_stacked_16x9.h"
+#include "test/lstm_stacked_64x83.h"
 #include "test/maxpool2d_1x1.h"
 #include "test/maxpool2d_2x2.h"
 #include "test/maxpool2d_3x2x2.h"
@@ -35,7 +35,7 @@ bool basics()
         const int i = 3;
         const int j = 5;
         const int k = 10;
-        Tensor t(i, j, k);
+        Tensor t{i, j, k};
 
         float c = 1.f;
         for (size_t ii = 0; ii < i; ++ii)
@@ -49,8 +49,8 @@ bool basics()
         for (size_t ii = 0; ii < i; ++ii)
             for (size_t jj = 0; jj < j; ++jj)
                 for (size_t kk = 0; kk < k; ++kk) {
-                    check_eq(t(ii, jj, kk), c, 1e-9f);
-                    check_eq(t.data_[cc], c, 1e-9f);
+                    check_eq(t(ii, jj, kk), c, 1e-9);
+                    check_eq(t.data_[cc], c, 1e-9);
                     c += 1.f;
                     ++cc;
                 }
@@ -60,7 +60,7 @@ bool basics()
         const size_t j = 3;
         const size_t k = 4;
         const size_t l = 5;
-        Tensor t(i, j, k, l);
+        Tensor t{i, j, k, l};
 
         float c = 1.f;
         for (size_t ii = 0; ii < i; ++ii)
@@ -76,15 +76,15 @@ bool basics()
             for (size_t jj = 0; jj < j; ++jj)
                 for (size_t kk = 0; kk < k; ++kk)
                     for (size_t ll = 0; ll < l; ++ll) {
-                        check_eq(t(ii, jj, kk, ll), c, 1e-9f);
-                        check_eq(t.data_[cc], c, 1e-9f);
+                        check_eq(t(ii, jj, kk, ll), c, 1e-9);
+                        check_eq(t.data_[cc], c, 1e-9);
                         c += 1.f;
                         ++cc;
                     }
     }
     {
-        Tensor a(2, 2);
-        Tensor b(2, 2);
+        Tensor a{2, 2};
+        Tensor b{2, 2};
 
         a.data_ = {1.0, 2.0, 3.0, 5.0};
         b.data_ = {2.0, 5.0, 4.0, 1.0};
@@ -93,8 +93,8 @@ bool basics()
         check(result.data_ == std::vector<float>({3.0, 7.0, 7.0, 6.0}));
     }
     {
-        Tensor a(2, 2);
-        Tensor b(2, 2);
+        Tensor a{2, 2};
+        Tensor b{2, 2};
 
         a.data_ = {1.0, 2.0, 3.0, 5.0};
         b.data_ = {2.0, 5.0, 4.0, 1.0};
@@ -103,8 +103,8 @@ bool basics()
         check(result.data_ == std::vector<float>({2.0, 10.0, 12.0, 5.0}));
     }
     {
-        Tensor a(1, 2);
-        Tensor b(2, 1);
+        Tensor a{1, 2};
+        Tensor b{2, 1};
 
         a.data_ = {1.0, 2.0};
         b.data_ = {2.0, 5.0};
@@ -113,8 +113,8 @@ bool basics()
         check(result.data_ == std::vector<float>({12.0}));
     }
     {
-        Tensor a(2, 1);
-        Tensor b(1, 2);
+        Tensor a{2, 1};
+        Tensor b{1, 2};
 
         a.data_ = {1.0, 2.0};
         b.data_ = {2.0, 5.0};
@@ -194,13 +194,13 @@ int main()
     if (!test::lstm_simple_7x20(load_time, apply_time))
         return 1;
 
-    if (!test::lstm_simple_stacked16x9(load_time, apply_time))
+    if (!test::lstm_simple_stacked_16x9(load_time, apply_time))
         return 1;
 
-    if (!test::lstm_stacked64x83(load_time, apply_time))
+    if (!test::lstm_stacked_64x83(load_time, apply_time))
         return 1;
 
-    if (!test::embedding64(load_time, apply_time))
+    if (!test::embedding_64(load_time, apply_time))
         return 1;
 
     // Run benchmark 5 times and report duration.

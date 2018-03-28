@@ -13,25 +13,27 @@
 #define check(x) \
     if (!(x)) { \
         printf( \
-            "ASSERT [%s:%d] - '%s' failed\n", __FILE__, __LINE__, \
-            stringify(x)); \
+            "ASSERT [%s:%d] '%s' failed\n", __FILE__, __LINE__, stringify(x)); \
         return false; \
     }
 
 #define check_eq(x, y, eps) \
-    if (std::abs((x) - (y)) > eps) { \
-        printf( \
-            "ASSERT [%s:%d] - expected %f, got %f\n", __FILE__, __LINE__, \
-            static_cast<double>(y), static_cast<double>(x)); \
+    { \
+        auto x_ = static_cast<double>(x); \
+        auto y_ = static_cast<double>(y); \
+        if (std::abs(x_ - y_) > eps) { \
+            printf( \
+                "ASSERT [%s:%d] %f isn't equal to %f ('%s' != '%s')\n", \
+                __FILE__, __LINE__, x_, y_, stringify(x), stringify(y)); \
+            return false; \
+        } \
     }
-// return false;}
 
 #ifdef DEBUG
 #define kassert(x) \
     if (!(x)) { \
         printf( \
-            "ASSERT [%s:%d] - '%s' failed\n", __FILE__, __LINE__, \
-            stringify(x)); \
+            "ASSERT [%s:%d] '%s' failed\n", __FILE__, __LINE__, stringify(x)); \
         exit(-1); \
     }
 #else
