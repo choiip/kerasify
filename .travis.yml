@@ -1,5 +1,0 @@
-dist: trusty
-language: cpp
-
-script:
-- make static_analysis=false
