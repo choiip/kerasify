@@ -1,4 +1,4 @@
-﻿//#include "test/benchmark.h"
+﻿#include "test/benchmark.h"
 #include "test/conv_2x2.h"
 #include "test/conv_3x3.h"
 #include "test/conv_3x3x3.h"
@@ -29,7 +29,7 @@
 using namespace keras;
 
 namespace test {
-bool tensor()
+bool basics()
 {
     {
         const int i = 3;
@@ -131,7 +131,7 @@ int main()
     double load_time = 0.0;
     double apply_time = 0.0;
 
-    if (!test::tensor())
+    if (!test::basics())
         return 1;
 
     if (!test::dense_1x1(load_time, apply_time))
@@ -199,10 +199,10 @@ int main()
 
     if (!test::lstm_stacked64x83(load_time, apply_time))
         return 1;
-
     /*
     if (!test::embedding32(load_time, apply_time))
         return 1;
+    */
 
     // Run benchmark 5 times and report duration.
     double total_load_time = 0.0;
@@ -217,7 +217,6 @@ int main()
     }
     printf("Benchmark network loads in %fs\n", total_load_time / 5);
     printf("Benchmark network runs in %fs\n", total_apply_time / 5);
-    */
 
     return 0;
 }

@@ -79,7 +79,11 @@ def export_layer_conv2d(f, layer):
 
     # The kernel is accessed in reverse order. To simplify the C side we'll
     # flip the weight matrix for each kernel.
-    weights = weights[:, :, ::-1, ::-1]
+
+    # original shape: (rows, cols, depth, outputs) 
+    weights = weights.transpose(3, 0, 1, 2)
+    # original shape: (outputs, rows, cols, depth) 
+    # weights = weights[:, ::-1, ::-1, :]
 
     f.write(struct.pack('I', LAYER_CONVOLUTION2D))
     f.write(struct.pack('I', weights.shape[0]))

@@ -40,10 +40,6 @@ bool Conv2D::load_layer(std::ifstream* file)
     biases_.resize(biases_shape);
     check(read_floats(file, biases_.data_.data(), biases_shape));
 
-#ifndef NDEBUG
-    weights_.print_shape();
-    biases_.print_shape();
-#endif
     check(activation_.load_layer(file));
     return true;
 }
@@ -53,30 +49,32 @@ bool Conv2D::apply(Tensor* in, Tensor* out)
     check(in);
     check(out);
 
-    check(in->dims_[0] == weights_.dims_[1]);
+    check(in->dims_[2] == weights_.dims_[3]);
 
-    size_t st_nj = (weights_.dims_[2] - 1) / 2;
-    size_t st_pj = (weights_.dims_[2]) / 2;
-    size_t st_nk = (weights_.dims_[3] - 1) / 2;
-    size_t st_pk = (weights_.dims_[3]) / 2;
+    size_t st_nj = (weights_.dims_[1] - 1) / 2;
+    size_t st_pj = (weights_.dims_[1]) / 2;
+    size_t st_nk = (weights_.dims_[2] - 1) / 2;
+    size_t st_pk = (weights_.dims_[2]) / 2;
 
-    Tensor tmp{weights_.dims_[0], in->dims_[1] - st_nj - st_pj,
-               in->dims_[2] - st_nk - st_pk};
+    Tensor tmp{in->dims_[0] - st_nj - st_pj, in->dims_[1] - st_nk - st_pk,
+               weights_.dims_[3]};
 
-    for (size_t i = 0; i < weights_.dims_[0]; ++i) {
-        for (size_t j = 0; j < weights_.dims_[1]; ++j)
-            for (size_t tj = st_nj; tj < in->dims_[1] - st_pj; ++tj)
-                for (size_t tk = st_nk; tk < in->dims_[2] - st_pk; ++tk)
-                    for (size_t k = 0; k < weights_.dims_[2]; ++k)
-                        for (size_t l = 0; l < weights_.dims_[3]; ++l) {
-                            const float& weight = weights_(i, j, k, l);
-                            const float& value =
-                                (*in)(j, tj - st_nj + k, tk - st_nk + l);
-                            tmp(i, tj - st_nj, tk - st_nk) += weight * value;
+    // Iterate over each kernel.
+    for (size_t k = 0; k < weights_.dims_[0]; ++k) {
+        // 2D convolution in x and y (k and l in Tensor dimensions).
+        for (size_t y = 0; y < tmp.dims_[0]; ++y)
+            for (size_t x = 0; x < tmp.dims_[1]; ++x)
+                // Iterate over kernel.
+                for (size_t ky = 0; ky < weights_.dims_[1]; ++ky)
+                    for (size_t kx = 0; kx < weights_.dims_[2]; ++kx)
+                        for (size_t kd = 0; kd < weights_.dims_[3]; ++kd) {
+                            const float& weight = weights_(k, ky, kx, kd);
+                            const float& value = (*in)(y + ky, x + kx, kd);
+                            tmp(k, y, x) += weight * value;
                         }
-        for (size_t j = 0; j < tmp.dims_[1]; ++j)
-            for (size_t k = 0; k < tmp.dims_[2]; ++k)
-                tmp(i, j, k) += biases_(i);
+        for (size_t y = 0; y < tmp.dims_[0]; ++y)
+            for (size_t x = 0; x < tmp.dims_[1]; ++x)
+                tmp(k, y, x) += biases_(k);
     }
     check(activation_.apply(&tmp, out));
     return true;

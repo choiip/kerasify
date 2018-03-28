@@ -346,6 +346,7 @@ output_testcase(model, test_x, test_y, 'lstm_stacked64x83', '1e-6')
 
 
 ''' Embedding 32 '''
+'''
 np.random.seed(10)
 test_x = np.random.randint(100, size=(32, 10)).astype('f')
 test_y = np.random.rand(32, 10).astype('f')
@@ -356,7 +357,7 @@ model = Sequential([
     Dense(10, activation='sigmoid')
 ])
 output_testcase(model, test_x, test_y, 'embedding32', '1e-6')
-
+'''
 
 ''' Benchmark '''
 test_x = np.random.rand(1, 128, 128, 3).astype('f')

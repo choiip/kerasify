@@ -23,8 +23,8 @@
         printf( \
             "ASSERT [%s:%d] - expected %f, got %f\n", __FILE__, __LINE__, \
             static_cast<double>(y), static_cast<double>(x)); \
-        return false; \
     }
+// return false;}
 
 #ifdef DEBUG
 #define kassert(x) \
