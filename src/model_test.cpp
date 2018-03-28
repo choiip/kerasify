@@ -13,7 +13,7 @@
 #include "test/dense_relu_10.h"
 #include "test/dense_tanh_10.h"
 #include "test/elu_10.h"
-//#include "test/embedding32.h"
+#include "test/embedding64.h"
 #include "test/lstm_simple_7x20.h"
 #include "test/lstm_simple_stacked16x9.h"
 #include "test/lstm_stacked64x83.h"
@@ -199,10 +199,9 @@ int main()
 
     if (!test::lstm_stacked64x83(load_time, apply_time))
         return 1;
-    /*
-    if (!test::embedding32(load_time, apply_time))
+    if (!test::embedding64(load_time, apply_time))
         return 1;
-    */
+
     // Run benchmark 5 times and report duration.
     double total_load_time = 0.0;
     double total_apply_time = 0.0;

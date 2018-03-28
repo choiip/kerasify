@@ -156,8 +156,8 @@ void Tensor::print() const
 void Tensor::print_shape() const
 {
     printf("(");
-    for (size_t i = 0; i < dims_.size(); ++i)
-        printf("%zu ", dims_[i]);
+    for (auto&& it : dims_)
+        printf("%zu ", it);
     printf(")\n");
 }
 } // namespace keras

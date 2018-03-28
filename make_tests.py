@@ -351,17 +351,17 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'lstm_stacked64x83', '1e-6')
 
 
-''' Embedding 32 '''
+''' Embedding 64 '''
 np.random.seed(10)
 test_x = np.random.randint(100, size=(32, 10)).astype('f')
-test_y = np.random.rand(32, 10).astype('f')
+test_y = np.random.rand(32, 20).astype('f')
 model = Sequential([
-    Embedding(50, 32, input_length=10),
+    Embedding(100, 64, input_length=10),
     Flatten(),
     #Dropout(0.5),
-    Dense(10, activation='sigmoid')
+    Dense(20, activation='sigmoid')
 ])
-output_testcase(model, test_x, test_y, 'embedding32', '1e-6')
+output_testcase(model, test_x, test_y, 'embedding64', '1e-6')
 
 
 ''' Benchmark '''
