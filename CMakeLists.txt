@@ -55,18 +55,28 @@ set(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO
     CACHE INTERNAL ""
 )
 
+# rolled loops works faster here
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} \
-    -O3 -ffast-math -funroll-loops \
+    -O3 -ffast-math -fno-unroll-loops \
     -fno-exceptions -fno-rtti"
     CACHE INTERNAL ""
 )
 
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} -Os"
+      CACHE INTERNAL "")
+endif()
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} -Oz"
+      CACHE INTERNAL "")
+endif()
+
 set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} \
-    -Oz \
-    -fno-exceptions -fno-rtti \
-    -fno-stack-protector -fomit-frame-pointer \
-    -ffunction-sections -fdata-sections \
-    -fno-math-errno -fno-unroll-loops -fmerge-all-constants -fno-ident"
+    -O3 -ffast-math -fno-math-errno -fno-unroll-loops \
+    -fno-exceptions -fno-rtti -fno-stack-protector -fno-ident \
+    -fomit-frame-pointer -ffunction-sections -fdata-sections \
+    -fmerge-all-constants"
     CACHE INTERNAL ""
 )
 
