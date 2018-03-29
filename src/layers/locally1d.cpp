@@ -10,8 +10,6 @@ namespace layers {
 
 bool LocallyConnected1D::load_layer(std::ifstream& file)
 {
-    check(file);
-
     unsigned weights_i = 0;
     check(read_uint(file, weights_i));
     check(weights_i > 0);
