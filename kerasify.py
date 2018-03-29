@@ -2,13 +2,14 @@ import numpy as np
 import struct
 
 LAYER_DENSE = 1
-LAYER_CONV2D = 2
+LAYER_CONV_2D = 2
 LAYER_FLATTEN = 3
 LAYER_ELU = 4
 LAYER_ACTIVATION = 5
-LAYER_MAXPOOLING2D = 6
+LAYER_MAXPOOLING_2D = 6
 LAYER_LSTM = 7
 LAYER_EMBEDDING = 8
+LAYER_BATCH_NORMALIZATION = 9
 
 ACTIVATION_LINEAR = 1
 ACTIVATION_RELU = 2
@@ -80,7 +81,7 @@ def export_layer_conv2d(f, layer):
     weights = weights.transpose(3, 0, 1, 2)
     # shape: (outputs, rows, cols, depth)
 
-    f.write(struct.pack('I', LAYER_CONV2D))
+    f.write(struct.pack('I', LAYER_CONV_2D))
     f.write(struct.pack('I', weights.shape[0]))
     f.write(struct.pack('I', weights.shape[1]))
     f.write(struct.pack('I', weights.shape[2]))
@@ -101,7 +102,7 @@ def export_layer_maxpooling2d(f, layer):
 
     pool_size = layer.get_config()['pool_size']
 
-    f.write(struct.pack('I', LAYER_MAXPOOLING2D))
+    f.write(struct.pack('I', LAYER_MAXPOOLING_2D))
     f.write(struct.pack('I', pool_size[0]))
     f.write(struct.pack('I', pool_size[1]))
 
@@ -199,7 +200,8 @@ def export_layer_embedding(f, layer):
 
 def export_model(model, filename):
     with open(filename, 'wb') as f:
-        model_layers = [l for l in model.layers if type(l).__name__ not in ['Dropout']]
+        model_layers = [
+            l for l in model.layers if type(l).__name__ not in ['Dropout']]
         num_layers = len(model_layers)
         f.write(struct.pack('I', num_layers))
 
@@ -232,6 +234,12 @@ def export_model(model, filename):
 
             elif layer_type == 'Embedding':
                 export_layer_embedding(f, layer)
+
+            elif layer_type == 'BatchNormalization':
+                f.write(struct.pack('I', LAYER_BATCH_NORMALIZATION))
+                f.write(struct.pack('f', layer.beta))
+                f.write(struct.pack('f', layer.gamma))
+                f.write(struct.pack('f', layer.epsilon))
 
             else:
                 assert False, "Unsupported layer type: %s" % layer_type

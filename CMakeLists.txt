@@ -83,6 +83,7 @@ target_sources(kerasify PRIVATE
     src/layers/flatten.cpp
     src/layers/lstm.cpp
     src/layers/maxpooling2d.cpp
+    src/layers/normalization.cpp
     src/model.cpp
     src/model_test.cpp
     src/tensor.cpp
