@@ -132,8 +132,9 @@ def export_layer_locally1d(f, layer):
     biases = layer.get_weights()[1]
     activation = layer.get_config()['activation']
 
-    # weights = weights.transpose(2, 0, 1)
-    # shape: (outputs, steps, dims)
+    # shape: (new_steps, ksize*dims, outputs)
+    weights = weights.transpose(0, 2, 1)
+    # shape: (new_steps, outputs, ksize*dims)
 
     f.write(struct.pack('I', LAYER_LOCALLY_1D))
     f.write(struct.pack('I', weights.shape[0]))

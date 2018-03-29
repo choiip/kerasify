@@ -67,9 +67,9 @@ bool LocallyConnected1D::apply(const Tensor& in, Tensor& out) const
     auto* t_ptr = &tmp.data_[0];
     auto* i_ptr = &in.data_[0];
 
-    // 'in' have shape (steps, dims)
-    // 'tmp' have shape (new_steps, filters)
-    // 'weights' have shape (new_steps, filters)
+    // 'in' have shape (steps, features)
+    // 'tmp' have shape (new_steps, outputs)
+    // 'weights' shape consists of (new_steps, kernel*features, outputs)?
     for (size_t x = 0; x < tmp.dims_[1]; ++x) {
         auto* b_ = b_ptr;
         auto* i_ = i_ptr + x * is0;
