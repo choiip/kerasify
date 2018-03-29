@@ -40,30 +40,35 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   )
 endif()
 
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Og"
-      CACHE INTERNAL ""
-  )
-endif()
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -Og"
+    CACHE INTERNAL ""
+)
 
-if (CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
-      -Oz \
-      -fno-exceptions -fno-rtti \
-      -fno-stack-protector -fomit-frame-pointer \
-      -ffunction-sections -fdata-sections \
-      -fno-math-errno -fno-unroll-loops -fmerge-all-constants -fno-ident"
-      CACHE INTERNAL ""
-  )
-endif()
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} \
+    -g -pg -no-pie \
+    -O3 -pg -ffast-math -funroll-loops \
+    -fno-exceptions -fno-rtti"
+    CACHE INTERNAL ""
+)
+set(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO
+    "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} -pg"
+    CACHE INTERNAL ""
+)
 
-if (CMAKE_BUILD_TYPE STREQUAL "Release")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
-      -O3 -ffast-math -funroll-loops \
-      -fno-exceptions -fno-rtti"
-      CACHE INTERNAL ""
-  )
-endif()
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} \
+    -O3 -ffast-math -funroll-loops \
+    -fno-exceptions -fno-rtti"
+    CACHE INTERNAL ""
+)
+
+set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} \
+    -Oz \
+    -fno-exceptions -fno-rtti \
+    -fno-stack-protector -fomit-frame-pointer \
+    -ffunction-sections -fdata-sections \
+    -fno-math-errno -fno-unroll-loops -fmerge-all-constants -fno-ident"
+    CACHE INTERNAL ""
+)
 
 # project configuration
 
@@ -83,6 +88,8 @@ target_sources(kerasify PRIVATE
     src/layers/embedding.cpp
     src/layers/flatten.cpp
     src/layers/lstm.cpp
+    src/layers/locally1d.cpp
+    src/layers/locally2d.cpp
     src/layers/maxpooling2d.cpp
     src/layers/normalization.cpp
     src/model.cpp
@@ -92,6 +99,5 @@ target_sources(kerasify PRIVATE
     src/utility.cpp
 )
 
-# find_package(OpenCV REQUIRED)
 # find_package(Threads REQUIRED)
-# target_link_libraries(kerasify PRIVATE ${OpenCV_LIBS} ${CMAKE_THREAD_LIBS_INIT})
+# target_link_libraries(kerasify PRIVATE ${CMAKE_THREAD_LIBS_INIT})

@@ -4,13 +4,15 @@ import struct
 LAYER_DENSE = 1
 LAYER_CONV_1D = 2
 LAYER_CONV_2D = 3
-LAYER_FLATTEN = 4
-LAYER_ELU = 5
-LAYER_ACTIVATION = 6
-LAYER_MAXPOOLING_2D = 7
-LAYER_LSTM = 8
-LAYER_EMBEDDING = 9
-LAYER_BATCH_NORMALIZATION = 10
+LAYER_LOCALLY_1D = 4
+LAYER_LOCALLY_2D = 5
+LAYER_FLATTEN = 6
+LAYER_ELU = 7
+LAYER_ACTIVATION = 8
+LAYER_MAXPOOLING_2D = 9
+LAYER_LSTM = 10
+LAYER_EMBEDDING = 11
+LAYER_BATCH_NORMALIZATION = 12
 
 ACTIVATION_LINEAR = 1
 ACTIVATION_RELU = 2
@@ -108,6 +110,57 @@ def export_layer_conv2d(f, layer):
     # shape: (outputs, rows, cols, depth)
 
     f.write(struct.pack('I', LAYER_CONV_2D))
+    f.write(struct.pack('I', weights.shape[0]))
+    f.write(struct.pack('I', weights.shape[1]))
+    f.write(struct.pack('I', weights.shape[2]))
+    f.write(struct.pack('I', weights.shape[3]))
+    f.write(struct.pack('I', biases.shape[0]))
+
+    weights = weights.flatten()
+    biases = biases.flatten()
+
+    write_floats(f, weights)
+    write_floats(f, biases)
+
+    export_activation(f, activation)
+
+
+def export_layer_locally1d(f, layer):
+    # only border_mode=valid is implemented
+
+    weights = layer.get_weights()[0]
+    biases = layer.get_weights()[1]
+    activation = layer.get_config()['activation']
+
+    # weights = weights.transpose(2, 0, 1)
+    # shape: (outputs, steps, dims)
+
+    f.write(struct.pack('I', LAYER_LOCALLY_1D))
+    f.write(struct.pack('I', weights.shape[0]))
+    f.write(struct.pack('I', weights.shape[1]))
+    f.write(struct.pack('I', weights.shape[2]))
+    f.write(struct.pack('I', biases.shape[0]))
+
+    weights = weights.flatten()
+    biases = biases.flatten()
+
+    write_floats(f, weights)
+    write_floats(f, biases)
+
+    export_activation(f, activation)
+
+
+def export_layer_locally2d(f, layer):
+    # only border_mode=valid is implemented
+
+    weights = layer.get_weights()[0]
+    biases = layer.get_weights()[1]
+    activation = layer.get_config()['activation']
+
+    # weights = weights.transpose(3, 0, 1, 2)
+    # shape: (outputs, rows, cols, depth)
+
+    f.write(struct.pack('I', LAYER_LOCALLY_2D))
     f.write(struct.pack('I', weights.shape[0]))
     f.write(struct.pack('I', weights.shape[1]))
     f.write(struct.pack('I', weights.shape[2]))
@@ -240,8 +293,17 @@ def export_model(model, filename):
             elif layer_type == 'Conv1D':
                 export_layer_conv1d(f, layer)
 
+            elif layer_type == 'Conv1D':
+                export_layer_conv1d(f, layer)
+
             elif layer_type == 'Conv2D':
                 export_layer_conv2d(f, layer)
+
+            elif layer_type == 'LocallyConnected1D':
+                export_layer_locally1d(f, layer)
+
+            elif layer_type == 'LocallyConnected2D':
+                export_layer_locally2d(f, layer)
 
             elif layer_type == 'Flatten':
                 f.write(struct.pack('I', LAYER_FLATTEN))

@@ -6,6 +6,8 @@
 #include "keras/model.h"
 #include "keras/layers/conv1d.h"
 #include "keras/layers/conv2d.h"
+#include "keras/layers/locally1d.h"
+#include "keras/layers/locally2d.h"
 #include "keras/layers/dense.h"
 #include "keras/layers/elu.h"
 #include "keras/layers/embedding.h"
@@ -41,6 +43,12 @@ bool Model::load_model(const std::string& filename)
         case Conv2D:
             layer = new layers::Conv2D();
             break;
+        case LocallyConnected1D:
+            layer = new layers::LocallyConnected1D();
+            break;
+        case LocallyConnected2D:
+            layer = new layers::LocallyConnected2D();
+            break;
         case Flatten:
             layer = new layers::Flatten();
             break;
@@ -72,12 +80,12 @@ bool Model::load_model(const std::string& filename)
             delete layer;
             return false;
         }
-        layers_.push_back(layer);
+        layers_.emplace_back(layer);
     }
     return true;
 }
 
-bool Model::apply(const Tensor& in, Tensor& out)
+bool Model::apply(const Tensor& in, Tensor& out) const
 {
     Tensor temp_in, temp_out;
     for (size_t i = 0; i < layers_.size(); ++i) {

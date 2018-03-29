@@ -6,37 +6,34 @@
 #pragma once
 
 #include "keras/layer.h"
+#include <memory>
 
 namespace keras {
 
 class Model {
-    // TODO: rewrite using smart pointers
-    std::vector<Layer*> layers_;
+    std::vector<std::unique_ptr<Layer>> layers_;
 
 public:
     enum layer_type {
         Dense = 1,
         Conv1D = 2,
         Conv2D = 3,
-        Flatten = 4,
-        ELU = 5,
-        Activation = 6,
-        MaxPooling2D = 7,
-        LSTM = 8,
-        Embedding = 9,
-        BatchNormalization = 10,
+        LocallyConnected1D = 4,
+        LocallyConnected2D = 5,
+        Flatten = 6,
+        ELU = 7,
+        Activation = 8,
+        MaxPooling2D = 9,
+        LSTM = 10,
+        Embedding = 11,
+        BatchNormalization = 12,
     };
 
     Model() {}
 
-    virtual ~Model()
-    {
-        for (auto&& it : layers_)
-            delete it;
-    }
-
+    virtual ~Model() {}
     virtual bool load_model(const std::string& filename);
-    virtual bool apply(const Tensor& in, Tensor& out);
+    virtual bool apply(const Tensor& in, Tensor& out) const;
 };
 
 } // namespace keras
