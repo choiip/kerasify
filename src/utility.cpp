@@ -7,34 +7,29 @@
 
 namespace keras {
 
-bool read_uint(std::ifstream* file, unsigned& i)
+bool read_uint(std::ifstream& file, unsigned& i)
 {
-    check(file);
-
-    file->read(reinterpret_cast<char*>(&i), sizeof(unsigned));
-    check(file->gcount() == sizeof(unsigned));
+    file.read(reinterpret_cast<char*>(&i), sizeof(unsigned));
+    check(file.gcount() == sizeof(unsigned));
     return true;
 }
 
-bool read_float(std::ifstream* file, float& f)
+bool read_float(std::ifstream& file, float& f)
 {
-    check(file);
-
-    file->read(reinterpret_cast<char*>(&f), sizeof(float));
-    check(file->gcount() == sizeof(float));
+    file.read(reinterpret_cast<char*>(&f), sizeof(float));
+    check(file.gcount() == sizeof(float));
     return true;
 }
 
-bool read_floats(std::ifstream* file, float* f, size_t n)
+bool read_floats(std::ifstream& file, float* f, size_t n)
 {
-    check(file);
     check(f);
 
     auto pos = reinterpret_cast<char*>(f);
     auto size = static_cast<ptrdiff_t>(sizeof(float) * n);
 
-    file->read(pos, size);
-    check(file->gcount() == size);
+    file.read(pos, size);
+    check(file.gcount() == size);
     return true;
 }
 

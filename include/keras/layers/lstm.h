@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2016 Robert W. Rose
  *
  * MIT License, see LICENSE file.
@@ -14,7 +14,7 @@ class LSTM : public Layer {
 public:
     LSTM() : return_sequences_(false) {}
     ~LSTM() override {}
-    bool load_layer(std::ifstream* file) override;
+    bool load_layer(std::ifstream& file) override;
     bool apply(const Tensor& in, Tensor& out) const override;
 
 private:

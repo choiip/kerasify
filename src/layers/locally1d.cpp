@@ -8,7 +8,7 @@
 namespace keras {
 namespace layers {
 
-bool LocallyConnected1D::load_layer(std::ifstream* file)
+bool LocallyConnected1D::load_layer(std::ifstream& file)
 {
     check(file);
 

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2016 Robert W. Rose
  *
  * MIT License, see LICENSE file.
@@ -8,7 +8,7 @@
 namespace keras {
 namespace layers {
 
-bool Embedding::load_layer(std::ifstream* file)
+bool Embedding::load_layer(std::ifstream& file)
 {
     check(file);
 

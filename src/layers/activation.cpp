@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2016 Robert W. Rose
  *
  * MIT License, see LICENSE file.
@@ -8,10 +8,8 @@
 namespace keras {
 namespace layers {
 
-bool Activation::load_layer(std::ifstream* file)
+bool Activation::load_layer(std::ifstream& file)
 {
-    check(file);
-
     unsigned activation = 0;
     check(read_uint(file, activation));
 
@@ -57,30 +55,30 @@ bool Activation::apply(const Tensor& in, Tensor& out) const
         break;
     case SoftPlus:
         for (auto&& it : out.data_)
-            it = std::log(1.0f + std::exp(it));
+            it = std::log(1.f + std::exp(it));
         break;
     case SoftSign:
         for (auto&& it : out.data_)
-            it = it / (1 + std::abs(it));
+            it = it / (1.f + std::abs(it));
         break;
     case HardSigmoid:
         for (auto&& it : out.data_) {
             if (it <= -2.5f)
-                it = 0.0f;
+                it = 0.f;
             else if (it >= 2.5f)
-                it = 1.0f;
+                it = 1.f;
             else
-                it = (it * 0.2f) + 0.5f;
+                it = (it * .2f) + .5f;
         }
         break;
     case Sigmoid:
         for (auto&& it : out.data_)
             if (it >= 0) {
                 float z = std::exp(-it);
-                it = 1.0f / (1.0f + z);
+                it = 1.f / (1.f + z);
             } else {
                 float z = std::exp(it);
-                it = z / (1.0f + z);
+                it = z / (1.f + z);
             }
         break;
     case Tanh:

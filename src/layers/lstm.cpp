@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2016 Robert W. Rose
  *
  * MIT License, see LICENSE file.
@@ -8,10 +8,8 @@
 namespace keras {
 namespace layers {
 
-bool LSTM::load_layer(std::ifstream* file)
+bool LSTM::load_layer(std::ifstream& file)
 {
-    check(file);
-
     unsigned wi_rows = 0;
     check(read_uint(file, wi_rows));
     check(wi_rows > 0);

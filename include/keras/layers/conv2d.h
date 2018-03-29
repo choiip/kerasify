@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2016 Robert W. Rose
  *
  * MIT License, see LICENSE file.
@@ -14,7 +14,7 @@ class Conv2D : public Layer {
 public:
     Conv2D() {}
     ~Conv2D() override {}
-    bool load_layer(std::ifstream* file) override;
+    bool load_layer(std::ifstream& file) override;
     bool apply(const Tensor& in, Tensor& out) const override;
 
 private:

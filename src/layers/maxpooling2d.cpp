@@ -8,37 +8,48 @@
 namespace keras {
 namespace layers {
 
-bool MaxPooling2D::load_layer(std::ifstream* file)
+bool MaxPooling2D::load_layer(std::ifstream& file)
 {
-    check(file);
     check(read_uint(file, pool_size_y_));
     check(read_uint(file, pool_size_x_));
     return true;
 }
 
-// TODO: optimize for speed
 bool MaxPooling2D::apply(const Tensor& in, Tensor& out) const
 {
     check(in.dims_.size() == 3);
 
     out.resize(
         in.dims_[0] / pool_size_y_, in.dims_[1] / pool_size_x_, in.dims_[2]);
-    const auto& out_size = out.dims_;
+    out.fill(-std::numeric_limits<float>::infinity());
 
-    for (size_t y2 = 0; y2 < out_size[0]; ++y2) {
-        const size_t y1 = y2 * pool_size_y_;
-        for (size_t x2 = 0; x2 < out_size[1]; ++x2) {
-            const size_t x1 = x2 * pool_size_x_;
-            for (size_t ch = 0; ch < out_size[2]; ++ch) {
-                float max_val = -std::numeric_limits<float>::infinity();
-                for (size_t py = 0; py < pool_size_y_; ++py)
-                    for (size_t px = 0; px < pool_size_x_; ++px) {
-                        const float& pool_val = in(y1 + py, x1 + px, ch);
-                        if (pool_val > max_val)
-                            max_val = pool_val;
+    const auto& iw = in.dims_;
+    const auto& ow = out.dims_;
+
+    size_t is0 = iw[1] * iw[2];
+    size_t is1 = iw[2];
+
+    size_t ip_ = is0 * pool_size_y_;
+    size_t ip0 = is1 * pool_size_x_;
+
+    size_t os_ = ow[0] * ow[1] * ow[2];
+    size_t os0 = ow[1] * ow[2];
+    size_t os1 = ow[2];
+
+    auto* o_ptr = &out.data_[0];
+    auto* i_ptr = &in.data_[0];
+    for (auto* o__ = o_ptr; o__ < o_ptr + os_; o__ += os0, i_ptr += ip_) {
+        auto* i_ = i_ptr;
+        for (auto* o_ = o__; o_ < o__ + os0; o_ += os1, i_ += ip0) {
+            for (auto* i0 = i_; i0 < i_ + ip_; i0 += is0)
+                for (auto* i1 = i0; i1 < i0 + ip0; i1 += is1) {
+                    auto* o1 = o_;
+                    for (auto* i2 = i1; i2 < i1 + is1; ++i2) {
+                        if (*i2 > *o1)
+                            *o1 = *i2;
+                        ++o1;
                     }
-                out(y2, x2, ch) = max_val;
-            }
+                }
         }
     }
     return true;

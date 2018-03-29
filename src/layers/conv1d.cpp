@@ -8,10 +8,8 @@
 namespace keras {
 namespace layers {
 
-bool Conv1D::load_layer(std::ifstream* file)
+bool Conv1D::load_layer(std::ifstream& file)
 {
-    check(file);
-
     unsigned weights_i = 0;
     check(read_uint(file, weights_i));
     check(weights_i > 0);
@@ -39,7 +37,6 @@ bool Conv1D::load_layer(std::ifstream* file)
     return true;
 }
 
-// TODO: optimize for speed
 bool Conv1D::apply(const Tensor& in, Tensor& out) const
 {
     check(in.dims_[1] == weights_.dims_[2]);

@@ -8,9 +8,8 @@
 namespace keras {
 namespace layers {
 
-bool BatchNormalization::load_layer(std::ifstream* file)
+bool BatchNormalization::load_layer(std::ifstream& file)
 {
-    check(file);
     check(read_float(file, beta_));
     check(read_float(file, gamma_));
     check(read_float(file, epsilon_));

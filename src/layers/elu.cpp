@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2016 Robert W. Rose
  *
  * MIT License, see LICENSE file.
@@ -8,9 +8,8 @@
 namespace keras {
 namespace layers {
 
-bool ELU::load_layer(std::ifstream* file)
+bool ELU::load_layer(std::ifstream& file)
 {
-    check(file);
     check(read_float(file, alpha_));
     return true;
 }

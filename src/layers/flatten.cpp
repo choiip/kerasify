@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2016 Robert W. Rose
  *
  * MIT License, see LICENSE file.
@@ -8,11 +8,7 @@
 namespace keras {
 namespace layers {
 
-bool Flatten::load_layer(std::ifstream* file)
-{
-    check(file);
-    return true;
-}
+bool Flatten::load_layer(std::ifstream&) { return true; }
 
 bool Flatten::apply(const Tensor& in, Tensor& out) const
 {

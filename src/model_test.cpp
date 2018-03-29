@@ -23,8 +23,8 @@
 #include "test/maxpool2d_3x3x3.h"
 #include "test/relu_10.h"
 
+#include <cstdio>
 #include <iostream>
-#include <stdio.h>
 
 using namespace keras;
 
@@ -203,19 +203,20 @@ int main()
     if (!test::embedding_64(load_time, apply_time))
         return 1;
 
-    // Run benchmark 5 times and report duration.
+    const size_t n = 20;
+    // Run benchmark (n) times and report duration.
+
     double total_load_time = 0.0;
     double total_apply_time = 0.0;
 
-    for (int i = 0; i < 5; ++i) {
+    for (size_t i = 0; i < n; ++i) {
         if (!test::benchmark(load_time, apply_time))
             return 1;
-
         total_load_time += load_time;
         total_apply_time += apply_time;
     }
-    printf("Benchmark network loads in %fs\n", total_load_time / 5);
-    printf("Benchmark network runs in %fs\n", total_apply_time / 5);
+    printf("Benchmark network loads in %fs\n", total_load_time / n);
+    printf("Benchmark network runs in %fs\n", total_apply_time / n);
 
     return 0;
 }
