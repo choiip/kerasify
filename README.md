@@ -12,6 +12,14 @@ Design goals:
 * Doesn't throw exceptions, returns only bool on error.
 * Unit testable, rigorous unit tests.
 
+Currently implemented Keras layers:
+
+* Embedding, Flatten
+* Dense, Conv1D, Conv2D
+* LSTM
+* BatchNormalization, MaxPooling
+* Activation: Linear, Relu, ELU, SoftPlus, SoftSign, Tanh, Sigmoid, HardSigmoid
+
 Looking for more Keras/C++ libraries? Check out https://github.com/pplonski/keras2cpp/
 
 # Example
