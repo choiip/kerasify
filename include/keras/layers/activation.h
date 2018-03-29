@@ -16,9 +16,10 @@ public:
         Linear = 1,
         Relu = 2,
         SoftPlus = 3,
-        Sigmoid = 4,
-        Tanh = 5,
-        HardSigmoid = 6
+        SoftSign = 4,
+        Sigmoid = 5,
+        Tanh = 6,
+        HardSigmoid = 7
     };
 
     Activation() : activation_type_(Linear) {}

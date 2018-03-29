@@ -17,9 +17,10 @@ LAYER_BATCH_NORMALIZATION = 12
 ACTIVATION_LINEAR = 1
 ACTIVATION_RELU = 2
 ACTIVATION_SOFTPLUS = 3
-ACTIVATION_SIGMOID = 4
-ACTIVATION_TANH = 5
-ACTIVATION_HARD_SIGMOID = 6
+ACTIVATION_SOFTSIGN = 4
+ACTIVATION_SIGMOID = 5
+ACTIVATION_TANH = 6
+ACTIVATION_HARD_SIGMOID = 7
 
 
 def write_floats(f, floats):
@@ -45,6 +46,8 @@ def export_activation(f, activation):
         f.write(struct.pack('I', ACTIVATION_RELU))
     elif activation == 'softplus':
         f.write(struct.pack('I', ACTIVATION_SOFTPLUS))
+    elif activation == 'softsign':
+        f.write(struct.pack('I', ACTIVATION_SOFTSIGN))
     elif activation == 'sigmoid':
         f.write(struct.pack('I', ACTIVATION_SIGMOID))
     elif activation == 'tanh':

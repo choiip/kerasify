@@ -25,6 +25,9 @@ bool Activation::load_layer(std::ifstream* file)
     case SoftPlus:
         activation_type_ = SoftPlus;
         break;
+    case SoftSign:
+        activation_type_ = SoftSign;
+        break;
     case HardSigmoid:
         activation_type_ = HardSigmoid;
         break;
@@ -55,6 +58,10 @@ bool Activation::apply(const Tensor& in, Tensor& out) const
     case SoftPlus:
         for (auto&& it : out.data_)
             it = std::log(1.0f + std::exp(it));
+        break;
+    case SoftSign:
+        for (auto&& it : out.data_)
+            it = it / (1 + std::abs(it));
         break;
     case HardSigmoid:
         for (auto&& it : out.data_) {
