@@ -49,6 +49,7 @@ bool Conv1D::apply(const Tensor& in, Tensor& out) const
     Tensor tmp{in.dims_[0] - offset, weights_.dims_[0]};
 
     auto& ww = weights_.dims_;
+    size_t ws_ = ww[0] * ww[1] * ww[2];
     size_t ws0 = ww[1] * ww[2];
     size_t ws1 = ww[2];
 
@@ -61,22 +62,20 @@ bool Conv1D::apply(const Tensor& in, Tensor& out) const
     auto* i_ptr = &in.data_[0];
 
     for (size_t x = 0; x < tmp.dims_[1]; ++x) {
-        auto* w0 = w_ptr;
         auto* b_ = b_ptr;
         auto* i_ = i_ptr + x * is0;
         auto* t_ = t_ptr + x * ts0;
-        for (size_t k = 0; k < ww[0]; ++k) {
+        for (auto* w0 = w_ptr; w0 < w_ptr + ws_; w0 += ws0) {
             auto* i0 = i_;
             for (auto* w1 = w0; w1 < w0 + ws0; w1 += ws1) {
                 auto* i1 = i0;
                 for (auto* w2 = w1; w2 < w1 + ws1; ++w2) {
-                    *t_ += (*w2) * (*i1);
+                    *t_ += (*w2) * (*i1); // convolute with kernel
                     ++i1;
                 }
                 i0 += is0;
             }
-            *t_ += *b_;
-            w0 += ws0;
+            *t_ += *b_; // add bias
             ++b_;
             ++t_;
         }

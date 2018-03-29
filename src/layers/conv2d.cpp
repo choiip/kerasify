@@ -56,6 +56,7 @@ bool Conv2D::apply(const Tensor& in, Tensor& out) const
                weights_.dims_[0]};
 
     auto& ww = weights_.dims_;
+    size_t ws_ = ww[0] * ww[1] * ww[2] * ww[3];
     size_t ws0 = ww[1] * ww[2] * ww[3];
     size_t ws1 = ww[2] * ww[3];
     size_t ws2 = ww[3];
@@ -73,26 +74,24 @@ bool Conv2D::apply(const Tensor& in, Tensor& out) const
 
     for (size_t y = 0; y < tmp.dims_[0]; ++y)
         for (size_t x = 0; x < tmp.dims_[1]; ++x) {
-            auto* w0 = w_ptr;
             auto* b_ = b_ptr;
             auto* i_ = i_ptr + y * is0 + x * is1;
             auto* t_ = t_ptr + y * ts0 + x * ts1;
-            for (size_t k = 0; k < ww[0]; ++k) {
+            for (auto* w0 = w_ptr; w0 < w_ptr + ws_; w0 += ws0) {
                 auto* i0 = i_;
                 for (auto* w1 = w0; w1 < w0 + ws0; w1 += ws1) {
                     auto* i1 = i0;
                     for (auto* w2 = w1; w2 < w1 + ws1; w2 += ws2) {
                         auto* i2 = i1;
                         for (auto* w3 = w2; w3 < w2 + ws2; ++w3) {
-                            *t_ += (*w3) * (*i2);
+                            *t_ += (*w3) * (*i2); // convolute with kernel
                             ++i2;
                         }
                         i1 += is1;
                     }
                     i0 += is0;
                 }
-                *t_ += *b_;
-                w0 += ws0;
+                *t_ += *b_; // add bias
                 ++b_;
                 ++t_;
             }
