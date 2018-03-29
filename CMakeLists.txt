@@ -76,6 +76,7 @@ add_executable(kerasify "")
 target_sources(kerasify PRIVATE
     src/layer.cpp
     src/layers/activation.cpp
+    src/layers/conv1d.cpp
     src/layers/conv2d.cpp
     src/layers/dense.cpp
     src/layers/elu.cpp

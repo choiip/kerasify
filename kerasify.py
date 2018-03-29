@@ -2,14 +2,15 @@ import numpy as np
 import struct
 
 LAYER_DENSE = 1
-LAYER_CONV_2D = 2
-LAYER_FLATTEN = 3
-LAYER_ELU = 4
-LAYER_ACTIVATION = 5
-LAYER_MAXPOOLING_2D = 6
-LAYER_LSTM = 7
-LAYER_EMBEDDING = 8
-LAYER_BATCH_NORMALIZATION = 9
+LAYER_CONV_1D = 2
+LAYER_CONV_2D = 3
+LAYER_FLATTEN = 4
+LAYER_ELU = 5
+LAYER_ACTIVATION = 6
+LAYER_MAXPOOLING_2D = 7
+LAYER_LSTM = 8
+LAYER_EMBEDDING = 9
+LAYER_BATCH_NORMALIZATION = 10
 
 ACTIVATION_LINEAR = 1
 ACTIVATION_RELU = 2
@@ -42,10 +43,10 @@ def export_activation(f, activation):
         f.write(struct.pack('I', ACTIVATION_RELU))
     elif activation == 'softplus':
         f.write(struct.pack('I', ACTIVATION_SOFTPLUS))
-    elif activation == 'tanh':
-        f.write(struct.pack('I', ACTIVATION_TANH))
     elif activation == 'sigmoid':
         f.write(struct.pack('I', ACTIVATION_SIGMOID))
+    elif activation == 'tanh':
+        f.write(struct.pack('I', ACTIVATION_TANH))
     elif activation == 'hard_sigmoid':
         f.write(struct.pack('I', ACTIVATION_HARD_SIGMOID))
     else:
@@ -60,6 +61,31 @@ def export_layer_dense(f, layer):
     f.write(struct.pack('I', LAYER_DENSE))
     f.write(struct.pack('I', weights.shape[0]))
     f.write(struct.pack('I', weights.shape[1]))
+    f.write(struct.pack('I', biases.shape[0]))
+
+    weights = weights.flatten()
+    biases = biases.flatten()
+
+    write_floats(f, weights)
+    write_floats(f, biases)
+
+    export_activation(f, activation)
+
+
+def export_layer_conv1d(f, layer):
+    # only border_mode=valid is implemented
+
+    weights = layer.get_weights()[0]
+    biases = layer.get_weights()[1]
+    activation = layer.get_config()['activation']
+
+    weights = weights.transpose(2, 0, 1)
+    # shape: (outputs, steps, dims)
+
+    f.write(struct.pack('I', LAYER_CONV_1D))
+    f.write(struct.pack('I', weights.shape[0]))
+    f.write(struct.pack('I', weights.shape[1]))
+    f.write(struct.pack('I', weights.shape[2]))
     f.write(struct.pack('I', biases.shape[0]))
 
     weights = weights.flatten()
@@ -210,6 +236,9 @@ def export_model(model, filename):
 
             if layer_type == 'Dense':
                 export_layer_dense(f, layer)
+
+            elif layer_type == 'Conv1D':
+                export_layer_conv1d(f, layer)
 
             elif layer_type == 'Conv2D':
                 export_layer_conv2d(f, layer)

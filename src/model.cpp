@@ -4,6 +4,7 @@
  * MIT License, see LICENSE file.
  */
 #include "keras/model.h"
+#include "keras/layers/conv1d.h"
 #include "keras/layers/conv2d.h"
 #include "keras/layers/dense.h"
 #include "keras/layers/elu.h"
@@ -11,6 +12,7 @@
 #include "keras/layers/flatten.h"
 #include "keras/layers/lstm.h"
 #include "keras/layers/maxpooling2d.h"
+#include "keras/layers/normalization.h"
 #include <limits>
 #include <utility>
 
@@ -33,6 +35,9 @@ bool Model::load_model(const std::string& filename)
         case Dense:
             layer = new layers::Dense();
             break;
+        case Conv1D:
+            layer = new layers::Conv1D();
+            break;
         case Conv2D:
             layer = new layers::Conv2D();
             break;
@@ -53,6 +58,9 @@ bool Model::load_model(const std::string& filename)
             break;
         case Embedding:
             layer = new layers::Embedding();
+            break;
+        case BatchNormalization:
+            layer = new layers::BatchNormalization();
             break;
         default:
             break;

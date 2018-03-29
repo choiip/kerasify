@@ -16,13 +16,15 @@ class Model {
 public:
     enum layer_type {
         Dense = 1,
-        Conv2D = 2,
-        Flatten = 3,
-        ELU = 4,
-        Activation = 5,
-        MaxPooling2D = 6,
-        LSTM = 7,
-        Embedding = 8
+        Conv1D = 2,
+        Conv2D = 3,
+        Flatten = 4,
+        ELU = 5,
+        Activation = 6,
+        MaxPooling2D = 7,
+        LSTM = 8,
+        Embedding = 9,
+        BatchNormalization = 10,
     };
 
     Model() {}
