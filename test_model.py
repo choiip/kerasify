@@ -3,7 +3,8 @@ import json
 from keras import backend as K
 from keras.models import Sequential
 from keras.layers import (
-    LocallyConnected1D, Conv2D, Dense, Flatten, Activation, MaxPooling2D, Dropout
+    LocallyConnected1D, Conv2D, Dense, Flatten, Activation,
+    MaxPooling2D, Dropout, BatchNormalization
 )
 from tensorflow import ConfigProto, Session
 
@@ -16,7 +17,9 @@ model = Sequential([
     LocallyConnected1D(15, 3, input_shape=(10, 17)),
     LocallyConnected1D(8, 5),
     Flatten(),
-    Dense(1)
+    Dense(16),
+    BatchNormalization(),
+    Dense(1),
 ])
 
 model.compile(loss='mse', optimizer='adam')
@@ -24,9 +27,18 @@ model.compile(loss='mse', optimizer='adam')
 for layer in model.layers:
     print()
     print('Name: ', type(layer).__name__)
-    # print('Config: ', json.dumps(layer.get_config(), indent=2, sort_keys=True))
-    # print('Weights: ', layer.get_weights().shape)
-    print('Kernel: ', layer.kernel)
+    print('Config: ', json.dumps(layer.get_config(), indent=2, sort_keys=True))
+    # for w in layer.get_weights():
+    #    print('Weights: ', w.shape)
+    if type(layer).__name__ == 'BatchNormalization':
+        print('Beta: ', layer.beta)
+        print('Gamma: ', layer.gamma)
+        print('Moving Mean: ', layer.moving_mean)
+        print('Moving Variance: ', layer.moving_variance)
+
+    if type(layer).__name__ == 'LocallyConnected1D':
+        print('Kernel: ', layer.kernel)
+        print('Bias: ', layer.bias)
 
 print(model.summary())
 

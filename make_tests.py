@@ -6,7 +6,9 @@ import re
 
 from keras import backend as K
 from keras.models import Sequential
-from keras.layers import Conv2D, Dense, Flatten, Activation, MaxPooling2D, Dropout
+from keras.layers import (
+    Conv2D, Dense, Activation, Flatten,
+    MaxPooling2D, Dropout, BatchNormalization)
 from keras.layers.recurrent import LSTM
 from keras.layers.advanced_activations import ELU
 from keras.layers.embeddings import Embedding
@@ -192,6 +194,7 @@ test_y = np.random.rand(10, 1).astype('f')
 model = Sequential([
     Conv2D(3, (3, 3), input_shape=(10, 10, 3)),
     Flatten(),
+    BatchNormalization(),
     Dense(1)
 ])
 output_testcase(model, test_x, test_y, 'conv_3x3x3', '1e-6')
@@ -203,7 +206,7 @@ test_y = np.random.rand(1, 1).astype('f')
 model = Sequential([
     Dense(10, input_dim=10),
     ELU(alpha=0.5),
-    Dense(1)
+    Dense(1, activation='elu')
 ])
 output_testcase(model, test_x, test_y, 'elu_10', '1e-6')
 

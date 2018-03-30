@@ -15,11 +15,12 @@ public:
     enum activation_type {
         Linear = 1,
         Relu = 2,
-        SoftPlus = 3,
-        SoftSign = 4,
-        Sigmoid = 5,
-        Tanh = 6,
-        HardSigmoid = 7
+        Elu = 3,
+        SoftPlus = 4,
+        SoftSign = 5,
+        Sigmoid = 6,
+        Tanh = 7,
+        HardSigmoid = 8
     };
 
     bool load_layer(std::ifstream& file) noexcept override;

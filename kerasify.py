@@ -16,11 +16,12 @@ LAYER_BATCH_NORMALIZATION = 12
 
 ACTIVATION_LINEAR = 1
 ACTIVATION_RELU = 2
-ACTIVATION_SOFTPLUS = 3
-ACTIVATION_SOFTSIGN = 4
-ACTIVATION_SIGMOID = 5
-ACTIVATION_TANH = 6
-ACTIVATION_HARD_SIGMOID = 7
+ACTIVATION_ELU = 3
+ACTIVATION_SOFTPLUS = 4
+ACTIVATION_SOFTSIGN = 5
+ACTIVATION_SIGMOID = 6
+ACTIVATION_TANH = 7
+ACTIVATION_HARD_SIGMOID = 8
 
 
 def write_floats(f, floats):
@@ -44,6 +45,8 @@ def export_activation(f, activation):
         f.write(struct.pack('I', ACTIVATION_LINEAR))
     elif activation == 'relu':
         f.write(struct.pack('I', ACTIVATION_RELU))
+    elif activation == 'elu':
+        f.write(struct.pack('I', ACTIVATION_ELU))
     elif activation == 'softplus':
         f.write(struct.pack('I', ACTIVATION_SOFTPLUS))
     elif activation == 'softsign':
@@ -56,6 +59,27 @@ def export_activation(f, activation):
         f.write(struct.pack('I', ACTIVATION_HARD_SIGMOID))
     else:
         assert False, "Unsupported activation type: %s" % activation
+
+
+def export_layer_normalization(f, layer):
+    epsilon = layer.epsilon
+    gamma = layer.get_weights()[0]
+    beta = layer.get_weights()[1]
+    pop_mean = layer.get_weights()[2]
+    pop_variance = layer.get_weights()[3]
+
+    scale = gamma / np.sqrt(pop_variance + epsilon)
+    bias = beta - pop_mean * scale
+
+    f.write(struct.pack('I', LAYER_BATCH_NORMALIZATION))
+    f.write(struct.pack('I', scale.shape[0]))
+    f.write(struct.pack('I', bias.shape[0]))
+
+    scale = scale.flatten()
+    bias = bias.flatten()
+
+    write_floats(f, scale)
+    write_floats(f, bias)
 
 
 def export_layer_dense(f, layer):
@@ -331,10 +355,7 @@ def export_model(model, filename):
                 export_layer_embedding(f, layer)
 
             elif layer_type == 'BatchNormalization':
-                f.write(struct.pack('I', LAYER_BATCH_NORMALIZATION))
-                f.write(struct.pack('f', layer.beta))
-                f.write(struct.pack('f', layer.gamma))
-                f.write(struct.pack('f', layer.epsilon))
+                export_layer_normalization(f, layer)
 
             else:
                 assert False, "Unsupported layer type: %s" % layer_type

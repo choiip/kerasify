@@ -16,9 +16,8 @@ public:
     bool apply(const Tensor& in, Tensor& out) const noexcept override;
 
 private:
-    float beta_{0};
-    float gamma_{1};
-    float epsilon_{1e-3f};
+    Tensor scale_;
+    Tensor bias_;
 };
 
 } // namespace layers

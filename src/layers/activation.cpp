@@ -20,6 +20,9 @@ bool Activation::load_layer(std::ifstream& file) noexcept
     case Relu:
         activation_type_ = Relu;
         break;
+    case Elu:
+        activation_type_ = Elu;
+        break;
     case SoftPlus:
         activation_type_ = SoftPlus;
         break;
@@ -48,19 +51,28 @@ bool Activation::apply(const Tensor& in, Tensor& out) const noexcept
 
     switch (activation_type_) {
     case Linear:
-        std::transform(
-            in.data_.begin(), in.data_.end(), out.data_.begin(),
-            [](float x) { return x; });
+        std::copy(in.data_.begin(), in.data_.end(), out.data_.begin());
         break;
     case Relu:
         std::transform(
-            in.data_.begin(), in.data_.end(), out.data_.begin(),
-            [](float x) { return (x < 0.0f) ? 0.f : x; });
+            in.data_.begin(), in.data_.end(), out.data_.begin(), [](float x) {
+                if (x < 0.f)
+                    return 0.f;
+                return x;
+            });
+        break;
+    case Elu:
+        std::transform(
+            in.data_.begin(), in.data_.end(), out.data_.begin(), [](float x) {
+                if (x < 0.f)
+                    return std::expm1(x);
+                return x;
+            });
         break;
     case SoftPlus:
         std::transform(
             in.data_.begin(), in.data_.end(), out.data_.begin(),
-            [](float x) { return std::log(1.f + std::exp(x)); });
+            [](float x) { return std::log1p(std::exp(x)); });
         break;
     case SoftSign:
         std::transform(
@@ -80,13 +92,10 @@ bool Activation::apply(const Tensor& in, Tensor& out) const noexcept
     case Sigmoid:
         std::transform(
             in.data_.begin(), in.data_.end(), out.data_.begin(), [](float x) {
-                if (x >= 0) {
-                    float z = std::exp(-x);
-                    return 1.f / (1.f + z);
-                } else {
-                    float z = std::exp(x);
+                float z = std::exp(-std::abs(x));
+                if (x < 0)
                     return z / (1.f + z);
-                }
+                return 1.f / (1.f + z);
             });
         break;
     case Tanh:
