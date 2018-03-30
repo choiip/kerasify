@@ -29,14 +29,15 @@ bool Embedding::apply(const Tensor& in, Tensor& out) const noexcept
     size_t out_i = in.dims_[0];
     size_t out_j = weights_.dims_[1];
 
-    out.dims_ = {out_i, out_j};
     out.data_.reserve(out_i * out_j);
+    out.dims_ = {out_i, out_j};
 
     for (const auto& it : in.data_) {
         auto first =
             weights_.data_.begin() + static_cast<ptrdiff_t>(it * out_j);
         auto last =
             weights_.data_.begin() + static_cast<ptrdiff_t>(it * out_j + out_j);
+        // std::copy(first, last, std::back_inserter(out.data_));
         out.data_.insert(out.data_.end(), first, last);
     }
     return true;

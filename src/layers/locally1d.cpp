@@ -55,10 +55,10 @@ bool LocallyConnected1D::apply(const Tensor& in, Tensor& out) const noexcept
     size_t is0 = in.dims_[1];
     size_t ts0 = tmp.dims_[1];
 
-    auto* w_ptr = &weights_.data_[0];
-    auto* b_ptr = &biases_.data_[0];
-    auto* t_ptr = &tmp.data_[0];
-    auto* i_ptr = &in.data_[0];
+    auto* w_ptr = weights_.data_.data();
+    auto* b_ptr = biases_.data_.data();
+    auto* t_ptr = tmp.data_.data();
+    auto* i_ptr = in.data_.data();
 
     // 'in' have shape (steps, features)
     // 'tmp' have shape (new_steps, outputs)

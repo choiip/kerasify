@@ -36,8 +36,8 @@ bool MaxPooling2D::apply(const Tensor& in, Tensor& out) const noexcept
     size_t os0 = ow[1] * ow[2];
     size_t os1 = ow[2];
 
-    auto* o_ptr = &out.data_[0];
-    auto* i_ptr = &in.data_[0];
+    auto* o_ptr = out.data_.data();
+    auto* i_ptr = in.data_.data();
     for (auto* o__ = o_ptr; o__ < o_ptr + os_; o__ += os0, i_ptr += ip_) {
         auto* i_ = i_ptr;
         for (auto* o_ = o__; o_ < o__ + os0; o_ += os1, i_ += ip0) {

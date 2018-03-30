@@ -17,10 +17,17 @@ bool ELU::load_layer(std::ifstream& file) noexcept
 bool ELU::apply(const Tensor& in, Tensor& out) const noexcept
 {
     check(in.dims_.size() > 0);
-    out = in;
-    for (auto&& it : out.data_)
-        if (it < 0.0f)
-            it = alpha_ * (std::exp(it) - 1.0f);
+    out.data_.resize(in.size());
+    out.dims_ = in.dims_;
+
+    const float alpha = alpha_;
+
+    std::transform(
+        in.data_.begin(), in.data_.end(), out.data_.begin(), [alpha](float x) {
+            if (x >= 0.f)
+                return x;
+            return alpha * (std::exp(x) - 1.f);
+        });
     return true;
 }
 

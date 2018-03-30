@@ -203,7 +203,8 @@ int main()
     if (!test::embedding_64(load_time, apply_time))
         return 1;
 
-    const size_t n = 20;
+    /*
+    const size_t n = 100;
     // Run benchmark (n) times and report duration.
 
     double total_load_time = 0.0;
@@ -217,6 +218,6 @@ int main()
     }
     printf("Benchmark network loads in %fs\n", total_load_time / n);
     printf("Benchmark network runs in %fs\n", total_apply_time / n);
-
+    */
     return 0;
 }

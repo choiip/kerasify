@@ -64,10 +64,10 @@ bool Conv2D::apply(const Tensor& in, Tensor& out) const noexcept
     size_t ts0 = tmp.dims_[1] * tmp.dims_[2];
     size_t ts1 = tmp.dims_[2];
 
-    auto* w_ptr = &weights_.data_[0];
-    auto* b_ptr = &biases_.data_[0];
-    auto* t_ptr = &tmp.data_[0];
-    auto* i_ptr = &in.data_[0];
+    auto* w_ptr = weights_.data_.data();
+    auto* b_ptr = biases_.data_.data();
+    auto* t_ptr = tmp.data_.data();
+    auto* i_ptr = in.data_.data();
 
     for (size_t y = 0; y < tmp.dims_[0]; ++y)
         for (size_t x = 0; x < tmp.dims_[1]; ++x) {

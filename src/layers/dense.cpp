@@ -38,9 +38,9 @@ bool Dense::apply(const Tensor& in, Tensor& out) const noexcept
 
     Tensor tmp{weights_.dims_[1]};
 
-    auto* w_ = &weights_.data_[0];
-    auto* t_ = &tmp.data_[0];
-    auto* i_ = &in.data_[0];
+    auto* w_ = weights_.data_.data();
+    auto* t_ = tmp.data_.data();
+    auto* i_ = in.data_.data();
 
     const size_t ws_ = weights_.dims_[0] * weights_.dims_[1];
     const size_t ws0 = weights_.dims_[1];

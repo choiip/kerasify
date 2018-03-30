@@ -43,47 +43,56 @@ bool Activation::load_layer(std::ifstream& file) noexcept
 
 bool Activation::apply(const Tensor& in, Tensor& out) const noexcept
 {
-    out = in;
+    out.data_.resize(in.size());
+    out.dims_ = in.dims_;
 
     switch (activation_type_) {
     case Linear:
+        std::transform(
+            in.data_.begin(), in.data_.end(), out.data_.begin(),
+            [](float x) { return x; });
         break;
     case Relu:
-        for (auto&& it : out.data_)
-            if (it < 0.0f)
-                it = 0.0f;
+        std::transform(
+            in.data_.begin(), in.data_.end(), out.data_.begin(),
+            [](float x) { return (x < 0.0f) ? 0.f : x; });
         break;
     case SoftPlus:
-        for (auto&& it : out.data_)
-            it = std::log(1.f + std::exp(it));
+        std::transform(
+            in.data_.begin(), in.data_.end(), out.data_.begin(),
+            [](float x) { return std::log(1.f + std::exp(x)); });
         break;
     case SoftSign:
-        for (auto&& it : out.data_)
-            it = it / (1.f + std::abs(it));
+        std::transform(
+            in.data_.begin(), in.data_.end(), out.data_.begin(),
+            [](float x) { return x / (1.f + std::abs(x)); });
         break;
     case HardSigmoid:
-        for (auto&& it : out.data_) {
-            if (it <= -2.5f)
-                it = 0.f;
-            else if (it >= 2.5f)
-                it = 1.f;
-            else
-                it = (it * .2f) + .5f;
-        }
+        std::transform(
+            in.data_.begin(), in.data_.end(), out.data_.begin(), [](float x) {
+                if (x <= -2.5f)
+                    return 0.f;
+                if (x >= 2.5f)
+                    return 1.f;
+                return (x * .2f) + .5f;
+            });
         break;
     case Sigmoid:
-        for (auto&& it : out.data_)
-            if (it >= 0) {
-                float z = std::exp(-it);
-                it = 1.f / (1.f + z);
-            } else {
-                float z = std::exp(it);
-                it = z / (1.f + z);
-            }
+        std::transform(
+            in.data_.begin(), in.data_.end(), out.data_.begin(), [](float x) {
+                if (x >= 0) {
+                    float z = std::exp(-x);
+                    return 1.f / (1.f + z);
+                } else {
+                    float z = std::exp(x);
+                    return z / (1.f + z);
+                }
+            });
         break;
     case Tanh:
-        for (auto&& it : out.data_)
-            it = std::tanh(it);
+        std::transform(
+            in.data_.begin(), in.data_.end(), out.data_.begin(),
+            [](float x) { return std::tanh(x); });
         break;
     }
     return true;
