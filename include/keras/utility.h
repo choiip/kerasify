@@ -6,6 +6,7 @@
 #pragma once
 
 #include <cmath>
+#include <chrono>
 #include <fstream>
 
 #define stringify(x) #x
@@ -41,6 +42,14 @@
 #endif
 
 namespace keras {
+
+#define timeit(duration, action) \
+    { \
+        auto begin = std::chrono::high_resolution_clock::now(); \
+        check(action); \
+        auto end = std::chrono::high_resolution_clock::now(); \
+        duration = std::chrono::duration_cast<double>(end - start).count(); \
+    }
 
 bool read_uint(std::ifstream& file, unsigned& i) noexcept;
 bool read_float(std::ifstream& file, float& f) noexcept;
