@@ -92,6 +92,17 @@ Tensor Tensor::dot(const Tensor& other) const noexcept
     kassert(dims_[1] == other.dims_[0]);
 
     Tensor tmp{dims_[0], other.dims_[1]};
+    /*
+    auto& o_data = other.data_;
+    auto is = static_cast<ptrdiff_t>(dims_[1]);
+    auto js = static_cast<ptrdiff_t>(other.dims_[1]);
+    auto t_ = tmp.data_.begin();
+    for (auto i_ = data_.begin(); i_ < data_.end(); i_ += is, t_ += js) {
+        auto t0 = t_;
+        for (auto j_ = o_data.begin(); j_ < o_data.end(); j_ += js, ++t0)
+            std::inner_product(i_, i_ + is, j_, 0);
+    }
+    */
     for (size_t i = 0; i < dims_[0]; ++i)
         for (size_t j = 0; j < other.dims_[1]; ++j)
             for (size_t k = 0; k < dims_[1]; ++k)
