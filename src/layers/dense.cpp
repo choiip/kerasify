@@ -38,25 +38,19 @@ bool Dense::apply(const Tensor& in, Tensor& out) const noexcept
 
     Tensor tmp{weights_.dims_[1]};
 
-    auto* w_ = weights_.data_.data();
-    auto* t_ = tmp.data_.data();
-    auto* i_ = in.data_.data();
+    auto in_ = in.data_.begin();
+    auto out_ = tmp.data_.begin();
 
-    const size_t ws_ = weights_.dims_[0] * weights_.dims_[1];
-    const size_t ws0 = weights_.dims_[1];
+    const auto ws = static_cast<ptrdiff_t>(weights_.dims_[1]);
+    const auto& w_data = weights_.data_;
+    const auto& b_data = biases_.data_;
 
-    for (auto* w0 = w_; w0 < w_ + ws_; w0 += ws0) {
-        auto* t0 = t_;
-        for (auto* w1 = w0; w1 < w0 + ws0; ++w1) {
-            *t0 += (*i_) * (*w1);
-            ++t0;
-        }
-        ++i_;
-    }
-    for (auto&& b : biases_.data_) {
-        *t_ += b;
-        ++t_;
-    }
+    std::copy(b_data.begin(), b_data.end(), out_);
+    for (auto w = w_data.begin(); w < w_data.end(); w += ws, ++in_)
+        std::transform(
+            w, w + ws, out_, out_, [in_](float weight_, float bias_) {
+                return weight_ * (*in_) + bias_;
+            });
 
     check(activation_.apply(tmp, out));
     return true;

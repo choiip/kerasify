@@ -84,6 +84,7 @@ Tensor Tensor::multiply(const Tensor& other) const noexcept
     return result;
 }
 
+// TODO: optimize for speed
 Tensor Tensor::dot(const Tensor& other) const noexcept
 {
     kassert(dims_.size() == 2);
