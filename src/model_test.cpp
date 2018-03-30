@@ -29,7 +29,7 @@
 using namespace keras;
 
 namespace test {
-inline bool basics()
+inline bool basics() noexcept
 {
     {
         const int i = 3;

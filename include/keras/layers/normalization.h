@@ -10,17 +10,15 @@
 namespace keras {
 namespace layers {
 
-class BatchNormalization : public Layer {
+class BatchNormalization final : public Layer {
 public:
-    BatchNormalization() : beta_(0), gamma_(1), epsilon_(1e-3f) {}
-    ~BatchNormalization() override {}
-    bool load_layer(std::ifstream& file) override;
-    bool apply(const Tensor& in, Tensor& out) const override;
+    bool load_layer(std::ifstream& file) noexcept override;
+    bool apply(const Tensor& in, Tensor& out) const noexcept override;
 
 private:
-    float beta_;
-    float gamma_;
-    float epsilon_;
+    float beta_{0};
+    float gamma_{1};
+    float epsilon_{1e-3f};
 };
 
 } // namespace layers

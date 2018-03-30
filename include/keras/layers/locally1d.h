@@ -10,12 +10,10 @@
 namespace keras {
 namespace layers {
 
-class LocallyConnected1D : public Layer {
+class LocallyConnected1D final : public Layer {
 public:
-    LocallyConnected1D() {}
-    ~LocallyConnected1D() override {}
-    bool load_layer(std::ifstream& file) override;
-    bool apply(const Tensor& in, Tensor& out) const override;
+    bool load_layer(std::ifstream& file) noexcept override;
+    bool apply(const Tensor& in, Tensor& out) const noexcept override;
 
 private:
     Tensor weights_;

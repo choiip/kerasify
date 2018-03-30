@@ -8,7 +8,7 @@
 namespace keras {
 namespace layers {
 
-bool Conv2D::load_layer(std::ifstream& file)
+bool Conv2D::load_layer(std::ifstream& file) noexcept
 {
     unsigned weights_i = 0;
     check(read_uint(file, weights_i));
@@ -42,7 +42,7 @@ bool Conv2D::load_layer(std::ifstream& file)
     return true;
 }
 
-bool Conv2D::apply(const Tensor& in, Tensor& out) const
+bool Conv2D::apply(const Tensor& in, Tensor& out) const noexcept
 {
     check(in.dims_[2] == weights_.dims_[3]);
 

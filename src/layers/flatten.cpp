@@ -8,9 +8,9 @@
 namespace keras {
 namespace layers {
 
-bool Flatten::load_layer(std::ifstream&) { return true; }
+bool Flatten::load_layer(std::ifstream&) noexcept { return true; }
 
-bool Flatten::apply(const Tensor& in, Tensor& out) const
+bool Flatten::apply(const Tensor& in, Tensor& out) const noexcept
 {
     out = in;
     out.flatten();

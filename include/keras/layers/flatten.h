@@ -10,12 +10,10 @@
 namespace keras {
 namespace layers {
 
-class Flatten : public Layer {
+class Flatten final : public Layer {
 public:
-    Flatten() {}
-    ~Flatten() override {}
-    bool load_layer(std::ifstream& file) override;
-    bool apply(const Tensor& in, Tensor& out) const override;
+    bool load_layer(std::ifstream& file) noexcept override;
+    bool apply(const Tensor& in, Tensor& out) const noexcept override;
 };
 
 } // namespace layers

@@ -11,9 +11,8 @@ namespace keras {
 
 class Timer {
 public:
-    Timer() {}
-    void start();
-    double stop();
+    void start() noexcept;
+    double stop() noexcept;
 
 private:
     std::chrono::time_point<std::chrono::high_resolution_clock> start_;

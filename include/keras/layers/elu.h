@@ -10,15 +10,13 @@
 namespace keras {
 namespace layers {
 
-class ELU : public Layer {
+class ELU final : public Layer {
 public:
-    ELU() : alpha_(1.0f) {}
-    ~ELU() override {}
-    bool load_layer(std::ifstream& file) override;
-    bool apply(const Tensor& in, Tensor& out) const override;
+    bool load_layer(std::ifstream& file) noexcept override;
+    bool apply(const Tensor& in, Tensor& out) const noexcept override;
 
 private:
-    float alpha_;
+    float alpha_{1.f};
 };
 
 } // namespace layers

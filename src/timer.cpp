@@ -7,9 +7,12 @@
 
 namespace keras {
 
-void Timer::start() { start_ = std::chrono::high_resolution_clock::now(); }
+void Timer::start() noexcept
+{
+    start_ = std::chrono::high_resolution_clock::now();
+}
 
-double Timer::stop()
+double Timer::stop() noexcept
 {
     auto now = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> diff = now - start_;

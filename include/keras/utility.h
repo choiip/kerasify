@@ -42,8 +42,8 @@
 
 namespace keras {
 
-bool read_uint(std::ifstream& file, unsigned& i);
-bool read_float(std::ifstream& file, float& f);
-bool read_floats(std::ifstream& file, float* f, size_t n);
+bool read_uint(std::ifstream& file, unsigned& i) noexcept;
+bool read_float(std::ifstream& file, float& f) noexcept;
+bool read_floats(std::ifstream& file, float* f, size_t n) noexcept;
 
 } // namespace keras

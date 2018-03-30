@@ -29,11 +29,9 @@ public:
         BatchNormalization = 12,
     };
 
-    Model() {}
-
-    virtual ~Model() {}
-    virtual bool load_model(const std::string& filename);
-    virtual bool apply(const Tensor& in, Tensor& out) const;
+    virtual ~Model() = default;
+    virtual bool load_model(const std::string& filename) noexcept;
+    virtual bool apply(const Tensor& in, Tensor& out) const noexcept;
 };
 
 } // namespace keras

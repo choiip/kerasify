@@ -7,6 +7,6 @@
 
 namespace keras {
 
-Layer::~Layer() {}
+Layer::~Layer() = default;
 
 } // namespace keras

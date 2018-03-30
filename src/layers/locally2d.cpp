@@ -8,7 +8,7 @@
 namespace keras {
 namespace layers {
 
-bool LocallyConnected2D::load_layer(std::ifstream& file)
+bool LocallyConnected2D::load_layer(std::ifstream& file) noexcept
 {
     unsigned weights_i = 0;
     check(read_uint(file, weights_i));
@@ -43,7 +43,7 @@ bool LocallyConnected2D::load_layer(std::ifstream& file)
 }
 
 // TODO: optimize for speed
-bool LocallyConnected2D::apply(const Tensor& in, Tensor& out) const
+bool LocallyConnected2D::apply(const Tensor& in, Tensor& out) const noexcept
 {
     check(in.dims_[2] == weights_.dims_[3]);
 

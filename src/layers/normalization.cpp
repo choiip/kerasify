@@ -8,7 +8,7 @@
 namespace keras {
 namespace layers {
 
-bool BatchNormalization::load_layer(std::ifstream& file)
+bool BatchNormalization::load_layer(std::ifstream& file) noexcept
 {
     check(read_float(file, beta_));
     check(read_float(file, gamma_));
@@ -16,7 +16,7 @@ bool BatchNormalization::load_layer(std::ifstream& file)
     return true;
 }
 
-bool BatchNormalization::apply(const Tensor& in, Tensor& out) const
+bool BatchNormalization::apply(const Tensor& in, Tensor& out) const noexcept
 {
     check(in.dims_.size() > 0);
     out = in;

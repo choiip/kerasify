@@ -8,7 +8,7 @@
 namespace keras {
 namespace layers {
 
-bool LSTM::load_layer(std::ifstream& file)
+bool LSTM::load_layer(std::ifstream& file) noexcept
 {
     unsigned wi_rows = 0;
     check(read_uint(file, wi_rows));
@@ -139,7 +139,7 @@ bool LSTM::load_layer(std::ifstream& file)
     return true;
 }
 
-bool LSTM::apply(const Tensor& in, Tensor& out) const
+bool LSTM::apply(const Tensor& in, Tensor& out) const noexcept
 {
     // Assume 'bo_' always keeps the output shape and we will always
     // receive one single sample.
@@ -172,6 +172,7 @@ bool LSTM::apply(const Tensor& in, Tensor& out) const
 }
 
 bool LSTM::step(const Tensor& x, Tensor& out, Tensor& ht_1, Tensor& ct_1) const
+    noexcept
 {
     Tensor xi = x.dot(Wi_) + bi_;
     Tensor xf = x.dot(Wf_) + bf_;

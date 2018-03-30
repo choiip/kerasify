@@ -10,12 +10,10 @@
 namespace keras {
 namespace layers {
 
-class Conv2D : public Layer {
+class Conv2D final : public Layer {
 public:
-    Conv2D() {}
-    ~Conv2D() override {}
-    bool load_layer(std::ifstream& file) override;
-    bool apply(const Tensor& in, Tensor& out) const override;
+    bool load_layer(std::ifstream& file) noexcept override;
+    bool apply(const Tensor& in, Tensor& out) const noexcept override;
 
 private:
     Tensor weights_;

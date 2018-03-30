@@ -8,7 +8,7 @@
 namespace keras {
 namespace layers {
 
-bool Embedding::load_layer(std::ifstream& file)
+bool Embedding::load_layer(std::ifstream& file) noexcept
 {
     unsigned weights_i = 0;
     check(read_uint(file, weights_i));
@@ -24,7 +24,7 @@ bool Embedding::load_layer(std::ifstream& file)
     return true;
 }
 
-bool Embedding::apply(const Tensor& in, Tensor& out) const
+bool Embedding::apply(const Tensor& in, Tensor& out) const noexcept
 {
     size_t out_i = in.dims_[0];
     size_t out_j = weights_.dims_[1];

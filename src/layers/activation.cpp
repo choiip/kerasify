@@ -8,7 +8,7 @@
 namespace keras {
 namespace layers {
 
-bool Activation::load_layer(std::ifstream& file)
+bool Activation::load_layer(std::ifstream& file) noexcept
 {
     unsigned activation = 0;
     check(read_uint(file, activation));
@@ -41,7 +41,7 @@ bool Activation::load_layer(std::ifstream& file)
     return true;
 }
 
-bool Activation::apply(const Tensor& in, Tensor& out) const
+bool Activation::apply(const Tensor& in, Tensor& out) const noexcept
 {
     out = in;
 

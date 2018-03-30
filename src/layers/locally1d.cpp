@@ -8,7 +8,7 @@
 namespace keras {
 namespace layers {
 
-bool LocallyConnected1D::load_layer(std::ifstream& file)
+bool LocallyConnected1D::load_layer(std::ifstream& file) noexcept
 {
     unsigned weights_i = 0;
     check(read_uint(file, weights_i));
@@ -39,14 +39,14 @@ bool LocallyConnected1D::load_layer(std::ifstream& file)
 }
 
 // TODO: optimize for speed
-bool LocallyConnected1D::apply(const Tensor& in, Tensor& out) const
+bool LocallyConnected1D::apply(const Tensor& in, Tensor& out) const noexcept
 {
-	size_t ksize = weights_.dims_[1] / in.dims_[1];
+    size_t ksize = weights_.dims_[1] / in.dims_[1];
     size_t offset = ksize - 1;
-    check(in.dims_[0] - offset == weights_.dims[0]);
+    check(in.dims_[0] - offset == weights_.dims_[0]);
 
-    Tensor tmp{weights_.dims[0], weights_.dims_[2]};
-
+    Tensor tmp{weights_.dims_[0], weights_.dims_[2]};
+    /*
     auto& ww = weights_.dims_;
     size_t ws_ = ww[0] * ww[1] * ww[2];
     size_t ws0 = ww[1] * ww[2];
@@ -86,6 +86,7 @@ bool LocallyConnected1D::apply(const Tensor& in, Tensor& out) const
             ++t_;
         }
     }
+    */
     check(activation_.apply(tmp, out));
     return true;
 }

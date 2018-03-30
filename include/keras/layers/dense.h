@@ -10,12 +10,10 @@
 namespace keras {
 namespace layers {
 
-class Dense : public Layer {
+class Dense final : public Layer {
 public:
-    Dense() {}
-    ~Dense() override {}
-    bool load_layer(std::ifstream& file) override;
-    bool apply(const Tensor& in, Tensor& out) const override;
+    bool load_layer(std::ifstream& file) noexcept override;
+    bool apply(const Tensor& in, Tensor& out) const noexcept override;
 
 private:
     Tensor weights_;

@@ -10,7 +10,7 @@
 namespace keras {
 namespace layers {
 
-class Activation : public Layer {
+class Activation final : public Layer {
 public:
     enum activation_type {
         Linear = 1,
@@ -22,13 +22,11 @@ public:
         HardSigmoid = 7
     };
 
-    Activation() : activation_type_(Linear) {}
-    ~Activation() override {}
-    bool load_layer(std::ifstream& file) override;
-    bool apply(const Tensor& in, Tensor& out) const override;
+    bool load_layer(std::ifstream& file) noexcept override;
+    bool apply(const Tensor& in, Tensor& out) const noexcept override;
 
 private:
-    activation_type activation_type_;
+    activation_type activation_type_{Linear};
 };
 
 } // namespace layers

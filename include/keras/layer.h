@@ -12,8 +12,8 @@ namespace keras {
 class Layer {
 public:
     virtual ~Layer();
-    virtual bool load_layer(std::ifstream& file) = 0;
-    virtual bool apply(const Tensor& in, Tensor& out) const = 0;
+    virtual bool load_layer(std::ifstream& file) noexcept = 0;
+    virtual bool apply(const Tensor& in, Tensor& out) const noexcept = 0;
 };
 
 } // namespace keras

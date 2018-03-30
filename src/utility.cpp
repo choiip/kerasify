@@ -7,21 +7,21 @@
 
 namespace keras {
 
-bool read_uint(std::ifstream& file, unsigned& i)
+bool read_uint(std::ifstream& file, unsigned& i) noexcept
 {
     file.read(reinterpret_cast<char*>(&i), sizeof(unsigned));
     check(file.gcount() == sizeof(unsigned));
     return true;
 }
 
-bool read_float(std::ifstream& file, float& f)
+bool read_float(std::ifstream& file, float& f) noexcept
 {
     file.read(reinterpret_cast<char*>(&f), sizeof(float));
     check(file.gcount() == sizeof(float));
     return true;
 }
 
-bool read_floats(std::ifstream& file, float* f, size_t n)
+bool read_floats(std::ifstream& file, float* f, size_t n) noexcept
 {
     check(f);
 

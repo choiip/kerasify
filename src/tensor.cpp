@@ -7,31 +7,31 @@
 
 namespace keras {
 
-void Tensor::resize(size_t i)
+void Tensor::resize(size_t i) noexcept
 {
     dims_ = {i};
     data_.resize(i);
 }
 
-void Tensor::resize(size_t i, size_t j)
+void Tensor::resize(size_t i, size_t j) noexcept
 {
     dims_ = {i, j};
     data_.resize(i * j);
 }
 
-void Tensor::resize(size_t i, size_t j, size_t k)
+void Tensor::resize(size_t i, size_t j, size_t k) noexcept
 {
     dims_ = {i, j, k};
     data_.resize(i * j * k);
 }
 
-void Tensor::resize(size_t i, size_t j, size_t k, size_t l)
+void Tensor::resize(size_t i, size_t j, size_t k, size_t l) noexcept
 {
     dims_ = {i, j, k, l};
     data_.resize(i * j * k * l);
 }
 
-Tensor Tensor::unpack(size_t row) const
+Tensor Tensor::unpack(size_t row) const noexcept
 {
     kassert(dims_.size() >= 2);
     auto pack_dims = std::vector<size_t>(dims_.begin() + 1, dims_.end());
@@ -47,14 +47,14 @@ Tensor Tensor::unpack(size_t row) const
     return x;
 }
 
-Tensor Tensor::select(size_t row) const
+Tensor Tensor::select(size_t row) const noexcept
 {
     auto x = unpack(row);
     x.dims_.insert(x.dims_.begin(), 1);
     return x;
 }
 
-Tensor Tensor::operator+(const Tensor& other) const
+Tensor Tensor::operator+(const Tensor& other) const noexcept
 {
     kassert(dims_ == other.dims_);
 
@@ -69,7 +69,7 @@ Tensor Tensor::operator+(const Tensor& other) const
     return result;
 }
 
-Tensor Tensor::multiply(const Tensor& other) const
+Tensor Tensor::multiply(const Tensor& other) const noexcept
 {
     kassert(dims_ == other.dims_);
 
@@ -84,7 +84,7 @@ Tensor Tensor::multiply(const Tensor& other) const
     return result;
 }
 
-Tensor Tensor::dot(const Tensor& other) const
+Tensor Tensor::dot(const Tensor& other) const noexcept
 {
     kassert(dims_.size() == 2);
     kassert(other.dims_.size() == 2);
@@ -98,7 +98,7 @@ Tensor Tensor::dot(const Tensor& other) const
     return tmp;
 }
 
-void Tensor::print() const
+void Tensor::print() const noexcept
 {
     if (dims_.size() == 1) {
         printf("[");
@@ -153,7 +153,7 @@ void Tensor::print() const
     }
 }
 
-void Tensor::print_shape() const
+void Tensor::print_shape() const noexcept
 {
     printf("(");
     for (auto&& it : dims_)

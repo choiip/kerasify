@@ -8,7 +8,7 @@
 namespace keras {
 namespace layers {
 
-bool Dense::load_layer(std::ifstream& file)
+bool Dense::load_layer(std::ifstream& file) noexcept
 {
     unsigned weights_i = 0;
     check(read_uint(file, weights_i));
@@ -32,7 +32,7 @@ bool Dense::load_layer(std::ifstream& file)
     return true;
 }
 
-bool Dense::apply(const Tensor& in, Tensor& out) const
+bool Dense::apply(const Tensor& in, Tensor& out) const noexcept
 {
     check(in.size() == weights_.dims_[0]);
 

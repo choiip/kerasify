@@ -20,7 +20,7 @@
 
 namespace keras {
 
-bool Model::load_model(const std::string& filename)
+bool Model::load_model(const std::string& filename) noexcept
 {
     std::ifstream file(filename.c_str(), std::ios::binary);
     check(file.is_open());
@@ -70,7 +70,7 @@ bool Model::load_model(const std::string& filename)
     return true;
 }
 
-bool Model::apply(const Tensor& in, Tensor& out) const
+bool Model::apply(const Tensor& in, Tensor& out) const noexcept
 {
     Tensor temp_in, temp_out;
 

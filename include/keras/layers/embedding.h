@@ -10,12 +10,10 @@
 namespace keras {
 namespace layers {
 
-class Embedding : public Layer {
+class Embedding final : public Layer {
 public:
-    Embedding() {}
-    ~Embedding() override {}
-    bool load_layer(std::ifstream& file) override;
-    bool apply(const Tensor& in, Tensor& out) const override;
+    bool load_layer(std::ifstream& file) noexcept override;
+    bool apply(const Tensor& in, Tensor& out) const noexcept override;
 
 private:
     Tensor weights_;

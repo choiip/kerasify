@@ -10,15 +10,14 @@
 namespace keras {
 namespace layers {
 
-class LSTM : public Layer {
+class LSTM final : public Layer {
 public:
-    LSTM() : return_sequences_(false) {}
-    ~LSTM() override {}
-    bool load_layer(std::ifstream& file) override;
-    bool apply(const Tensor& in, Tensor& out) const override;
+    bool load_layer(std::ifstream& file) noexcept override;
+    bool apply(const Tensor& in, Tensor& out) const noexcept override;
 
 private:
-    bool step(const Tensor& x, Tensor& out, Tensor& ht_1, Tensor& ct_1) const;
+    bool step(const Tensor& x, Tensor& out, Tensor& ht_1, Tensor& ct_1) const
+        noexcept;
 
     Tensor Wi_;
     Tensor Ui_;
@@ -35,7 +34,7 @@ private:
 
     Activation inner_activation_;
     Activation activation_;
-    bool return_sequences_;
+    bool return_sequences_{false};
 };
 
 } // namespace layers
