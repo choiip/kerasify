@@ -37,7 +37,6 @@ bool Embedding::apply(const Tensor& in, Tensor& out) const noexcept
             weights_.data_.begin() + static_cast<ptrdiff_t>(it * out_j);
         auto last =
             weights_.data_.begin() + static_cast<ptrdiff_t>(it * out_j + out_j);
-        // std::copy(first, last, std::back_inserter(out.data_));
         out.data_.insert(out.data_.end(), first, last);
     }
     return true;
