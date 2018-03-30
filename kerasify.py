@@ -136,7 +136,7 @@ def export_layer_locally1d(f, layer):
     activation = layer.get_config()['activation']
 
     # shape: (new_steps, ksize*dims, outputs)
-    weights = weights.transpose(0, 2, 1)
+    # weights = weights.transpose(0, 2, 1)
     # shape: (new_steps, outputs, ksize*dims)
 
     f.write(struct.pack('I', LAYER_LOCALLY_1D))

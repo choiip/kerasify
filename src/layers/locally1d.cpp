@@ -22,18 +22,14 @@ bool LocallyConnected1D::load_layer(std::ifstream& file)
     check(read_uint(file, weights_k));
     check(weights_k > 0);
 
-    unsigned weights_l = 0;
-    check(read_uint(file, weights_l));
-    check(weights_l > 0);
-
     unsigned biases_shape = 0;
     check(read_uint(file, biases_shape));
     check(biases_shape > 0);
 
-    weights_.resize(weights_i, weights_j, weights_k, weights_l);
+    weights_.resize(weights_i, weights_j, weights_k);
     check(read_floats(
         file, weights_.data_.data(),
-        weights_i * weights_j * weights_k * weights_l));
+        weights_i * weights_j * weights_k));
 
     biases_.resize(biases_shape);
     check(read_floats(file, biases_.data_.data(), biases_shape));
@@ -45,17 +41,16 @@ bool LocallyConnected1D::load_layer(std::ifstream& file)
 // TODO: optimize for speed
 bool LocallyConnected1D::apply(const Tensor& in, Tensor& out) const
 {
-    check(in.dims_[2] == weights_.dims_[3]);
+	size_t ksize = weights_.dims_[1] / in.dims_[1];
+    size_t offset = ksize - 1;
+    check(in.dims_[0] - offset == weights_.dims[0]);
 
-    size_t offset = weights_.dims_[1] - 1;
+    Tensor tmp{weights_.dims[0], weights_.dims_[2]};
 
-    Tensor tmp{in.dims_[0] - offset, weights_.dims_[0]};
-    /*
     auto& ww = weights_.dims_;
-    size_t ws_ = ww[0] * ww[1] * ww[2] * ww[3];
-    size_t ws0 = ww[1] * ww[2] * ww[3];
-    size_t ws1 = ww[2] * ww[3];
-    size_t ws2 = ww[3];
+    size_t ws_ = ww[0] * ww[1] * ww[2];
+    size_t ws0 = ww[1] * ww[2];
+    size_t ws1 = ww[2];
 
     size_t is0 = in.dims_[1];
     size_t ts0 = tmp.dims_[1];
@@ -67,8 +62,8 @@ bool LocallyConnected1D::apply(const Tensor& in, Tensor& out) const
 
     // 'in' have shape (steps, features)
     // 'tmp' have shape (new_steps, outputs)
-    // 'weights' shape consists of (new_steps, kernel*features, outputs)?
-    for (size_t x = 0; x < tmp.dims_[1]; ++x) {
+    // 'weights' shape consists of (new_steps, kernel*features, outputs)
+    for (size_t x = 0; x < tmp.dims_[0]; ++x) {
         auto* b_ = b_ptr;
         auto* i_ = i_ptr + x * is0;
         auto* t_ = t_ptr + x * ts0;
@@ -91,7 +86,6 @@ bool LocallyConnected1D::apply(const Tensor& in, Tensor& out) const
             ++t_;
         }
     }
-    */
     check(activation_.apply(tmp, out));
     return true;
 }
