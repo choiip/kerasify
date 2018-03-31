@@ -64,26 +64,29 @@ bool Conv2D::apply(const Tensor& in, Tensor& out) const noexcept
     size_t ts0 = tmp.dims_[1] * tmp.dims_[2];
     size_t ts1 = tmp.dims_[2];
 
-    auto* w_ptr = weights_.data_.data();
-    auto* b_ptr = biases_.data_.data();
-    auto* t_ptr = tmp.data_.data();
-    auto* i_ptr = in.data_.data();
+    auto w_ptr = weights_.data_.begin();
+    auto b_ptr = biases_.data_.begin();
+    auto t_ptr = tmp.data_.begin();
+    auto i_ptr = in.data_.begin();
 
     for (size_t y = 0; y < tmp.dims_[0]; ++y)
         for (size_t x = 0; x < tmp.dims_[1]; ++x) {
-            auto* b_ = b_ptr;
-            auto* i_ = i_ptr + y * is0 + x * is1;
-            auto* t_ = t_ptr + y * ts0 + x * ts1;
-            for (auto* w0 = w_ptr; w0 < w_ptr + ws_; w0 += ws0) {
-                auto* i0 = i_;
-                for (auto* w1 = w0; w1 < w0 + ws0; w1 += ws1) {
-                    auto* i1 = i0;
-                    for (auto* w2 = w1; w2 < w1 + ws1; w2 += ws2) {
-                        auto* i2 = i1;
-                        for (auto* w3 = w2; w3 < w2 + ws2; ++w3) {
+            auto b_ = b_ptr;
+            auto i_ = i_ptr + y * is0 + x * is1;
+            auto t_ = t_ptr + y * ts0 + x * ts1;
+            for (auto w0 = w_ptr; w0 < w_ptr + ws_; w0 += ws0) {
+                auto i0 = i_;
+                for (auto w1 = w0; w1 < w0 + ws0; w1 += ws1) {
+                    auto i1 = i0;
+                    for (auto w2 = w1; w2 < w1 + ws1; w2 += ws2) {
+                        *t_ += std::inner_product(w2, w2 + ws2, i1, 0);
+                        /*
+                        auto i2 = i1;
+                        for (auto w3 = w2; w3 < w2 + ws2; ++w3) {
                             *t_ += (*w3) * (*i2); // convolute with kernel
                             ++i2;
                         }
+                        */
                         i1 += is1;
                     }
                     i0 += is0;

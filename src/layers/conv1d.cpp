@@ -46,26 +46,28 @@ bool Conv1D::apply(const Tensor& in, Tensor& out) const noexcept
     Tensor tmp{in.dims_[0] - offset, weights_.dims_[0]};
 
     auto& ww = weights_.dims_;
-    size_t ws_ = ww[0] * ww[1] * ww[2];
-    size_t ws0 = ww[1] * ww[2];
-    size_t ws1 = ww[2];
+    auto ws_ = static_cast<ptrdiff_t>(ww[0] * ww[1] * ww[2]);
+    auto ws0 = static_cast<ptrdiff_t>(ww[1] * ww[2]);
+    auto ws1 = static_cast<ptrdiff_t>(ww[2]);
 
-    size_t is0 = in.dims_[1];
-    size_t ts0 = tmp.dims_[1];
+    auto is0 = static_cast<ptrdiff_t>(in.dims_[1]);
+    auto ts0 = static_cast<ptrdiff_t>(tmp.dims_[1]);
 
-    auto* w_ptr = weights_.data_.data();
-    auto* b_ptr = biases_.data_.data();
-    auto* t_ptr = tmp.data_.data();
-    auto* i_ptr = in.data_.data();
+    auto w_ptr = weights_.data_.begin();
+    auto b_ptr = biases_.data_.begin();
+    auto t_ptr = tmp.data_.begin();
+    auto i_ptr = in.data_.begin();
 
     for (size_t x = 0; x < tmp.dims_[1]; ++x) {
-        auto* b_ = b_ptr;
-        auto* i_ = i_ptr + x * is0;
-        auto* t_ = t_ptr + x * ts0;
-        for (auto* w0 = w_ptr; w0 < w_ptr + ws_; w0 += ws0) {
-            auto* i0 = i_;
-            for (auto* w1 = w0; w1 < w0 + ws0; w1 += ws1) {
-                auto* i1 = i0;
+        auto b_ = b_ptr;
+        auto i_ = i_ptr + x * is0;
+        auto t_ = t_ptr + x * ts0;
+        for (auto w0 = w_ptr; w0 < w_ptr + ws_; w0 += ws0) {
+            *t_ = std::inner_product(w0, w0 + ws0, i0, *b_);
+            /*
+            auto i0 = i_;
+            for (auto w1 = w0; w1 < w0 + ws0; w1 += ws1) {
+                auto i1 = i0;
                 for (auto* w2 = w1; w2 < w1 + ws1; ++w2) {
                     *t_ += (*w2) * (*i1); // convolute with kernel
                     ++i1;
@@ -73,6 +75,7 @@ bool Conv1D::apply(const Tensor& in, Tensor& out) const noexcept
                 i0 += is0;
             }
             *t_ += *b_; // add bias
+            */
             ++b_;
             ++t_;
         }
