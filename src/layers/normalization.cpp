@@ -30,7 +30,7 @@ bool BatchNormalization::load_layer(std::ifstream& file) noexcept
 bool BatchNormalization::apply(const Tensor& in, Tensor& out) const noexcept
 {
     check(in.dims_.size() > 0);
-    out = in.multiply(scale_) + bias_;
+    out = in.fma(scale_, bias_);
     return true;
 }
 

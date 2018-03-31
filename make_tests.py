@@ -74,7 +74,7 @@ inline bool %s(double& load_time, double& apply_time)
 #pragma GCC diagnostic pop
 
     keras::Model model;
-    timeit(load_time, model.load_mode("models/%s.model"));
+    timeit(load_time, model.load_model("models/%s.model"));
 
     keras::Tensor predict = out;
     timeit(apply_time, model.apply(in, out));

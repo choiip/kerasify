@@ -5,8 +5,8 @@
  */
 #pragma once
 
-#include <cmath>
 #include <chrono>
+#include <cmath>
 #include <fstream>
 
 #define stringify(x) #x
@@ -43,12 +43,12 @@
 
 namespace keras {
 
-#define timeit(duration, action) \
+#define timeit(t, action) \
     { \
         auto begin = std::chrono::high_resolution_clock::now(); \
         check(action); \
         auto end = std::chrono::high_resolution_clock::now(); \
-        duration = std::chrono::duration_cast<double>(end - start).count(); \
+        t = std::chrono::duration<double>(end - begin).count(); \
     }
 
 bool read_uint(std::ifstream& file, unsigned& i) noexcept;

@@ -53,47 +53,35 @@ bool Conv2D::apply(const Tensor& in, Tensor& out) const noexcept
                weights_.dims_[0]};
 
     auto& ww = weights_.dims_;
-    size_t ws_ = ww[0] * ww[1] * ww[2] * ww[3];
-    size_t ws0 = ww[1] * ww[2] * ww[3];
-    size_t ws1 = ww[2] * ww[3];
-    size_t ws2 = ww[3];
+    auto scpd = [](auto x) { return static_cast<ptrdiff_t>(x); };
 
-    size_t is0 = in.dims_[1] * in.dims_[2];
-    size_t is1 = in.dims_[2];
-
-    size_t ts0 = tmp.dims_[1] * tmp.dims_[2];
-    size_t ts1 = tmp.dims_[2];
+    auto ts0 = scpd(ww[0] * tmp.dims_[1]);
+    auto ts1 = scpd(ww[0]);
+    auto ws_ = scpd(ww[0] * ww[1] * ww[2] * ww[3]);
+    auto ws0 = scpd(ww[1] * ww[2] * ww[3]);
+    auto ws1 = scpd(ww[2] * ww[3]);
+    auto ws2 = scpd(ww[3]);
+    auto is0 = scpd(ww[3] * in.dims_[1]);
 
     auto w_ptr = weights_.data_.begin();
     auto b_ptr = biases_.data_.begin();
     auto t_ptr = tmp.data_.begin();
     auto i_ptr = in.data_.begin();
 
-    for (size_t y = 0; y < tmp.dims_[0]; ++y)
-        for (size_t x = 0; x < tmp.dims_[1]; ++x) {
+    auto ty = scpd(tmp.dims_[0]);
+    auto tx = scpd(tmp.dims_[1]);
+
+    for (ptrdiff_t y = 0; y < ty; ++y)
+        for (ptrdiff_t x = 0; x < tx; ++x) {
             auto b_ = b_ptr;
-            auto i_ = i_ptr + y * is0 + x * is1;
+            auto i_ = i_ptr + y * is0 + x * ws2;
             auto t_ = t_ptr + y * ts0 + x * ts1;
-            for (auto w0 = w_ptr; w0 < w_ptr + ws_; w0 += ws0) {
+            for (auto w0 = w_ptr; w0 < w_ptr + ws_; w0 += ws0, ++t_) {
+                *t_ = *(b_++); // init with bias
                 auto i0 = i_;
-                for (auto w1 = w0; w1 < w0 + ws0; w1 += ws1) {
-                    auto i1 = i0;
-                    for (auto w2 = w1; w2 < w1 + ws1; w2 += ws2) {
-                        *t_ += std::inner_product(w2, w2 + ws2, i1, 0);
-                        /*
-                        auto i2 = i1;
-                        for (auto w3 = w2; w3 < w2 + ws2; ++w3) {
-                            *t_ += (*w3) * (*i2); // convolute with kernel
-                            ++i2;
-                        }
-                        */
-                        i1 += is1;
-                    }
-                    i0 += is0;
+                for (auto w1 = w0; w1 < w0 + ws0; w1 += ws1, i0 += is0) {
+                    *t_ += std::inner_product(w1, w1 + ws1, i0, 0.f);
                 }
-                *t_ += *b_; // add bias
-                ++b_;
-                ++t_;
             }
         }
     check(activation_.apply(tmp, out));

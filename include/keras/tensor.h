@@ -42,6 +42,7 @@ public:
     Tensor unpack(size_t row) const noexcept;
     Tensor select(size_t row) const noexcept;
     Tensor operator+(const Tensor& other) const noexcept;
+    Tensor fma(const Tensor& scale, const Tensor& bias) const noexcept;
     Tensor multiply(const Tensor& other) const noexcept;
     Tensor dot(const Tensor& other) const noexcept;
 
@@ -49,6 +50,7 @@ public:
     void print_shape() const noexcept;
 
     std::vector<size_t> dims_;
+    std::vector<size_t> steps_;
     std::vector<float> data_;
 };
 
