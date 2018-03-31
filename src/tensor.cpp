@@ -4,6 +4,7 @@
  * MIT License, see LICENSE file.
  */
 #include "keras/tensor.h"
+#include <experimental/numeric>
 
 namespace keras {
 
@@ -34,15 +35,14 @@ void Tensor::resize(size_t i, size_t j, size_t k, size_t l) noexcept
 Tensor Tensor::unpack(size_t row) const noexcept
 {
     kassert(dims_.size() >= 2);
-    auto pack_dims = std::vector<size_t>(dims_.begin() + 1, dims_.end());
-    size_t pack_size = std::accumulate(pack_dims.begin(), pack_dims.end(), 0u);
+    size_t pack_size = std::accumulate(dims_.begin() + 1, dims_.end(), 0u);
 
     auto base = row * pack_size;
-    auto first = data_.begin() + static_cast<ptrdiff_t>(base);
-    auto last = data_.begin() + static_cast<ptrdiff_t>(base + pack_size);
+    auto first = begin() + cast(base);
+    auto last = begin() + cast(base + pack_size);
 
     Tensor x;
-    x.dims_ = pack_dims;
+    x.dims_ = std::vector<size_t>(dims_.begin() + 1, dims_.end());
     x.data_ = std::vector<float>(first, last);
     return x;
 }
@@ -54,22 +54,15 @@ Tensor Tensor::select(size_t row) const noexcept
     return x;
 }
 
-Tensor Tensor::operator+(const Tensor& other) const noexcept
+Tensor& Tensor::operator+=(const Tensor& other) noexcept
 {
     kassert(dims_ == other.dims_);
-
-    Tensor result;
-    result.dims_ = dims_;
-    result.data_.reserve(data_.size());
-
-    std::transform(
-        data_.begin(), data_.end(), other.data_.begin(),
-        std::back_inserter(result.data_),
-        [](float x, float y) { return x + y; });
-    return result;
+    std::transform(begin(), end(), other.begin(), begin(), std::plus<>());
+    return *this;
 }
 
-Tensor Tensor::fma(const Tensor& scale, const Tensor& bias) const noexcept{
+Tensor Tensor::fma(const Tensor& scale, const Tensor& bias) const noexcept
+{
     kassert(dims_ == scale.dims_);
     kassert(dims_ == bias.dims_);
 
@@ -77,10 +70,10 @@ Tensor Tensor::fma(const Tensor& scale, const Tensor& bias) const noexcept{
     result.dims_ = dims_;
     result.data_.resize(data_.size());
 
-    auto k_ = scale.data_.begin();
-    auto b_ = bias.data_.begin();
-    auto r_ = result.data_.begin();
-    for (auto x_ = data_.begin(); x_ != data_.end();)
+    auto k_ = scale.begin();
+    auto b_ = bias.begin();
+    auto r_ = result.begin();
+    for (auto x_ = begin(); x_ != end();)
         *(r_++) = *(x_++) * *(k_++) + *(b_++);
 
     return result;
@@ -95,25 +88,28 @@ Tensor Tensor::multiply(const Tensor& other) const noexcept
     result.data_.reserve(data_.size());
 
     std::transform(
-        data_.begin(), data_.end(), other.data_.begin(),
-        std::back_inserter(result.data_),
-        [](float x, float y) { return x * y; });
+        begin(), end(), other.begin(), std::back_inserter(result.data_),
+        std::multiplies<>());
     return result;
 }
 
-// TODO: optimize for speed
 Tensor Tensor::dot(const Tensor& other) const noexcept
 {
     kassert(dims_.size() == 2);
     kassert(other.dims_.size() == 2);
-    kassert(dims_[1] == other.dims_[0]);
+    kassert(dims_[1] == other.dims_[1]);
 
-    Tensor tmp{dims_[0], other.dims_[1]};
+    Tensor tmp{dims_[0], other.dims_[0]};
 
-    for (size_t i = 0; i < dims_[0]; ++i)
-        for (size_t j = 0; j < other.dims_[1]; ++j)
-            for (size_t k = 0; k < dims_[1]; ++k)
-                tmp(i, j) += (*this)(i, k) * other(k, j);
+    auto ts = cast(tmp.dims_[1]);
+    auto is = cast(dims_[1]);
+
+    auto i_ = begin();
+    for (auto t0 = tmp.begin(); t0 != tmp.end(); t0 += ts, i_ += is) {
+        auto o_ = other.begin();
+        for (auto t1 = t0; t1 != t0 + ts; ++t1, o_ += is)
+            *t1 = std::inner_product(i_, i_ + is, o_, 0.f);
+    }
     return tmp;
 }
 

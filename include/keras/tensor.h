@@ -37,11 +37,17 @@ public:
     inline float operator()(size_t, size_t, size_t) const noexcept;
     inline float operator()(size_t, size_t, size_t, size_t) const noexcept;
 
+    inline std::vector<float>::iterator begin() noexcept;
+    inline std::vector<float>::const_iterator begin() const noexcept;
+    inline std::vector<float>::iterator end() noexcept;
+    inline std::vector<float>::const_iterator end() const noexcept;
+
     inline void fill(float value) noexcept;
 
     Tensor unpack(size_t row) const noexcept;
     Tensor select(size_t row) const noexcept;
-    Tensor operator+(const Tensor& other) const noexcept;
+
+    Tensor& operator+=(const Tensor& other) noexcept;
     Tensor fma(const Tensor& scale, const Tensor& bias) const noexcept;
     Tensor multiply(const Tensor& other) const noexcept;
     Tensor dot(const Tensor& other) const noexcept;
@@ -136,9 +142,25 @@ float Tensor::operator()(size_t i, size_t j, size_t k, size_t l) const noexcept
     return data_[dims_[3] * (dims_[2] * (dims_[1] * i + j) + k) + l];
 }
 
-void Tensor::fill(float value) noexcept
+void Tensor::fill(float value) noexcept { std::fill(begin(), end(), value); }
+
+std::vector<float>::iterator Tensor::begin() noexcept { return data_.begin(); }
+std::vector<float>::iterator Tensor::end() noexcept { return data_.end(); }
+
+std::vector<float>::const_iterator Tensor::begin() const noexcept
 {
-    std::fill(data_.begin(), data_.end(), value);
+    return data_.begin();
+}
+
+std::vector<float>::const_iterator Tensor::end() const noexcept
+{
+    return data_.end();
+}
+
+inline Tensor operator+(Tensor lhs, const Tensor& rhs) noexcept
+{
+    lhs += rhs;
+    return lhs;
 }
 
 } // namespace keras

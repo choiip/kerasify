@@ -104,7 +104,7 @@ inline bool basics() noexcept
     }
     {
         Tensor a{1, 2};
-        Tensor b{2, 1};
+        Tensor b{1, 2};
 
         a.data_ = {1.0, 2.0};
         b.data_ = {2.0, 5.0};
@@ -114,7 +114,7 @@ inline bool basics() noexcept
     }
     {
         Tensor a{2, 1};
-        Tensor b{1, 2};
+        Tensor b{2, 1};
 
         a.data_ = {1.0, 2.0};
         b.data_ = {2.0, 5.0};
@@ -203,7 +203,7 @@ int main()
     if (!test::embedding_64(load_time, apply_time))
         return 1;
 
-    const size_t n = 5;
+    const size_t n = 10;
     // Run benchmark (n) times and report duration.
 
     double total_load_time = 0.0;

@@ -4,6 +4,8 @@
  * MIT License, see LICENSE file.
  */
 #include "keras/utility.h"
+#include <algorithm>
+#include <iterator>
 
 namespace keras {
 
@@ -26,7 +28,7 @@ bool read_floats(std::ifstream& file, float* f, size_t n) noexcept
     check(f);
 
     auto pos = reinterpret_cast<char*>(f);
-    auto size = static_cast<ptrdiff_t>(sizeof(float) * n);
+    auto size = cast(sizeof(float) * n);
 
     file.read(pos, size);
     check(file.gcount() == size);

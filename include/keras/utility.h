@@ -8,8 +8,11 @@
 #include <chrono>
 #include <cmath>
 #include <fstream>
+#include <vector>
 
 #define stringify(x) #x
+
+#define cast(x) static_cast<ptrdiff_t>(x)
 
 #define check(x) \
     if (!(x)) { \

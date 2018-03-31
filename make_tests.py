@@ -362,11 +362,11 @@ model = Sequential([
     ELU(),
     Conv2D(8, (3, 3)),
     Flatten(),
-    Dense(100, activation='relu'),
+    Dense(1000, activation='relu'),
     Dense(10)
 ])
 output_testcase(model, test_x, test_y, 'benchmark', '1e-3')
 
 
-os.system('clang-format -i --style=file test/*.h')
+os.system('clang-format -i --style=file include/test/*.h')
 

@@ -143,31 +143,29 @@ bool LSTM::apply(const Tensor& in, Tensor& out) const noexcept
 {
     // Assume 'bo_' always keeps the output shape and we will always
     // receive one single sample.
-    size_t outputDim = bo_.dims_[1];
-    Tensor ht_1{1, outputDim};
-    Tensor ct_1{1, outputDim};
+    size_t out_dim = bo_.dims_[1];
+    size_t steps = in.dims_[0];
+
+    Tensor ht_1{1, out_dim};
+    Tensor ct_1{1, out_dim};
 
     ht_1.fill(0.f);
     ct_1.fill(0.f);
 
-    size_t steps = in.dims_[0];
-    Tensor outputs, lastOutput;
-
-    if (return_sequences_) {
-        outputs.dims_ = {steps, outputDim};
-        outputs.data_.reserve(steps * outputDim);
+    if (!return_sequences_) {
+        for (size_t s = 0; s < steps; ++s)
+            check(step(in.select(s), out, ht_1, ct_1));
+        return true;
     }
 
+    out.dims_ = {steps, out_dim};
+    out.data_.reserve(steps * out_dim);
+
+    Tensor last;
     for (size_t s = 0; s < steps; ++s) {
-        Tensor x = in.select(s);
-        check(step(x, lastOutput, ht_1, ct_1));
-
-        if (return_sequences_)
-            outputs.data_.insert(
-                outputs.data_.end(), lastOutput.data_.begin(),
-                lastOutput.data_.end());
+        check(step(in.select(s), last, ht_1, ct_1));
+        out.data_.insert(out.end(), last.begin(), last.end());
     }
-    out = return_sequences_ ? outputs : lastOutput;
     return true;
 }
 

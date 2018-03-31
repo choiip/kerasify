@@ -33,11 +33,9 @@ bool Embedding::apply(const Tensor& in, Tensor& out) const noexcept
     out.dims_ = {out_i, out_j};
 
     for (const auto& it : in.data_) {
-        auto first =
-            weights_.data_.begin() + static_cast<ptrdiff_t>(it * out_j);
-        auto last =
-            weights_.data_.begin() + static_cast<ptrdiff_t>(it * out_j + out_j);
-        out.data_.insert(out.data_.end(), first, last);
+        auto first = weights_.begin() + cast(it * out_j);
+        auto last = weights_.begin() + cast(it * out_j + out_j);
+        out.data_.insert(out.end(), first, last);
     }
     return true;
 }

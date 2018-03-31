@@ -87,6 +87,8 @@ def export_layer_dense(f, layer):
     biases = layer.get_weights()[1]
     activation = layer.get_config()['activation']
 
+    weights = weights.transpose()
+
     f.write(struct.pack('I', LAYER_DENSE))
     f.write(struct.pack('I', weights.shape[0]))
     f.write(struct.pack('I', weights.shape[1]))
@@ -236,6 +238,21 @@ def export_layer_lstm(f, layer):
     b_f = weights[2][units: units*2]
     b_c = weights[2][units*2: -units]
     b_o = weights[2][-units:]
+
+    W_i = W_i.transpose()
+    W_f = W_f.transpose()
+    W_c = W_c.transpose()
+    W_o = W_o.transpose()
+
+    U_i = U_i.transpose()
+    U_f = U_f.transpose()
+    U_c = U_c.transpose()
+    U_o = U_o.transpose()
+
+    b_i = b_i.transpose()
+    b_f = b_f.transpose()
+    b_c = b_c.transpose()
+    b_o = b_o.transpose()
 
     f.write(struct.pack('I', LAYER_LSTM))
     f.write(struct.pack('I', W_i.shape[0]))

@@ -41,23 +41,22 @@ bool Conv1D::apply(const Tensor& in, Tensor& out) const noexcept
 {
     check(in.dims_[1] == weights_.dims_[2]);
 
-    size_t offset = weights_.dims_[1] - 1;
-
-    Tensor tmp{in.dims_[0] - offset, weights_.dims_[0]};
-
     auto& ww = weights_.dims_;
-    auto scpd = [](auto x) { return static_cast<ptrdiff_t>(x); };
-    auto ts0 = scpd(ww[0]);
-    auto ws_ = scpd(ww[0] * ww[1] * ww[2]);
-    auto ws0 = scpd(ww[1] * ww[2]);
-    auto ws1 = scpd(ww[2]);
 
-    auto w_ptr = weights_.data_.begin();
-    auto b_ptr = biases_.data_.begin();
-    auto t_ptr = tmp.data_.begin();
-    auto i_ptr = in.data_.begin();
+    size_t offset = ww[1] - 1;
+    Tensor tmp{in.dims_[0] - offset, ww[0]};
 
-    auto tx = scpd(tmp.dims_[0]);
+    auto ts0 = cast(ww[0]);
+    auto ws_ = cast(ww[2] * ww[1] * ww[0]);
+    auto ws0 = cast(ww[2] * ww[1]);
+    auto ws1 = cast(ww[2]);
+
+    auto tx = cast(tmp.dims_[0]);
+
+    auto w_ptr = weights_.begin();
+    auto b_ptr = biases_.begin();
+    auto t_ptr = tmp.begin();
+    auto i_ptr = in.begin();
 
     for (ptrdiff_t x = 0; x < tx; ++x) {
         auto b_ = b_ptr;

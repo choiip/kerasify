@@ -46,8 +46,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -Og"
 
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} \
     -g -pg -no-pie \
-    -O3 -pg -ffast-math -funroll-loops \
-    -fno-exceptions -fno-rtti"
+    -O3 -ffast-math -fno-exceptions -fno-rtti"
     CACHE INTERNAL ""
 )
 set(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO
@@ -57,8 +56,7 @@ set(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO
 
 # rolled loops works faster here
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} \
-    -O3 -ffast-math -fno-unroll-loops \
-    -fno-exceptions -fno-rtti"
+    -O3 -ffast-math -fno-exceptions -fno-rtti"
     CACHE INTERNAL ""
 )
 

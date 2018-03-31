@@ -20,14 +20,11 @@ bool ELU::apply(const Tensor& in, Tensor& out) const noexcept
     out.data_.resize(in.size());
     out.dims_ = in.dims_;
 
-    const float alpha = alpha_;
-
-    std::transform(
-        in.data_.begin(), in.data_.end(), out.data_.begin(), [alpha](float x) {
-            if (x >= 0.f)
-                return x;
-            return alpha * (std::exp(x) - 1.f);
-        });
+    std::transform(in.begin(), in.end(), out.begin(), [this](float x) {
+        if (x >= 0.f)
+            return x;
+        return alpha_ * (std::exp(x) - 1.f);
+    });
     return true;
 }
 
