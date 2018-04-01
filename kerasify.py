@@ -88,6 +88,7 @@ def export_layer_dense(f, layer):
     activation = layer.get_config()['activation']
 
     weights = weights.transpose()
+    # shape: (outputs, dims)
 
     f.write(struct.pack('I', LAYER_DENSE))
     f.write(struct.pack('I', weights.shape[0]))
@@ -104,8 +105,6 @@ def export_layer_dense(f, layer):
 
 
 def export_layer_conv1d(f, layer):
-    # only border_mode=valid is implemented
-
     weights = layer.get_weights()[0]
     biases = layer.get_weights()[1]
     activation = layer.get_config()['activation']
@@ -155,14 +154,11 @@ def export_layer_conv2d(f, layer):
 
 
 def export_layer_locally1d(f, layer):
-    # only border_mode=valid is implemented
-
     weights = layer.get_weights()[0]
     biases = layer.get_weights()[1]
     activation = layer.get_config()['activation']
 
-    # shape: (new_steps, ksize*dims, outputs)
-    # weights = weights.transpose(0, 2, 1)
+    weights = weights.transpose(0, 2, 1)
     # shape: (new_steps, outputs, ksize*dims)
 
     f.write(struct.pack('I', LAYER_LOCALLY_1D))
@@ -170,6 +166,7 @@ def export_layer_locally1d(f, layer):
     f.write(struct.pack('I', weights.shape[1]))
     f.write(struct.pack('I', weights.shape[2]))
     f.write(struct.pack('I', biases.shape[0]))
+    f.write(struct.pack('I', biases.shape[1]))
 
     weights = weights.flatten()
     biases = biases.flatten()
@@ -181,14 +178,12 @@ def export_layer_locally1d(f, layer):
 
 
 def export_layer_locally2d(f, layer):
-    # only border_mode=valid is implemented
-
     weights = layer.get_weights()[0]
     biases = layer.get_weights()[1]
     activation = layer.get_config()['activation']
 
     # weights = weights.transpose(3, 0, 1, 2)
-    # shape: (outputs, rows, cols, depth)
+    # shape: (outputs, rows, cols, depth)?
 
     f.write(struct.pack('I', LAYER_LOCALLY_2D))
     f.write(struct.pack('I', weights.shape[0]))
@@ -207,8 +202,6 @@ def export_layer_locally2d(f, layer):
 
 
 def export_layer_maxpooling2d(f, layer):
-    # only border_mode=valid is implemented
-
     pool_size = layer.get_config()['pool_size']
 
     f.write(struct.pack('I', LAYER_MAXPOOLING_2D))

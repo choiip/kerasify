@@ -39,6 +39,9 @@ bool Conv1D::load_layer(std::ifstream& file) noexcept
 
 bool Conv1D::apply(const Tensor& in, Tensor& out) const noexcept
 {
+    // 'in' have shape (steps, features)
+    // 'tmp' have shape (new_steps, outputs)
+    // 'weights' have shape (outputs, kernel, features)
     check(in.dims_[1] == weights_.dims_[2]);
 
     auto& ww = weights_.dims_;
@@ -47,13 +50,11 @@ bool Conv1D::apply(const Tensor& in, Tensor& out) const noexcept
     Tensor tmp{in.dims_[0] - offset, ww[0]};
 
     auto ts0 = cast(ww[0]);
-    auto ws_ = cast(ww[2] * ww[1] * ww[0]);
     auto ws0 = cast(ww[2] * ww[1]);
     auto ws1 = cast(ww[2]);
 
     auto tx = cast(tmp.dims_[0]);
 
-    auto w_ptr = weights_.begin();
     auto b_ptr = biases_.begin();
     auto t_ptr = tmp.begin();
     auto i_ptr = in.begin();
@@ -62,7 +63,7 @@ bool Conv1D::apply(const Tensor& in, Tensor& out) const noexcept
         auto b_ = b_ptr;
         auto i_ = i_ptr + x * ws1;
         auto t_ = t_ptr + x * ts0;
-        for (auto w0 = w_ptr; w0 < w_ptr + ws_; w0 += ws0)
+        for (auto w0 = weights_.end(); w0 < weights_.end(); w0 += ws0)
             *(t_++) = std::inner_product(w0, w0 + ws0, i_, *(b_++));
     }
     check(activation_.apply(tmp, out));

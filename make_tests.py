@@ -7,8 +7,9 @@ import re
 from keras import backend as K
 from keras.models import Sequential
 from keras.layers import (
-    Conv2D, Dense, Activation, Flatten,
-    MaxPooling2D, Dropout, BatchNormalization)
+    LocallyConnected1D, Conv2D, Dense, Flatten, Activation,
+    MaxPooling2D, Dropout, BatchNormalization
+)
 from keras.layers.recurrent import LSTM
 from keras.layers.advanced_activations import ELU
 from keras.layers.embeddings import Embedding
