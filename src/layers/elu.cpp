@@ -23,7 +23,7 @@ bool ELU::apply(const Tensor& in, Tensor& out) const noexcept
     std::transform(in.begin(), in.end(), out.begin(), [this](float x) {
         if (x >= 0.f)
             return x;
-        return alpha_ * (std::exp(x) - 1.f);
+        return alpha_ * std::expm1(x);
     });
     return true;
 }
