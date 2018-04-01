@@ -15,7 +15,7 @@ Design goals:
 Currently implemented Keras layers:
 
 * Embedding, Flatten
-* Dense, Conv1D, Conv2D
+* Dense, Conv1D, Conv2D, LocallyConnected1D
 * LSTM
 * BatchNormalization, MaxPooling
 * Activation: Linear, Relu, ELU, SoftPlus, SoftSign, Tanh, Sigmoid, HardSigmoid
@@ -26,7 +26,7 @@ Looking for more Keras/C++ libraries? Check out https://github.com/pplonski/kera
 
 make_model.py:
 
-```
+```python
 import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense
@@ -49,7 +49,7 @@ export_model(model, 'example.model')
 
 test.cpp:
 
-```
+```c++
 #include "keras/model.h"
 
 using keras::Model;
@@ -74,15 +74,12 @@ int main() {
 
 # Unit tests
 
-To run the unit tests, generate the unit test models and then run `keras_model_test`:
+To run the unit tests, generate the unit test models and then run `kerasify`:
 
-```
+```bash
 $ python3 make_tests.py
 ...
-$ mkdir build && cd build
-$ cmake ..
-...
-$ cmake --build .
+$ mkdir build && cd build && cmake .. && cmake --build . && cd
 ...
 $ ./build/kerasify
 TEST dense_1x1
