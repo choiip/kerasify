@@ -175,4 +175,21 @@ void Tensor::print_shape() const noexcept
         printf("%zu ", it);
     printf(")\n");
 }
+
+bool Tensor::load(std::ifstream& file, size_t dims) noexcept
+{
+    check(dims > 0);
+
+    for (size_t i = 0; i < dims; ++i) {
+        unsigned stride = 0;
+        check(read_uint(file, stride));
+        check(stride > 0);
+        dims_.push_back(stride);
+    }
+    const auto items = size();
+    data_.resize(items);
+    check(read_floats(file, data_.data(), items));
+    return true;
+}
+
 } // namespace keras

@@ -10,33 +10,8 @@ namespace layers {
 
 bool LocallyConnected1D::load_layer(std::ifstream& file) noexcept
 {
-    unsigned weights_i = 0;
-    check(read_uint(file, weights_i));
-    check(weights_i > 0);
-
-    unsigned weights_j = 0;
-    check(read_uint(file, weights_j));
-    check(weights_j > 0);
-
-    unsigned weights_k = 0;
-    check(read_uint(file, weights_k));
-    check(weights_k > 0);
-
-    unsigned biases_i = 0;
-    check(read_uint(file, biases_i));
-    check(biases_i > 0);
-
-    unsigned biases_j = 0;
-    check(read_uint(file, biases_j));
-    check(biases_j > 0);
-
-    weights_.resize(weights_i, weights_j, weights_k);
-    check(read_floats(
-        file, weights_.data_.data(), weights_i * weights_j * weights_k));
-
-    biases_.resize(biases_i, biases_j);
-    check(read_floats(file, biases_.data_.data(), biases_i * biases_j));
-
+    check(weights_.load(file, 3));
+    check(biases_.load(file, 2));
     check(activation_.load_layer(file));
     return true;
 }

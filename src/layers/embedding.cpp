@@ -10,17 +10,7 @@ namespace layers {
 
 bool Embedding::load_layer(std::ifstream& file) noexcept
 {
-    unsigned weights_i = 0;
-    check(read_uint(file, weights_i));
-    check(weights_i > 0);
-
-    unsigned weights_j = 0;
-    check(read_uint(file, weights_j));
-    check(weights_j > 0);
-
-    weights_.resize(weights_i, weights_j);
-    check(read_floats(file, weights_.data_.data(), weights_i * weights_j));
-
+    check(weights_.load(file, 2));
     return true;
 }
 

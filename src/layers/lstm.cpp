@@ -10,125 +10,25 @@ namespace layers {
 
 bool LSTM::load_layer(std::ifstream& file) noexcept
 {
-    unsigned wi_rows = 0;
-    check(read_uint(file, wi_rows));
-    check(wi_rows > 0);
-
-    unsigned wi_cols = 0;
-    check(read_uint(file, wi_cols));
-    check(wi_cols > 0);
-
-    unsigned ui_rows = 0;
-    check(read_uint(file, ui_rows));
-    check(ui_rows > 0);
-
-    unsigned ui_cols = 0;
-    check(read_uint(file, ui_cols));
-    check(ui_cols > 0);
-
-    unsigned bi_shape = 0;
-    check(read_uint(file, bi_shape));
-    check(bi_shape > 0);
-
-    unsigned wf_rows = 0;
-    check(read_uint(file, wf_rows));
-    check(wf_rows > 0);
-
-    unsigned wf_cols = 0;
-    check(read_uint(file, wf_cols));
-    check(wf_cols > 0);
-
-    unsigned uf_rows = 0;
-    check(read_uint(file, uf_rows));
-    check(uf_rows > 0);
-
-    unsigned uf_cols = 0;
-    check(read_uint(file, uf_cols));
-    check(uf_cols > 0);
-
-    unsigned bf_shape = 0;
-    check(read_uint(file, bf_shape));
-    check(bf_shape > 0);
-
-    unsigned wc_rows = 0;
-    check(read_uint(file, wc_rows));
-    check(wc_rows > 0);
-
-    unsigned wc_cols = 0;
-    check(read_uint(file, wc_cols));
-    check(wc_cols > 0);
-
-    unsigned uc_rows = 0;
-    check(read_uint(file, uc_rows));
-    check(uc_rows > 0);
-
-    unsigned uc_cols = 0;
-    check(read_uint(file, uc_cols));
-    check(uc_cols > 0);
-
-    unsigned bc_shape = 0;
-    check(read_uint(file, bc_shape));
-    check(bc_shape > 0);
-
-    unsigned wo_rows = 0;
-    check(read_uint(file, wo_rows));
-    check(wo_rows > 0);
-
-    unsigned wo_cols = 0;
-    check(read_uint(file, wo_cols));
-    check(wo_cols > 0);
-
-    unsigned uo_rows = 0;
-    check(read_uint(file, uo_rows));
-    check(uo_rows > 0);
-
-    unsigned uo_cols = 0;
-    check(read_uint(file, uo_cols));
-    check(uo_cols > 0);
-
-    unsigned bo_shape = 0;
-    check(read_uint(file, bo_shape));
-    check(bo_shape > 0);
-
     // Load Input Weights and Biases
-    Wi_.resize(wi_rows, wi_cols);
-    check(read_floats(file, Wi_.data_.data(), wi_rows * wi_cols));
-
-    Ui_.resize(ui_rows, ui_cols);
-    check(read_floats(file, Ui_.data_.data(), ui_rows * ui_cols));
-
-    bi_.resize(1, bi_shape);
-    check(read_floats(file, bi_.data_.data(), bi_shape));
+    check(Wi_.load(file, 2));
+    check(Ui_.load(file, 2));
+    check(bi_.load(file, 2));
 
     // Load Forget Weights and Biases
-    Wf_.resize(wf_rows, wf_cols);
-    check(read_floats(file, Wf_.data_.data(), wf_rows * wf_cols));
-
-    Uf_.resize(uf_rows, uf_cols);
-    check(read_floats(file, Uf_.data_.data(), uf_rows * uf_cols));
-
-    bf_.resize(1, bf_shape);
-    check(read_floats(file, bf_.data_.data(), bf_shape));
+    check(Wf_.load(file, 2));
+    check(Uf_.load(file, 2));
+    check(bf_.load(file, 2));
 
     // Load State Weights and Biases
-    Wc_.resize(wc_rows, wc_cols);
-    check(read_floats(file, Wc_.data_.data(), wc_rows * wc_cols));
-
-    Uc_.resize(uc_rows, uc_cols);
-    check(read_floats(file, Uc_.data_.data(), uc_rows * uc_cols));
-
-    bc_.resize(1, bc_shape);
-    check(read_floats(file, bc_.data_.data(), bc_shape));
+    check(Wc_.load(file, 2));
+    check(Uc_.load(file, 2));
+    check(bc_.load(file, 2));
 
     // Load Output Weights and Biases
-    Wo_.resize(wo_rows, wo_cols);
-    check(read_floats(file, Wo_.data_.data(), wo_rows * wo_cols));
-
-    Uo_.resize(uo_rows, uo_cols);
-    check(read_floats(file, Uo_.data_.data(), uo_rows * uo_cols));
-
-    bo_.resize(1, bo_shape);
-    check(read_floats(file, bo_.data_.data(), bo_shape));
+    check(Wo_.load(file, 2));
+    check(Uo_.load(file, 2));
+    check(bo_.load(file, 2));
 
     check(inner_activation_.load_layer(file));
     check(activation_.load_layer(file));

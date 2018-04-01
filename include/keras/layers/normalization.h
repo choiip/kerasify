@@ -16,8 +16,8 @@ public:
     bool apply(const Tensor& in, Tensor& out) const noexcept override;
 
 private:
-    Tensor scale_;
-    Tensor bias_;
+    Tensor weights_;
+    Tensor biases_;
 };
 
 } // namespace layers
