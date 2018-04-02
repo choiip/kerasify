@@ -180,6 +180,7 @@ bool Tensor::load(std::ifstream& file, size_t dims) noexcept
 {
     check(dims > 0);
 
+    dims_.reserve(dims);
     for (size_t i = 0; i < dims; ++i) {
         unsigned stride = 0;
         check(read_uint(file, stride));

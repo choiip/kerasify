@@ -23,9 +23,6 @@
 #include "test/maxpool2d_3x3x3.h"
 #include "test/relu_10.h"
 
-#include <cstdio>
-#include <iostream>
-
 using namespace keras;
 
 namespace test {
