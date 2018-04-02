@@ -4,8 +4,6 @@
  * MIT License, see LICENSE file.
  */
 #include "keras/utility.h"
-#include <algorithm>
-#include <iterator>
 
 namespace keras {
 

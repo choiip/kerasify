@@ -4,7 +4,6 @@
  * MIT License, see LICENSE file.
  */
 #include "keras/tensor.h"
-#include <experimental/numeric>
 
 namespace keras {
 
@@ -115,64 +114,35 @@ Tensor Tensor::dot(const Tensor& other) const noexcept
 
 void Tensor::print() const noexcept
 {
-    if (dims_.size() == 1) {
-        printf("[");
-        for (size_t i = 0; i < dims_[0]; ++i)
-            printf("%f ", static_cast<double>((*this)(i)));
-        printf("]\n");
-        return;
+    std::vector<size_t> steps(dims_.size());
+    std::partial_sum(
+        dims_.rbegin(), dims_.rend(), steps.rbegin(), std::multiplies<>());
+
+    size_t count = 0;
+    for (auto&& it : data_) {
+        for (auto step : steps)
+            if (count % step == 0)
+                printf("[");
+        printf("%f", static_cast<double>(it));
+        ++count;
+        for (auto step : steps)
+            if (count % step == 0)
+                printf("]");
+        if (count != steps[0])
+            printf(", ");
     }
-    if (dims_.size() == 2) {
-        printf("[\n");
-        for (size_t i = 0; i < dims_[0]; ++i) {
-            printf(" [");
-            for (size_t j = 0; j < dims_[1]; ++j)
-                printf("%f ", static_cast<double>((*this)(i, j)));
-            printf("]\n");
-        }
-        printf("]\n");
-        return;
-    }
-    if (dims_.size() == 3) {
-        printf("[\n");
-        for (size_t i = 0; i < dims_[0]; ++i) {
-            printf(" [\n");
-            for (size_t j = 0; j < dims_[1]; ++j) {
-                printf("  [");
-                for (size_t k = 0; k < dims_[2]; ++k)
-                    printf("%f ", static_cast<double>((*this)(i, j, k)));
-                printf("  ]\n");
-            }
-            printf(" ]\n");
-        }
-        printf("]\n");
-        return;
-    }
-    if (dims_.size() == 4) {
-        printf("[\n");
-        for (size_t i = 0; i < dims_[0]; ++i) {
-            printf(" [\n");
-            for (size_t j = 0; j < dims_[1]; ++j) {
-                printf("  [\n");
-                for (size_t k = 0; k < dims_[2]; ++k) {
-                    printf("   [");
-                    for (size_t l = 0; l < dims_[3]; ++l)
-                        printf("%f ", static_cast<double>((*this)(i, j, k, l)));
-                    printf("]\n");
-                }
-                printf("  ]\n");
-            }
-            printf(" ]\n");
-        }
-        printf("]\n");
-    }
+    printf("\n");
 }
 
 void Tensor::print_shape() const noexcept
 {
     printf("(");
-    for (auto&& it : dims_)
-        printf("%zu ", it);
+    size_t count = 0;
+    for (auto&& dim : dims_) {
+        printf("%zu", dim);
+        if ((++count) != dims_.size())
+            printf(", ");
+    }
     printf(")\n");
 }
 
@@ -190,6 +160,7 @@ bool Tensor::load(std::ifstream& file, size_t dims) noexcept
     const auto items = size();
     data_.resize(items);
     check(read_floats(file, data_.data(), items));
+
     return true;
 }
 

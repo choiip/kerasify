@@ -7,7 +7,6 @@
 
 #include "keras/utility.h"
 #include <algorithm>
-#include <cstdio>
 #include <numeric>
 #include <vector>
 
@@ -58,7 +57,6 @@ public:
     bool load(std::ifstream& file, size_t dims = 1) noexcept;
 
     std::vector<size_t> dims_;
-    std::vector<size_t> steps_;
     std::vector<float> data_;
 };
 

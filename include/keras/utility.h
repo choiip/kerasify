@@ -8,7 +8,6 @@
 #include <chrono>
 #include <cmath>
 #include <fstream>
-#include <vector>
 
 #define stringify(x) #x
 
