@@ -8,16 +8,14 @@
 namespace keras {
 namespace layers {
 
-bool Conv2D::load_layer(std::ifstream& file) noexcept
-{
+bool Conv2D::load_layer(std::ifstream& file) noexcept {
     check(weights_.load(file, 4));
     check(biases_.load(file));
     check(activation_.load_layer(file));
     return true;
 }
 
-bool Conv2D::apply(const Tensor& in, Tensor& out) const noexcept
-{
+bool Conv2D::apply(const Tensor& in, Tensor& out) const noexcept {
     check(in.dims_[2] == weights_.dims_[3]);
 
     auto& ww = weights_.dims_;

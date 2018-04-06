@@ -8,15 +8,13 @@
 namespace keras {
 namespace layers {
 
-bool MaxPooling2D::load_layer(std::ifstream& file) noexcept
-{
+bool MaxPooling2D::load_layer(std::ifstream& file) noexcept {
     check(read_uint(file, pool_size_y_));
     check(read_uint(file, pool_size_x_));
     return true;
 }
 
-bool MaxPooling2D::apply(const Tensor& in, Tensor& out) const noexcept
-{
+bool MaxPooling2D::apply(const Tensor& in, Tensor& out) const noexcept {
     check(in.dims_.size() == 3);
 
     const auto& iw = in.dims_;

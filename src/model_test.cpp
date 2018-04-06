@@ -26,8 +26,7 @@
 using namespace keras;
 
 namespace test {
-inline bool basics() noexcept
-{
+inline bool basics() noexcept {
     {
         const int i = 3;
         const int j = 5;
@@ -123,8 +122,7 @@ inline bool basics() noexcept
 }
 } // namespace test
 
-int main()
-{
+int main() {
     double load_time = 0.0;
     double apply_time = 0.0;
 

@@ -7,32 +7,27 @@
 
 namespace keras {
 
-void Tensor::resize(size_t i) noexcept
-{
+void Tensor::resize(size_t i) noexcept {
     dims_ = {i};
     data_.resize(i);
 }
 
-void Tensor::resize(size_t i, size_t j) noexcept
-{
+void Tensor::resize(size_t i, size_t j) noexcept {
     dims_ = {i, j};
     data_.resize(i * j);
 }
 
-void Tensor::resize(size_t i, size_t j, size_t k) noexcept
-{
+void Tensor::resize(size_t i, size_t j, size_t k) noexcept {
     dims_ = {i, j, k};
     data_.resize(i * j * k);
 }
 
-void Tensor::resize(size_t i, size_t j, size_t k, size_t l) noexcept
-{
+void Tensor::resize(size_t i, size_t j, size_t k, size_t l) noexcept {
     dims_ = {i, j, k, l};
     data_.resize(i * j * k * l);
 }
 
-Tensor Tensor::unpack(size_t row) const noexcept
-{
+Tensor Tensor::unpack(size_t row) const noexcept {
     kassert(dims_.size() >= 2);
     size_t pack_size = std::accumulate(dims_.begin() + 1, dims_.end(), 0u);
 
@@ -46,22 +41,19 @@ Tensor Tensor::unpack(size_t row) const noexcept
     return x;
 }
 
-Tensor Tensor::select(size_t row) const noexcept
-{
+Tensor Tensor::select(size_t row) const noexcept {
     auto x = unpack(row);
     x.dims_.insert(x.dims_.begin(), 1);
     return x;
 }
 
-Tensor& Tensor::operator+=(const Tensor& other) noexcept
-{
+Tensor& Tensor::operator+=(const Tensor& other) noexcept {
     kassert(dims_ == other.dims_);
     std::transform(begin(), end(), other.begin(), begin(), std::plus<>());
     return *this;
 }
 
-Tensor Tensor::fma(const Tensor& scale, const Tensor& bias) const noexcept
-{
+Tensor Tensor::fma(const Tensor& scale, const Tensor& bias) const noexcept {
     kassert(dims_ == scale.dims_);
     kassert(dims_ == bias.dims_);
 
@@ -78,8 +70,7 @@ Tensor Tensor::fma(const Tensor& scale, const Tensor& bias) const noexcept
     return result;
 }
 
-Tensor Tensor::multiply(const Tensor& other) const noexcept
-{
+Tensor Tensor::multiply(const Tensor& other) const noexcept {
     kassert(dims_ == other.dims_);
 
     Tensor result;
@@ -92,8 +83,7 @@ Tensor Tensor::multiply(const Tensor& other) const noexcept
     return result;
 }
 
-Tensor Tensor::dot(const Tensor& other) const noexcept
-{
+Tensor Tensor::dot(const Tensor& other) const noexcept {
     kassert(dims_.size() == 2);
     kassert(other.dims_.size() == 2);
     kassert(dims_[1] == other.dims_[1]);
@@ -112,8 +102,7 @@ Tensor Tensor::dot(const Tensor& other) const noexcept
     return tmp;
 }
 
-void Tensor::print() const noexcept
-{
+void Tensor::print() const noexcept {
     std::vector<size_t> steps(dims_.size());
     std::partial_sum(
         dims_.rbegin(), dims_.rend(), steps.rbegin(), std::multiplies<>());
@@ -134,8 +123,7 @@ void Tensor::print() const noexcept
     printf("\n");
 }
 
-void Tensor::print_shape() const noexcept
-{
+void Tensor::print_shape() const noexcept {
     printf("(");
     size_t count = 0;
     for (auto&& dim : dims_) {
@@ -146,8 +134,7 @@ void Tensor::print_shape() const noexcept
     printf(")\n");
 }
 
-bool Tensor::load(std::ifstream& file, size_t dims) noexcept
-{
+bool Tensor::load(std::ifstream& file, size_t dims) noexcept {
     check(dims > 0);
 
     dims_.reserve(dims);

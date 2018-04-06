@@ -60,52 +60,45 @@ public:
     std::vector<float> data_;
 };
 
-size_t Tensor::size() const noexcept
-{
+size_t Tensor::size() const noexcept {
     size_t elements = 1;
     for (const auto& it : dims_)
         elements *= it;
     return elements;
 }
 
-void Tensor::flatten() noexcept
-{
+void Tensor::flatten() noexcept {
     kassert(dims_.size() > 0);
     dims_ = {size()};
 }
 
-float& Tensor::operator()(size_t i) noexcept
-{
+float& Tensor::operator()(size_t i) noexcept {
     kassert(dims_.size() == 1);
     kassert(i < dims_[0]);
     return data_[i];
 }
 
-float Tensor::operator()(size_t i) const noexcept
-{
+float Tensor::operator()(size_t i) const noexcept {
     kassert(dims_.size() == 1);
     kassert(i < dims_[0]);
     return data_[i];
 }
 
-float& Tensor::operator()(size_t i, size_t j) noexcept
-{
+float& Tensor::operator()(size_t i, size_t j) noexcept {
     kassert(dims_.size() == 2);
     kassert(i < dims_[0]);
     kassert(j < dims_[1]);
     return data_[dims_[1] * i + j];
 }
 
-float Tensor::operator()(size_t i, size_t j) const noexcept
-{
+float Tensor::operator()(size_t i, size_t j) const noexcept {
     kassert(dims_.size() == 2);
     kassert(i < dims_[0]);
     kassert(j < dims_[1]);
     return data_[dims_[1] * i + j];
 }
 
-float& Tensor::operator()(size_t i, size_t j, size_t k) noexcept
-{
+float& Tensor::operator()(size_t i, size_t j, size_t k) noexcept {
     kassert(dims_.size() == 3);
     kassert(i < dims_[0]);
     kassert(j < dims_[1]);
@@ -113,8 +106,7 @@ float& Tensor::operator()(size_t i, size_t j, size_t k) noexcept
     return data_[dims_[2] * (dims_[1] * i + j) + k];
 }
 
-float Tensor::operator()(size_t i, size_t j, size_t k) const noexcept
-{
+float Tensor::operator()(size_t i, size_t j, size_t k) const noexcept {
     kassert(dims_.size() == 3);
     kassert(i < dims_[0]);
     kassert(j < dims_[1]);
@@ -122,8 +114,7 @@ float Tensor::operator()(size_t i, size_t j, size_t k) const noexcept
     return data_[dims_[2] * (dims_[1] * i + j) + k];
 }
 
-float& Tensor::operator()(size_t i, size_t j, size_t k, size_t l) noexcept
-{
+float& Tensor::operator()(size_t i, size_t j, size_t k, size_t l) noexcept {
     kassert(dims_.size() == 4);
     kassert(i < dims_[0]);
     kassert(j < dims_[1]);
@@ -132,8 +123,8 @@ float& Tensor::operator()(size_t i, size_t j, size_t k, size_t l) noexcept
     return data_[dims_[3] * (dims_[2] * (dims_[1] * i + j) + k) + l];
 }
 
-float Tensor::operator()(size_t i, size_t j, size_t k, size_t l) const noexcept
-{
+float Tensor::operator()(size_t i, size_t j, size_t k, size_t l) const
+    noexcept {
     kassert(dims_.size() == 4);
     kassert(i < dims_[0]);
     kassert(j < dims_[1]);
@@ -142,23 +133,25 @@ float Tensor::operator()(size_t i, size_t j, size_t k, size_t l) const noexcept
     return data_[dims_[3] * (dims_[2] * (dims_[1] * i + j) + k) + l];
 }
 
-void Tensor::fill(float value) noexcept { std::fill(begin(), end(), value); }
+void Tensor::fill(float value) noexcept {
+    std::fill(begin(), end(), value);
+}
 
-std::vector<float>::iterator Tensor::begin() noexcept { return data_.begin(); }
-std::vector<float>::iterator Tensor::end() noexcept { return data_.end(); }
-
-std::vector<float>::const_iterator Tensor::begin() const noexcept
-{
+std::vector<float>::iterator Tensor::begin() noexcept {
+    return data_.begin();
+}
+std::vector<float>::const_iterator Tensor::begin() const noexcept {
     return data_.begin();
 }
 
-std::vector<float>::const_iterator Tensor::end() const noexcept
-{
+std::vector<float>::iterator Tensor::end() noexcept {
+    return data_.end();
+}
+std::vector<float>::const_iterator Tensor::end() const noexcept {
     return data_.end();
 }
 
-inline Tensor operator+(Tensor lhs, const Tensor& rhs) noexcept
-{
+inline Tensor operator+(Tensor lhs, const Tensor& rhs) noexcept {
     lhs += rhs;
     return lhs;
 }

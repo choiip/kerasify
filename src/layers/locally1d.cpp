@@ -8,16 +8,14 @@
 namespace keras {
 namespace layers {
 
-bool LocallyConnected1D::load_layer(std::ifstream& file) noexcept
-{
+bool LocallyConnected1D::load_layer(std::ifstream& file) noexcept {
     check(weights_.load(file, 3));
     check(biases_.load(file, 2));
     check(activation_.load_layer(file));
     return true;
 }
 
-bool LocallyConnected1D::apply(const Tensor& in, Tensor& out) const noexcept
-{
+bool LocallyConnected1D::apply(const Tensor& in, Tensor& out) const noexcept {
     // 'in' have shape (steps, features)
     // 'tmp' have shape (new_steps, outputs)
     // 'weights' have shape (new_steps, outputs, kernel*features)

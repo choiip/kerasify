@@ -8,16 +8,14 @@
 namespace keras {
 namespace layers {
 
-bool Conv1D::load_layer(std::ifstream& file) noexcept
-{
+bool Conv1D::load_layer(std::ifstream& file) noexcept {
     check(weights_.load(file, 3));
     check(biases_.load(file));
     check(activation_.load_layer(file));
     return true;
 }
 
-bool Conv1D::apply(const Tensor& in, Tensor& out) const noexcept
-{
+bool Conv1D::apply(const Tensor& in, Tensor& out) const noexcept {
     // 'in' have shape (steps, features)
     // 'tmp' have shape (new_steps, outputs)
     // 'weights' have shape (outputs, kernel, features)
