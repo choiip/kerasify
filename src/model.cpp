@@ -26,6 +26,7 @@ bool Model::load_model(const std::string& filename) noexcept {
 
     unsigned num_layers = 0;
     check(read_uint(file, num_layers));
+    layers_.reserve(num_layers);
 
     for (size_t i = 0; i < num_layers; ++i) {
         unsigned layer_type = 0;
@@ -57,9 +58,9 @@ bool Model::load_model(const std::string& filename) noexcept {
                 return std::make_unique<layers::Embedding>();
             case BatchNormalization:
                 return std::make_unique<layers::BatchNormalization>();
-            default:
-                return nullptr;
             }
+            kassert(false);
+            return nullptr;
         }();
         check(layer);
         check(layer->load_layer(file));
