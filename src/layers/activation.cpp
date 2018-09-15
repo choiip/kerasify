@@ -102,8 +102,8 @@ bool Activation::apply(const Tensor& in, Tensor& out) const noexcept {
         break;
     case SoftMax: {
         size_t channels = cast(in.dims_.back());
-        check(channels > 1);
-        
+        kassert(channels > 1);
+
         Tensor tmp = in;
         std::transform(in.begin(), in.end(), tmp.begin(), [](float x) {
             return std::exp(x);
