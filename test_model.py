@@ -41,4 +41,3 @@ for layer in model.layers:
         print('Bias: ', layer.bias)
 
 print(model.summary())
-

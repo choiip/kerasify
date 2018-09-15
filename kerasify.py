@@ -1,19 +1,32 @@
-import numpy as np
 import struct
+from functools import singledispatch
 
-# TODO: use singledispatch from functools
-LAYER_DENSE = 1
-LAYER_CONV_1D = 2
-LAYER_CONV_2D = 3
-LAYER_LOCALLY_1D = 4
-LAYER_LOCALLY_2D = 5
-LAYER_FLATTEN = 6
-LAYER_ELU = 7
-LAYER_ACTIVATION = 8
-LAYER_MAXPOOLING_2D = 9
-LAYER_LSTM = 10
-LAYER_EMBEDDING = 11
-LAYER_BATCH_NORMALIZATION = 12
+import numpy as np
+from keras.layers import (
+    Dense,
+    Conv1D, Conv2D,
+    LocallyConnected1D, LocallyConnected2D,
+    Flatten,
+    ELU,
+    Activation,
+    MaxPooling2D,
+    LSTM,
+    Embedding,
+    BatchNormalization,
+    )
+
+LAYERS = (
+    Dense,
+    Conv1D, Conv2D,
+    LocallyConnected1D, LocallyConnected2D,
+    Flatten,
+    ELU,
+    Activation,
+    MaxPooling2D,
+    LSTM,
+    Embedding,
+    BatchNormalization,
+)
 
 ACTIVATIONS = (
     'linear',
@@ -44,19 +57,41 @@ def write_tensor(f, data, dims=1):
     for i in np.arange(0, len(data), step):
         remaining = min(len(data) - i, step)
         written += remaining
-        f.write(struct.pack('=%sf' % remaining, *data[i: i + remaining]))
+        f.write(struct.pack(f'={remaining}f', *data[i: i + remaining]))
 
     assert written == len(data)
 
 
-def export_activation(f, activation):
-	if activation in ACTIVATIONS:
-		f.write(struct.pack('I', ACTIVATIONS.index(activation) + 1))
-		return
-    raise TypeError(f'Unsupported activation type: {activation}')
+def export_activation(activation, f):
+    if activation in ACTIVATIONS:
+        f.write(struct.pack('I', ACTIVATIONS.index(activation) + 1))
+        return
+    raise NotImplementedError(activation)
 
 
-def export_layer_normalization(f, layer):
+@singledispatch
+def export(layer, _):
+    raise NotImplementedError(layer)
+
+
+@export.register(Flatten)
+def _(_0, _1):
+    pass
+
+
+@export.register(Activation)
+def _(layer, f):
+    activation = layer.get_config()['activation']
+    export_activation(activation, f)
+
+
+@export.register(ELU)
+def _(layer, f):
+    f.write(struct.pack('f', layer.alpha))
+
+
+@export.register(BatchNormalization)
+def _(layer, f):
     epsilon = layer.epsilon
     gamma = layer.get_weights()[0]
     beta = layer.get_weights()[1]
@@ -66,98 +101,81 @@ def export_layer_normalization(f, layer):
     weights = gamma / np.sqrt(pop_variance + epsilon)
     biases = beta - pop_mean * weights
 
-    f.write(struct.pack('I', LAYER_BATCH_NORMALIZATION))
-
     write_tensor(f, weights)
     write_tensor(f, biases)
 
 
-def export_layer_dense(f, layer):
-    weights = layer.get_weights()[0]
+@export.register(Dense)
+def _(layer, f):
+    # shape: (outputs, dims)
+    weights = layer.get_weights()[0].transpose()
     biases = layer.get_weights()[1]
     activation = layer.get_config()['activation']
-
-    weights = weights.transpose()
-    # shape: (outputs, dims)
-
-    f.write(struct.pack('I', LAYER_DENSE))
 
     write_tensor(f, weights, 2)
     write_tensor(f, biases)
+    export_activation(activation, f)
 
-    export_activation(f, activation)
 
-
-def export_layer_conv1d(f, layer):
-    weights = layer.get_weights()[0]
+@export.register(Conv1D)
+def _(layer, f):
+    # shape: (outputs, steps, dims)
+    weights = layer.get_weights()[0].transpose(2, 0, 1)
     biases = layer.get_weights()[1]
     activation = layer.get_config()['activation']
 
-    weights = weights.transpose(2, 0, 1)
-    # shape: (outputs, steps, dims)
-
-    f.write(struct.pack('I', LAYER_CONV_1D))
     write_tensor(f, weights, 3)
     write_tensor(f, biases)
-    export_activation(f, activation)
+    export_activation(activation, f)
 
 
-def export_layer_conv2d(f, layer):
-    weights = layer.get_weights()[0]
+@export.register(Conv2D)
+def _(layer, f):
+    # shape: (outputs, rows, cols, depth)
+    weights = layer.get_weights()[0].transpose(3, 0, 1, 2)
     biases = layer.get_weights()[1]
     activation = layer.get_config()['activation']
 
-    weights = weights.transpose(3, 0, 1, 2)
-    # shape: (outputs, rows, cols, depth)
-
-    f.write(struct.pack('I', LAYER_CONV_2D))
     write_tensor(f, weights, 4)
     write_tensor(f, biases)
+    export_activation(activation, f)
 
-    export_activation(f, activation)
 
-
-def export_layer_locally1d(f, layer):
-    weights = layer.get_weights()[0]
-    biases = layer.get_weights()[1]
-    activation = layer.get_config()['activation']
-
-    weights = weights.transpose(0, 2, 1)
+@export.register(LocallyConnected1D)
+def _(layer, f):
     # shape: (new_steps, outputs, ksize*dims)
-
-    f.write(struct.pack('I', LAYER_LOCALLY_1D))
-
-    write_tensor(f, weights, 3)
-    write_tensor(f, biases, 2)
-
-    export_activation(f, activation)
-
-
-def export_layer_locally2d(f, layer):
-    weights = layer.get_weights()[0]
+    weights = layer.get_weights()[0].transpose(0, 2, 1)
     biases = layer.get_weights()[1]
     activation = layer.get_config()['activation']
 
-    # weights = weights.transpose(0, 2, 1)
-    # shape: (rows*cols, outputs, ksize*depth)
+    write_tensor(f, weights, 3)
+    write_tensor(f, biases, 2)
+    export_activation(activation, f)
 
-    f.write(struct.pack('I', LAYER_LOCALLY_2D))
+
+@export.register(LocallyConnected2D)
+def _(layer, f):
+    # shape: (rows*cols, outputs, ksize*depth)
+    weights = layer.get_weights()[0]
+    # weights = weights.transpose(0, 2, 1)
+    biases = layer.get_weights()[1]
+    activation = layer.get_config()['activation']
 
     write_tensor(f, weights, 3)
     write_tensor(f, biases, 2)
+    export_activation(activation, f)
 
-    export_activation(f, activation)
 
-
-def export_layer_maxpooling2d(f, layer):
+@export.register(MaxPooling2D)
+def _(layer, f):
     pool_size = layer.get_config()['pool_size']
 
-    f.write(struct.pack('I', LAYER_MAXPOOLING_2D))
     f.write(struct.pack('I', pool_size[0]))
     f.write(struct.pack('I', pool_size[1]))
 
 
-def export_layer_lstm(f, layer):
+@export.register(LSTM)
+def _(layer, f):
     inner_activation = layer.get_config()['recurrent_activation']
     activation = layer.get_config()['activation']
     return_sequences = int(layer.get_config()['return_sequences'])
@@ -165,102 +183,32 @@ def export_layer_lstm(f, layer):
     weights = layer.get_weights()
     units = layer.units
 
-    W_i = weights[0][:, :units].transpose()
-    W_f = weights[0][:, units: units*2].transpose()
-    W_c = weights[0][:, units*2: -units].transpose()
-    W_o = weights[0][:, -units:].transpose()
+    kernel, rkernel, bias = ([x[i: i+units] for i in range(0, 4*units, units)]
+                             for x in (weights[0].transpose(),
+                                       weights[1].transpose(),
+                                       weights[2]))
+    bias = [x.reshape(1, -1) for x in bias]
+    for tensors in zip(kernel, rkernel, bias):
+        for tensor in tensors:
+            write_tensor(f, tensor, 2)
 
-    U_i = weights[1][:, :units].transpose()
-    U_f = weights[1][:, units: units*2].transpose()
-    U_c = weights[1][:, units*2: -units].transpose()
-    U_o = weights[1][:, -units:].transpose()
-
-    b_i = weights[2][:units].reshape((1, -1))
-    b_f = weights[2][units: units*2].reshape((1, -1))
-    b_c = weights[2][units*2: -units].reshape((1, -1))
-    b_o = weights[2][-units:].reshape((1, -1))
-
-    f.write(struct.pack('I', LAYER_LSTM))
-
-    write_tensor(f, W_i, 2)
-    write_tensor(f, U_i, 2)
-    write_tensor(f, b_i, 2)
-
-    write_tensor(f, W_f, 2)
-    write_tensor(f, U_f, 2)
-    write_tensor(f, b_f, 2)
-
-    write_tensor(f, W_c, 2)
-    write_tensor(f, U_c, 2)
-    write_tensor(f, b_c, 2)
-
-    write_tensor(f, W_o, 2)
-    write_tensor(f, U_o, 2)
-    write_tensor(f, b_o, 2)
-
-    export_activation(f, inner_activation)
-    export_activation(f, activation)
+    export_activation(inner_activation, f)
+    export_activation(activation, f)
     f.write(struct.pack('I', return_sequences))
 
 
-def export_layer_embedding(f, layer):
+@export.register(Embedding)
+def _(layer, f):
     weights = layer.get_weights()[0]
-
-    f.write(struct.pack('I', LAYER_EMBEDDING))
     write_tensor(f, weights, 2)
 
 
 def export_model(model, filename):
     with open(filename, 'wb') as f:
-        model_layers = [
-            l for l in model.layers if type(l).__name__ not in ['Dropout']]
-        num_layers = len(model_layers)
-        f.write(struct.pack('I', num_layers))
+        layers = [layer for layer in model.layers
+                  if type(layer).__name__ not in ['Dropout']]
+        f.write(struct.pack('I', len(layers)))
 
-        for layer in model_layers:
-            layer_type = type(layer).__name__
-
-            if layer_type == 'Dense':
-                export_layer_dense(f, layer)
-
-            elif layer_type == 'Conv1D':
-                export_layer_conv1d(f, layer)
-
-            elif layer_type == 'Conv1D':
-                export_layer_conv1d(f, layer)
-
-            elif layer_type == 'Conv2D':
-                export_layer_conv2d(f, layer)
-
-            elif layer_type == 'LocallyConnected1D':
-                export_layer_locally1d(f, layer)
-
-            elif layer_type == 'LocallyConnected2D':
-                export_layer_locally2d(f, layer)
-
-            elif layer_type == 'Flatten':
-                f.write(struct.pack('I', LAYER_FLATTEN))
-
-            elif layer_type == 'ELU':
-                f.write(struct.pack('I', LAYER_ELU))
-                f.write(struct.pack('f', layer.alpha))
-
-            elif layer_type == 'Activation':
-                activation = layer.get_config()['activation']
-                f.write(struct.pack('I', LAYER_ACTIVATION))
-                export_activation(f, activation)
-
-            elif layer_type == 'MaxPooling2D':
-                export_layer_maxpooling2d(f, layer)
-
-            elif layer_type == 'LSTM':
-                export_layer_lstm(f, layer)
-
-            elif layer_type == 'Embedding':
-                export_layer_embedding(f, layer)
-
-            elif layer_type == 'BatchNormalization':
-                export_layer_normalization(f, layer)
-
-            else:
-                raise TypeError(f'Unsupported layer type: {layer_type}')
+        for layer in layers:
+            f.write(struct.pack('I', LAYERS.index(type(layer)) + 1))
+            export(layer, f)

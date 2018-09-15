@@ -36,7 +36,7 @@ for path_ in os.listdir('models'):
 
 def c_array(a):
     s = pprint.pformat(a.flatten())
-    
+
     s = re.sub(r'[ \t\n]*', '', s)
     s = re.sub(r'[ \t]*,[ \t]*', ', ', s)
     s = re.sub(r'[ \t]*\][, \t]*', '} ', s)
@@ -348,7 +348,7 @@ test_y = np.random.rand(32, 20).astype('f')
 model = Sequential([
     Embedding(100, 64, input_length=10),
     Flatten(),
-    #Dropout(0.5),
+    # Dropout(0.5),
     Dense(20, activation='sigmoid')
 ])
 output_testcase(model, test_x, test_y, 'embedding_64', '1e-6')
@@ -370,4 +370,3 @@ output_testcase(model, test_x, test_y, 'benchmark', '1e-3')
 
 
 os.system('clang-format -i --style=file include/test/*.h')
-

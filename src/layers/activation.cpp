@@ -14,31 +14,15 @@ bool Activation::load_layer(std::ifstream& file) noexcept {
 
     switch (activation) {
     case Linear:
-        activation_type_ = Linear;
-        break;
     case Relu:
-        activation_type_ = Relu;
-        break;
     case Elu:
-        activation_type_ = Elu;
-        break;
     case SoftPlus:
-        activation_type_ = SoftPlus;
-        break;
     case SoftSign:
-        activation_type_ = SoftSign;
-        break;
     case HardSigmoid:
-        activation_type_ = HardSigmoid;
-        break;
     case Sigmoid:
-        activation_type_ = Sigmoid;
-        break;
     case Tanh:
-        activation_type_ = Tanh;
-        break;
     case SoftMax:
-        activation_type_ = SoftMax;
+        activation_type_ = activation;
         break;
     default:
         check(false);
