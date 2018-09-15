@@ -20,7 +20,8 @@ public:
         SoftSign = 5,
         Sigmoid = 6,
         Tanh = 7,
-        HardSigmoid = 8
+        HardSigmoid = 8,
+        SoftMax = 9
     };
 
     bool load_layer(std::ifstream& file) noexcept override;

@@ -1,6 +1,7 @@
 import numpy as np
 import struct
 
+# TODO: use singledispatch from functools
 LAYER_DENSE = 1
 LAYER_CONV_1D = 2
 LAYER_CONV_2D = 3
@@ -14,22 +15,25 @@ LAYER_LSTM = 10
 LAYER_EMBEDDING = 11
 LAYER_BATCH_NORMALIZATION = 12
 
-ACTIVATION_LINEAR = 1
-ACTIVATION_RELU = 2
-ACTIVATION_ELU = 3
-ACTIVATION_SOFTPLUS = 4
-ACTIVATION_SOFTSIGN = 5
-ACTIVATION_SIGMOID = 6
-ACTIVATION_TANH = 7
-ACTIVATION_HARD_SIGMOID = 8
+ACTIVATIONS = (
+    'linear',
+    'relu',
+    'elu',
+    'softplus',
+    'softsign',
+    'sigmoid',
+    'tanh',
+    'hard_sigmoid',
+    'softmax',
+)
 
 
 def write_tensor(f, data, dims=1):
-    '''
+    """
     Writes tensor as flat array of floats to file in 1024 chunks,
     prevents memory explosion writing very large arrays to disk
     when calling struct.pack().
-    '''
+    """
     for stride in data.shape[:dims]:
         f.write(struct.pack('I', stride))
 
@@ -46,24 +50,10 @@ def write_tensor(f, data, dims=1):
 
 
 def export_activation(f, activation):
-    if activation == 'linear':
-        f.write(struct.pack('I', ACTIVATION_LINEAR))
-    elif activation == 'relu':
-        f.write(struct.pack('I', ACTIVATION_RELU))
-    elif activation == 'elu':
-        f.write(struct.pack('I', ACTIVATION_ELU))
-    elif activation == 'softplus':
-        f.write(struct.pack('I', ACTIVATION_SOFTPLUS))
-    elif activation == 'softsign':
-        f.write(struct.pack('I', ACTIVATION_SOFTSIGN))
-    elif activation == 'sigmoid':
-        f.write(struct.pack('I', ACTIVATION_SIGMOID))
-    elif activation == 'tanh':
-        f.write(struct.pack('I', ACTIVATION_TANH))
-    elif activation == 'hard_sigmoid':
-        f.write(struct.pack('I', ACTIVATION_HARD_SIGMOID))
-    else:
-        assert False, "Unsupported activation type: %s" % activation
+	if activation in ACTIVATIONS:
+		f.write(struct.pack('I', ACTIVATIONS.index(activation) + 1))
+		return
+    raise TypeError(f'Unsupported activation type: {activation}')
 
 
 def export_layer_normalization(f, layer):
@@ -273,4 +263,4 @@ def export_model(model, filename):
                 export_layer_normalization(f, layer)
 
             else:
-                assert False, "Unsupported layer type: %s" % layer_type
+                raise TypeError(f'Unsupported layer type: {layer_type}')

@@ -37,6 +37,9 @@ bool Activation::load_layer(std::ifstream& file) noexcept {
     case Tanh:
         activation_type_ = Tanh;
         break;
+    case SoftMax:
+        activation_type_ = SoftMax;
+        break;
     default:
         check(false);
     }
@@ -97,6 +100,25 @@ bool Activation::apply(const Tensor& in, Tensor& out) const noexcept {
             return std::tanh(x);
         });
         break;
+    case SoftMax: {
+        size_t channels = cast(in.dims_.back());
+        check(channels > 1);
+        
+        Tensor tmp = in;
+        std::transform(in.begin(), in.end(), tmp.begin(), [](float x) {
+            return std::exp(x);
+        });
+
+        auto out_ = out.begin();
+        for (auto t_ = tmp.begin(); t_ != tmp.end(); t_ += channels) {
+            auto norm = 1.f / std::reduce(t_, t_ + channels);
+            std::transform(t_, t_ + channels, out_, [norm](float x) {
+                return norm * x;
+            });
+            out_ += channels;
+        }
+        break;
+        }
     }
     return true;
 }
