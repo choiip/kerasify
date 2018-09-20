@@ -16,15 +16,20 @@ bool Dense::load_layer(std::ifstream& file) noexcept {
 }
 
 bool Dense::apply(const Tensor& in, Tensor& out) const noexcept {
-    check(in.size() == weights_.dims_[1]);
+    check(in.dims_.back() == weights_.dims_.back());
+    const auto ws = cast(weights_.dims_.back());
 
-    Tensor tmp = biases_;
-    const auto ws = cast(weights_.dims_[1]);
+    Tensor tmp;
+    tmp.dims_ = in.dims_;
+    tmp.dims_.back() = weights_.dims_.front();
+    tmp.data_.reserve(tmp.size());
 
-    auto in_ = in.begin();
-    auto out_ = tmp.begin();
-    for (auto w = weights_.begin(); w < weights_.end(); w += ws)
-        *(out_++) += std::inner_product(w, w + ws, in_, 0.f);
+    auto tmp_ = tmp.begin();
+    for (auto in_ = in.begin(); in_ < in.end(); in_ += ws) {
+        auto bias_ = biases_.begin();
+        for (auto w = weights_.begin(); w < weights_.end(); w += ws)
+            *(tmp_++) = std::inner_product(w, w + ws, in_, *(bias_++));
+    }
 
     check(activation_.apply(tmp, out));
     return true;
