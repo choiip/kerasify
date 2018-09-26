@@ -30,13 +30,13 @@ for layer in model.layers:
     print('Config: ', json.dumps(layer.get_config(), indent=2, sort_keys=True))
     # for w in layer.get_weights():
     #    print('Weights: ', w.shape)
-    if type(layer).__name__ == 'BatchNormalization':
+    if isinstance(layer, BatchNormalization):
         print('Beta: ', layer.beta)
         print('Gamma: ', layer.gamma)
         print('Moving Mean: ', layer.moving_mean)
         print('Moving Variance: ', layer.moving_variance)
 
-    if type(layer).__name__ == 'LocallyConnected1D':
+    if isinstance(layer, LocallyConnected1D):
         print('Kernel: ', layer.kernel)
         print('Bias: ', layer.bias)
 

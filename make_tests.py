@@ -108,7 +108,7 @@ def output_testcase(model, test_x, test_y, name, eps):
             name, name, x_shape, x_data, y_shape, y_data, name, eps))
 
 
-''' Dense 1x1 '''
+# Dense 1x1
 test_x = np.arange(10)
 test_y = test_x * 10 + 1
 model = Sequential([
@@ -117,7 +117,7 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'dense_1x1', '1e-6')
 
 
-''' Dense 10x1 '''
+# Dense 10x1
 test_x = np.random.rand(10, 10).astype('f')
 test_y = np.random.rand(10).astype('f')
 model = Sequential([
@@ -126,7 +126,7 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'dense_10x1', '1e-6')
 
 
-''' Dense 2x2 '''
+# Dense 2x2
 test_x = np.random.rand(10, 2).astype('f')
 test_y = np.random.rand(10).astype('f')
 model = Sequential([
@@ -136,7 +136,7 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'dense_2x2', '1e-6')
 
 
-''' Dense 10x10 '''
+# Dense 10x10
 test_x = np.random.rand(10, 10).astype('f')
 test_y = np.random.rand(10).astype('f')
 model = Sequential([
@@ -146,7 +146,7 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'dense_10x10', '1e-6')
 
 
-''' Dense 10x10x10 '''
+# Dense 10x10x10
 test_x = np.random.rand(10, 10).astype('f')
 test_y = np.random.rand(10, 10).astype('f')
 model = Sequential([
@@ -156,7 +156,7 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'dense_10x10x10', '1e-6')
 
 
-''' Conv 2x2 '''
+# Conv 2x2
 test_x = np.random.rand(10, 2, 2, 1).astype('f')
 test_y = np.random.rand(10, 1).astype('f')
 model = Sequential([
@@ -167,7 +167,7 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'conv_2x2', '1e-6')
 
 
-''' Conv 3x3 '''
+# Conv 3x3
 test_x = np.random.rand(10, 3, 3, 1).astype('f').astype('f')
 test_y = np.random.rand(10, 1).astype('f')
 model = Sequential([
@@ -178,7 +178,7 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'conv_3x3', '1e-6')
 
 
-''' Conv 3x3x3 '''
+# Conv 3x3x3
 test_x = np.random.rand(10, 10, 10, 3).astype('f')
 test_y = np.random.rand(10, 1).astype('f')
 model = Sequential([
@@ -190,7 +190,7 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'conv_3x3x3', '1e-6')
 
 
-''' Activation ELU '''
+# Activation ELU
 test_x = np.random.rand(1, 10).astype('f')
 test_y = np.random.rand(1, 1).astype('f')
 model = Sequential([
@@ -201,7 +201,7 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'elu_10', '1e-6')
 
 
-''' Activation relu '''
+# Activation relu
 test_x = np.random.rand(1, 10).astype('f')
 test_y = np.random.rand(1, 10).astype('f')
 model = Sequential([
@@ -211,7 +211,7 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'relu_10', '1e-6')
 
 
-''' Dense relu '''
+# Dense relu
 test_x = np.random.rand(1, 10).astype('f')
 test_y = np.random.rand(1, 10).astype('f')
 model = Sequential([
@@ -222,7 +222,7 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'dense_relu_10', '1e-6')
 
 
-''' Dense relu '''
+# Dense relu
 test_x = np.random.rand(1, 10).astype('f')
 test_y = np.random.rand(1, 10).astype('f')
 model = Sequential([
@@ -233,7 +233,7 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'dense_tanh_10', '1e-6')
 
 
-''' Conv softplus '''
+# Conv softplus
 test_x = np.random.rand(10, 2, 2, 1).astype('f')
 test_y = np.random.rand(10, 1).astype('f')
 model = Sequential([
@@ -244,7 +244,7 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'conv_softplus_2x2', '1e-6')
 
 
-''' Conv hardsigmoid '''
+# Conv hardsigmoid
 test_x = np.random.rand(10, 2, 2, 1).astype('f')
 test_y = np.random.rand(10, 1).astype('f')
 model = Sequential([
@@ -255,7 +255,7 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'conv_hard_sigmoid_2x2', '1e-6')
 
 
-''' Conv sigmoid '''
+# Conv sigmoid
 test_x = np.random.rand(10, 2, 2, 1).astype('f')
 test_y = np.random.rand(10, 1).astype('f')
 model = Sequential([
@@ -266,7 +266,7 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'conv_sigmoid_2x2', '1e-6')
 
 
-''' Maxpooling2D 1x1'''
+# Maxpooling2D 1x1
 test_x = np.random.rand(10, 10, 10, 1).astype('f')
 test_y = np.random.rand(10, 1).astype('f')
 model = Sequential([
@@ -277,7 +277,7 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'maxpool2d_1x1', '1e-6')
 
 
-''' Maxpooling2D 2x2'''
+# Maxpooling2D 2x2
 test_x = np.random.rand(10, 10, 10, 1).astype('f')
 test_y = np.random.rand(10, 1).astype('f')
 model = Sequential([
@@ -288,7 +288,7 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'maxpool2d_2x2', '1e-6')
 
 
-''' Maxpooling2D 3x2x2'''
+# Maxpooling2D 3x2x2
 test_x = np.random.rand(10, 10, 10, 3).astype('f')
 test_y = np.random.rand(10, 1).astype('f')
 model = Sequential([
@@ -299,7 +299,7 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'maxpool2d_3x2x2', '1e-6')
 
 
-''' Maxpooling2D 3x3x3'''
+# Maxpooling2D 3x3x3
 test_x = np.random.rand(10, 10, 10, 3).astype('f')
 test_y = np.random.rand(10, 1).astype('f')
 model = Sequential([
@@ -310,7 +310,7 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'maxpool2d_3x3x3', '1e-6')
 
 
-''' LSTM simple 7x20 '''
+# LSTM simple 7x20
 test_x = np.random.rand(10, 7, 20).astype('f')
 test_y = np.random.rand(10, 3).astype('f')
 model = Sequential([
@@ -319,7 +319,7 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'lstm_simple_7x20', '1e-6')
 
 
-''' LSTM simple stacked 16x9 '''
+# LSTM simple stacked 16x9
 test_x = np.random.rand(10, 16, 9).astype('f')
 test_y = np.random.rand(10, 1).astype('f')
 model = Sequential([
@@ -330,7 +330,7 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'lstm_simple_stacked_16x9', '1e-6')
 
 
-''' LSTM stacked 64x83 '''
+# LSTM stacked 64x83
 test_x = np.random.rand(10, 64, 83).astype('f')
 test_y = np.random.rand(10, 1).astype('f')
 model = Sequential([
@@ -341,7 +341,7 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'lstm_stacked_64x83', '1e-6')
 
 
-''' Embedding 64 '''
+# Embedding 64
 np.random.seed(10)
 test_x = np.random.randint(100, size=(32, 10)).astype('f')
 test_y = np.random.rand(32, 20).astype('f')
@@ -354,7 +354,7 @@ model = Sequential([
 output_testcase(model, test_x, test_y, 'embedding_64', '1e-6')
 
 
-''' Benchmark '''
+# Benchmark
 test_x = np.random.rand(1, 128, 128, 3).astype('f')
 test_y = np.random.rand(1, 10).astype('f')
 model = Sequential([
