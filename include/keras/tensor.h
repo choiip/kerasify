@@ -19,12 +19,20 @@ public:
     Tensor(size_t i, size_t j, size_t k) { resize(i, j, k); }
     Tensor(size_t i, size_t j, size_t k, size_t l) { resize(i, j, k, l); }
 
+    static auto empty(size_t i, size_t j) {
+        Tensor tensor;
+        tensor.dims_ = {i, j};
+        tensor.data_.reserve(i * j);
+        return tensor;
+    }
+
     void resize(size_t i) noexcept;
     void resize(size_t i, size_t j) noexcept;
     void resize(size_t i, size_t j, size_t k) noexcept;
     void resize(size_t i, size_t j, size_t k, size_t l) noexcept;
 
     inline size_t size() const noexcept;
+    inline size_t ndim() const noexcept;
     inline void flatten() noexcept;
 
     inline float& operator()(size_t) noexcept;
@@ -47,14 +55,14 @@ public:
     Tensor select(size_t row) const noexcept;
 
     Tensor& operator+=(const Tensor& other) noexcept;
+    Tensor& operator*=(const Tensor& other) noexcept;
     Tensor fma(const Tensor& scale, const Tensor& bias) const noexcept;
-    Tensor multiply(const Tensor& other) const noexcept;
     Tensor dot(const Tensor& other) const noexcept;
 
     void print() const noexcept;
     void print_shape() const noexcept;
 
-    bool load(std::ifstream& file, size_t dims = 1) noexcept;
+    void load(Stream& file, size_t dims = 1) noexcept;
 
     std::vector<size_t> dims_;
     std::vector<float> data_;
@@ -67,39 +75,43 @@ size_t Tensor::size() const noexcept {
     return elements;
 }
 
+size_t Tensor::ndim() const noexcept {
+    return dims_.size();
+}
+
 void Tensor::flatten() noexcept {
-    kassert(dims_.size() > 0);
+    kassert(ndims());
     dims_ = {size()};
 }
 
 float& Tensor::operator()(size_t i) noexcept {
-    kassert(dims_.size() == 1);
+    kassert(ndims() == 1);
     kassert(i < dims_[0]);
     return data_[i];
 }
 
 float Tensor::operator()(size_t i) const noexcept {
-    kassert(dims_.size() == 1);
+    kassert(ndims() == 1);
     kassert(i < dims_[0]);
     return data_[i];
 }
 
 float& Tensor::operator()(size_t i, size_t j) noexcept {
-    kassert(dims_.size() == 2);
+    kassert(ndims() == 2);
     kassert(i < dims_[0]);
     kassert(j < dims_[1]);
     return data_[dims_[1] * i + j];
 }
 
 float Tensor::operator()(size_t i, size_t j) const noexcept {
-    kassert(dims_.size() == 2);
+    kassert(ndims() == 2);
     kassert(i < dims_[0]);
     kassert(j < dims_[1]);
     return data_[dims_[1] * i + j];
 }
 
 float& Tensor::operator()(size_t i, size_t j, size_t k) noexcept {
-    kassert(dims_.size() == 3);
+    kassert(ndims() == 3);
     kassert(i < dims_[0]);
     kassert(j < dims_[1]);
     kassert(k < dims_[2]);
@@ -107,7 +119,7 @@ float& Tensor::operator()(size_t i, size_t j, size_t k) noexcept {
 }
 
 float Tensor::operator()(size_t i, size_t j, size_t k) const noexcept {
-    kassert(dims_.size() == 3);
+    kassert(ndims() == 3);
     kassert(i < dims_[0]);
     kassert(j < dims_[1]);
     kassert(k < dims_[2]);
@@ -115,7 +127,7 @@ float Tensor::operator()(size_t i, size_t j, size_t k) const noexcept {
 }
 
 float& Tensor::operator()(size_t i, size_t j, size_t k, size_t l) noexcept {
-    kassert(dims_.size() == 4);
+    kassert(ndims() == 4);
     kassert(i < dims_[0]);
     kassert(j < dims_[1]);
     kassert(k < dims_[2]);
@@ -125,7 +137,7 @@ float& Tensor::operator()(size_t i, size_t j, size_t k, size_t l) noexcept {
 
 float Tensor::operator()(size_t i, size_t j, size_t k, size_t l) const
     noexcept {
-    kassert(dims_.size() == 4);
+    kassert(ndims() == 4);
     kassert(i < dims_[0]);
     kassert(j < dims_[1]);
     kassert(k < dims_[2]);
@@ -153,6 +165,11 @@ std::vector<float>::const_iterator Tensor::end() const noexcept {
 
 inline Tensor operator+(Tensor lhs, const Tensor& rhs) noexcept {
     lhs += rhs;
+    return lhs;
+}
+
+inline Tensor operator*(Tensor lhs, const Tensor& rhs) noexcept {
+    lhs *= rhs;
     return lhs;
 }
 

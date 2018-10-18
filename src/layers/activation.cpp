@@ -8,9 +8,8 @@
 namespace keras {
 namespace layers {
 
-bool Activation::load_layer(std::ifstream& file) noexcept {
-    unsigned activation = 0;
-    check(read_uint(file, activation));
+void Activation::load(Stream& file) noexcept {
+    unsigned activation = file.to_uint();
 
     switch (activation) {
     case Linear:
@@ -22,15 +21,15 @@ bool Activation::load_layer(std::ifstream& file) noexcept {
     case Sigmoid:
     case Tanh:
     case SoftMax:
-        activation_type_ = activation;
+        activation_type_ = static_cast<activation_type>(activation);
         break;
     default:
-        check(false);
+        kassert(false);
     }
-    return true;
 }
 
-bool Activation::apply(const Tensor& in, Tensor& out) const noexcept {
+Tensor Activation::operator()(const Tensor& in) const noexcept {
+    Tensor out;
     out.data_.resize(in.size());
     out.dims_ = in.dims_;
 
@@ -85,7 +84,7 @@ bool Activation::apply(const Tensor& in, Tensor& out) const noexcept {
         });
         break;
     case SoftMax: {
-        size_t channels = cast(in.dims_.back());
+        auto channels = cast(in.dims_.back());
         kassert(channels > 1);
 
         Tensor tmp = in;
@@ -95,7 +94,8 @@ bool Activation::apply(const Tensor& in, Tensor& out) const noexcept {
 
         auto out_ = out.begin();
         for (auto t_ = tmp.begin(); t_ != tmp.end(); t_ += channels) {
-            auto norm = 1.f / std::reduce(t_, t_ + channels);
+            // why std::reduce not in libstdc++ yet?
+            auto norm = 1.f / std::accumulate(t_, t_ + channels, 0.f);
             std::transform(t_, t_ + channels, out_, [norm](float x) {
                 return norm * x;
             });
@@ -104,7 +104,7 @@ bool Activation::apply(const Tensor& in, Tensor& out) const noexcept {
         break;
         }
     }
-    return true;
+    return out;
 }
 
 } // namespace layers

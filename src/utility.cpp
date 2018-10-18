@@ -7,27 +7,29 @@
 
 namespace keras {
 
-bool read_uint(std::ifstream& file, unsigned& i) noexcept {
-    file.read(reinterpret_cast<char*>(&i), sizeof(unsigned));
-    check(file.gcount() == sizeof(unsigned));
-    return true;
+unsigned Stream::to_uint() noexcept {
+    unsigned out;
+    *this >> out;
+    return out;
 }
 
-bool read_float(std::ifstream& file, float& f) noexcept {
-    file.read(reinterpret_cast<char*>(&f), sizeof(float));
-    check(file.gcount() == sizeof(float));
-    return true;
+Stream& Stream::operator>>(unsigned& out) noexcept {
+    read(reinterpret_cast<char*>(&out), sizeof(unsigned));
+    kassert(gcount() == sizeof(unsigned));
+    return *this;
 }
 
-bool read_floats(std::ifstream& file, float* f, size_t n) noexcept {
-    check(f);
+Stream& Stream::operator>>(float& out) noexcept {
+    read(reinterpret_cast<char*>(&out), sizeof(float));
+    kassert(gcount() == sizeof(float));
+    return *this;
+}
 
-    auto pos = reinterpret_cast<char*>(f);
-    auto size = cast(sizeof(float) * n);
-
-    file.read(pos, size);
-    check(file.gcount() == size);
-    return true;
+Stream& Stream::operator>>(std::vector<float>& out) noexcept {
+    auto size = cast(sizeof(float) * out.size());
+    read(reinterpret_cast<char*>(out.data()), size);
+    kassert(gcount() == size);
+    return *this;
 }
 
 } // namespace keras

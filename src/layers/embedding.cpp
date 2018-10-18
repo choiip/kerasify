@@ -8,15 +8,15 @@
 namespace keras {
 namespace layers {
 
-bool Embedding::load_layer(std::ifstream& file) noexcept {
-    check(weights_.load(file, 2));
-    return true;
+void Embedding::load(Stream& file) noexcept {
+    weights_.load(file, 2);
 }
 
-bool Embedding::apply(const Tensor& in, Tensor& out) const noexcept {
+Tensor Embedding::operator()(const Tensor& in) const noexcept {
     size_t out_i = in.dims_[0];
     size_t out_j = weights_.dims_[1];
 
+    Tensor out;
     out.data_.reserve(out_i * out_j);
     out.dims_ = {out_i, out_j};
 
@@ -25,7 +25,7 @@ bool Embedding::apply(const Tensor& in, Tensor& out) const noexcept {
         auto last = weights_.begin() + cast(it * out_j + out_j);
         out.data_.insert(out.end(), first, last);
     }
-    return true;
+    return out;
 }
 } // namespace layers
 } // namespace keras

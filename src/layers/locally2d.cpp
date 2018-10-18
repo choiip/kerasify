@@ -8,14 +8,13 @@
 namespace keras {
 namespace layers {
 
-bool LocallyConnected2D::load_layer(std::ifstream& file) noexcept {
-    check(weights_.load(file, 4));
-    check(biases_.load(file));
-    check(activation_.load_layer(file));
-    return true;
+void LocallyConnected2D::load(Stream& file) noexcept {
+    weights_.load(file, 4);
+    biases_.load(file);
+    activation_.load(file);
 }
 
-bool LocallyConnected2D::apply(const Tensor& in, Tensor& out) const noexcept {
+Tensor LocallyConnected2D::operator()(const Tensor& in) const noexcept {
     /*
     // 'in' have shape (x, y, features)
     // 'tmp' have shape (new_x, new_y, outputs)
@@ -25,7 +24,7 @@ bool LocallyConnected2D::apply(const Tensor& in, Tensor& out) const noexcept {
 
     size_t ksize = ww[2] / in.dims_[1];
     size_t offset = ksize - 1;
-    check(in.dims_[0] - offset == ww[0]);
+    kassert(in.dims_[0] - offset == ww[0]);
 
     Tensor tmp{ww[0], ww[1]};
 
@@ -46,10 +45,9 @@ bool LocallyConnected2D::apply(const Tensor& in, Tensor& out) const noexcept {
         for (auto w0 = w_; w0 < w_ + ws0; w0 += ws1)
             *(t_++) = std::inner_product(w0, w0 + ws1, i_, *(b_++));
     }
-    check(activation_.apply(tmp, out));
+    return activation_(tmp);
     */
-    check(activation_.apply(in, out));
-    return true;
+    return activation_(in);
 }
 
 } // namespace layers

@@ -8,18 +8,17 @@
 namespace keras {
 namespace layers {
 
-bool Conv1D::load_layer(std::ifstream& file) noexcept {
-    check(weights_.load(file, 3));
-    check(biases_.load(file));
-    check(activation_.load_layer(file));
-    return true;
+void Conv1D::load(Stream& file) noexcept {
+    weights_.load(file, 3);
+    biases_.load(file);
+    activation_.load(file);
 }
 
-bool Conv1D::apply(const Tensor& in, Tensor& out) const noexcept {
+Tensor Conv1D::operator()(const Tensor& in) const noexcept {
     // 'in' have shape (steps, features)
     // 'tmp' have shape (new_steps, outputs)
     // 'weights' have shape (outputs, kernel, features)
-    check(in.dims_[1] == weights_.dims_[2]);
+    kassert(in.dims_[1] == weights_.dims_[2]);
 
     auto& ww = weights_.dims_;
 
@@ -43,8 +42,7 @@ bool Conv1D::apply(const Tensor& in, Tensor& out) const noexcept {
         for (auto w0 = weights_.end(); w0 < weights_.end(); w0 += ws0)
             *(t_++) = std::inner_product(w0, w0 + ws0, i_, *(b_++));
     }
-    check(activation_.apply(tmp, out));
-    return true;
+    return activation_(tmp);
 }
 
 } // namespace layers

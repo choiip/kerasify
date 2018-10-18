@@ -53,6 +53,12 @@ Tensor& Tensor::operator+=(const Tensor& other) noexcept {
     return *this;
 }
 
+Tensor& Tensor::operator*=(const Tensor& other) noexcept {
+    kassert(dims_ == other.dims_);
+    std::transform(begin(), end(), other.begin(), begin(), std::multiplies<>());
+    return *this;
+}
+
 Tensor Tensor::fma(const Tensor& scale, const Tensor& bias) const noexcept {
     kassert(dims_ == scale.dims_);
     kassert(dims_ == bias.dims_);
@@ -67,19 +73,6 @@ Tensor Tensor::fma(const Tensor& scale, const Tensor& bias) const noexcept {
     for (auto x_ = begin(); x_ != end();)
         *(r_++) = *(x_++) * *(k_++) + *(b_++);
 
-    return result;
-}
-
-Tensor Tensor::multiply(const Tensor& other) const noexcept {
-    kassert(dims_ == other.dims_);
-
-    Tensor result;
-    result.dims_ = dims_;
-    result.data_.reserve(data_.size());
-
-    std::transform(
-        begin(), end(), other.begin(), std::back_inserter(result.data_),
-        std::multiplies<>());
     return result;
 }
 
@@ -104,8 +97,8 @@ Tensor Tensor::dot(const Tensor& other) const noexcept {
 
 void Tensor::print() const noexcept {
     std::vector<size_t> steps(dims_.size());
-    std::partial_sum(
-        dims_.rbegin(), dims_.rend(), steps.rbegin(), std::multiplies<>());
+    std::partial_sum(dims_.rbegin(), dims_.rend(), steps.rbegin(),
+                     std::multiplies<>());
 
     size_t count = 0;
     for (auto&& it : data_) {
@@ -134,21 +127,16 @@ void Tensor::print_shape() const noexcept {
     printf(")\n");
 }
 
-bool Tensor::load(std::ifstream& file, size_t dims) noexcept {
-    check(dims > 0);
-
+void Tensor::load(Stream& file, size_t dims) noexcept {
+    kassert(dims);
     dims_.reserve(dims);
-    for (size_t i = 0; i < dims; ++i) {
-        unsigned stride = 0;
-        check(read_uint(file, stride));
-        check(stride > 0);
-        dims_.push_back(stride);
-    }
-    const auto items = size();
-    data_.resize(items);
-    check(read_floats(file, data_.data(), items));
-
-    return true;
+    std::generate(dims_.begin(), dims_.end(), [&file]{
+        auto stride = file.to_uint();
+        kassert(stride > 0);
+        return stride;
+    });
+    data_.resize(size());
+    file >> data_;
 }
 
 } // namespace keras

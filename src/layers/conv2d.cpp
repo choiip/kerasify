@@ -8,15 +8,14 @@
 namespace keras {
 namespace layers {
 
-bool Conv2D::load_layer(std::ifstream& file) noexcept {
-    check(weights_.load(file, 4));
-    check(biases_.load(file));
-    check(activation_.load_layer(file));
-    return true;
+void Conv2D::load(Stream& file) noexcept {
+    weights_.load(file, 4);
+    biases_.load(file);
+    activation_.load(file);
 }
 
-bool Conv2D::apply(const Tensor& in, Tensor& out) const noexcept {
-    check(in.dims_[2] == weights_.dims_[3]);
+Tensor Conv2D::operator()(const Tensor& in) const noexcept {
+    kassert(in.dims_[2] == weights_.dims_[3]);
 
     auto& ww = weights_.dims_;
 
@@ -52,8 +51,7 @@ bool Conv2D::apply(const Tensor& in, Tensor& out) const noexcept {
                     *t_ += std::inner_product(w1, w1 + ws1, i0, 0.f);
             }
         }
-    check(activation_.apply(tmp, out));
-    return true;
+    return activation_(tmp);
 }
 
 } // namespace layers

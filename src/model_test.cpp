@@ -26,7 +26,7 @@
 using namespace keras;
 
 namespace test {
-inline bool basics() noexcept {
+inline void basics() noexcept {
     {
         const int i = 3;
         const int j = 5;
@@ -45,8 +45,8 @@ inline bool basics() noexcept {
         for (size_t ii = 0; ii < i; ++ii)
             for (size_t jj = 0; jj < j; ++jj)
                 for (size_t kk = 0; kk < k; ++kk) {
-                    check_eq(t(ii, jj, kk), c, 1e-9);
-                    check_eq(t.data_[cc], c, 1e-9);
+                    kassert_eq(t(ii, jj, kk), c, 1e-9);
+                    kassert_eq(t.data_[cc], c, 1e-9);
                     c += 1.f;
                     ++cc;
                 }
@@ -72,8 +72,8 @@ inline bool basics() noexcept {
             for (size_t jj = 0; jj < j; ++jj)
                 for (size_t kk = 0; kk < k; ++kk)
                     for (size_t ll = 0; ll < l; ++ll) {
-                        check_eq(t(ii, jj, kk, ll), c, 1e-9);
-                        check_eq(t.data_[cc], c, 1e-9);
+                        kassert_eq(t(ii, jj, kk, ll), c, 1e-9);
+                        kassert_eq(t.data_[cc], c, 1e-9);
                         c += 1.f;
                         ++cc;
                     }
@@ -86,7 +86,7 @@ inline bool basics() noexcept {
         b.data_ = {2.0, 5.0, 4.0, 1.0};
 
         Tensor result = a + b;
-        check(result.data_ == std::vector<float>({3.0, 7.0, 7.0, 6.0}));
+        kassert(result.data_ == std::vector<float>({3.0, 7.0, 7.0, 6.0}));
     }
     {
         Tensor a{2, 2};
@@ -95,8 +95,8 @@ inline bool basics() noexcept {
         a.data_ = {1.0, 2.0, 3.0, 5.0};
         b.data_ = {2.0, 5.0, 4.0, 1.0};
 
-        Tensor result = a.multiply(b);
-        check(result.data_ == std::vector<float>({2.0, 10.0, 12.0, 5.0}));
+        Tensor result = a * b;
+        kassert(result.data_ == std::vector<float>({2.0, 10.0, 12.0, 5.0}));
     }
     {
         Tensor a{1, 2};
@@ -106,7 +106,7 @@ inline bool basics() noexcept {
         b.data_ = {2.0, 5.0};
 
         Tensor result = a.dot(b);
-        check(result.data_ == std::vector<float>({12.0}));
+        kassert(result.data_ == std::vector<float>({12.0}));
     }
     {
         Tensor a{2, 1};
@@ -116,87 +116,36 @@ inline bool basics() noexcept {
         b.data_ = {2.0, 5.0};
 
         Tensor result = a.dot(b);
-        check(result.data_ == std::vector<float>({2.0, 5.0, 4.0, 10.0}));
+        kassert(result.data_ == std::vector<float>({2.0, 5.0, 4.0, 10.0}));
     }
-    return true;
 }
 } // namespace test
 
 int main() {
-    double load_time = 0.0;
-    double apply_time = 0.0;
-
-    if (!test::basics())
-        return 1;
-
-    if (!test::dense_1x1(load_time, apply_time))
-        return 1;
-
-    if (!test::dense_10x1(load_time, apply_time))
-        return 1;
-
-    if (!test::dense_2x2(load_time, apply_time))
-        return 1;
-
-    if (!test::dense_10x10(load_time, apply_time))
-        return 1;
-
-    if (!test::dense_10x10x10(load_time, apply_time))
-        return 1;
-
-    if (!test::conv_2x2(load_time, apply_time))
-        return 1;
-
-    if (!test::conv_3x3(load_time, apply_time))
-        return 1;
-
-    if (!test::conv_3x3x3(load_time, apply_time))
-        return 1;
-
-    if (!test::elu_10(load_time, apply_time))
-        return 1;
-
-    if (!test::relu_10(load_time, apply_time))
-        return 1;
-
-    if (!test::dense_relu_10(load_time, apply_time))
-        return 1;
-
-    if (!test::dense_tanh_10(load_time, apply_time))
-        return 1;
-
-    if (!test::conv_softplus_2x2(load_time, apply_time))
-        return 1;
-
-    if (!test::conv_hard_sigmoid_2x2(load_time, apply_time))
-        return 1;
-
-    if (!test::conv_sigmoid_2x2(load_time, apply_time))
-        return 1;
-
-    if (!test::maxpool2d_1x1(load_time, apply_time))
-        return 1;
-
-    if (!test::maxpool2d_2x2(load_time, apply_time))
-        return 1;
-
-    if (!test::maxpool2d_3x2x2(load_time, apply_time))
-        return 1;
-
-    if (!test::maxpool2d_3x3x3(load_time, apply_time))
-        return 1;
-
-    if (!test::lstm_simple_7x20(load_time, apply_time))
-        return 1;
-
-    if (!test::lstm_simple_stacked_16x9(load_time, apply_time))
-        return 1;
-
-    if (!test::lstm_stacked_64x83(load_time, apply_time))
-        return 1;
-
-    if (!test::embedding_64(load_time, apply_time))
-        return 1;
+    test::basics();
+    test::dense_1x1();
+    test::dense_10x1();
+    test::dense_2x2();
+    test::dense_10x10();
+    test::dense_10x10x10();
+    test::conv_2x2();
+    test::conv_3x3();
+    test::conv_3x3x3();
+    test::elu_10();
+    test::relu_10();
+    test::dense_relu_10();
+    test::dense_tanh_10();
+    test::conv_softplus_2x2();
+    test::conv_hard_sigmoid_2x2();
+    test::conv_sigmoid_2x2();
+    test::maxpool2d_1x1();
+    test::maxpool2d_2x2();
+    test::maxpool2d_3x2x2();
+    test::maxpool2d_3x3x3();
+    test::lstm_simple_7x20();
+    test::lstm_simple_stacked_16x9();
+    test::lstm_stacked_64x83();
+    test::embedding_64();
 
     const size_t n = 10;
     // Run benchmark (n) times and report duration.
@@ -205,8 +154,7 @@ int main() {
     double total_apply_time = 0.0;
 
     for (size_t i = 0; i < n; ++i) {
-        if (!test::benchmark(load_time, apply_time))
-            return 1;
+        auto [load_time, apply_time] = test::benchmark();
         total_load_time += load_time;
         total_apply_time += apply_time;
     }

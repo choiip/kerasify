@@ -8,17 +8,16 @@
 namespace keras {
 namespace layers {
 
-bool MaxPooling2D::load_layer(std::ifstream& file) noexcept {
-    check(read_uint(file, pool_size_y_));
-    check(read_uint(file, pool_size_x_));
-    return true;
+void MaxPooling2D::load(Stream& file) noexcept {
+    file >> pool_size_y_ >> pool_size_x_;
 }
 
-bool MaxPooling2D::apply(const Tensor& in, Tensor& out) const noexcept {
-    check(in.dims_.size() == 3);
+Tensor MaxPooling2D::operator()(const Tensor& in) const noexcept {
+    kassert(in.ndim() == 3);
 
     const auto& iw = in.dims_;
 
+    Tensor out;
     out.resize(iw[0] / pool_size_y_, iw[1] / pool_size_x_, iw[2]);
     out.fill(-std::numeric_limits<float>::infinity());
 
@@ -40,7 +39,7 @@ bool MaxPooling2D::apply(const Tensor& in, Tensor& out) const noexcept {
                         return std::max(x, y);
                     });
     }
-    return true;
+    return out;
 }
 
 } // namespace layers
