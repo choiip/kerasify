@@ -20,67 +20,55 @@
 
 namespace keras {
 
-bool Model::load_model(const std::string& filename) noexcept {
-    std::ifstream file(filename.c_str(), std::ios::binary);
-    check(file.is_open());
+void Model::load(const std::string& filename) noexcept {
+    Stream file(filename, std::ios::binary);
+    kassert(file.is_open());
 
-    unsigned num_layers = 0;
-    check(read_uint(file, num_layers));
-    layers_.reserve(num_layers);
+    layers_.reserve(file.to_uint());
+    
+    auto make_layer = [](unsigned layer_type) -> std::unique_ptr<Layer> {
+        switch (layer_type) {
+        case Dense:
+            return std::make_unique<layers::Dense>();
+        case Conv1D:
+            return std::make_unique<layers::Conv1D>();
+        case Conv2D:
+            return std::make_unique<layers::Conv2D>();
+        case LocallyConnected1D:
+            return std::make_unique<layers::LocallyConnected1D>();
+        case LocallyConnected2D:
+            return std::make_unique<layers::LocallyConnected2D>();
+        case Flatten:
+            return std::make_unique<layers::Flatten>();
+        case ELU:
+            return std::make_unique<layers::ELU>();
+        case Activation:
+            return std::make_unique<layers::Activation>();
+        case MaxPooling2D:
+            return std::make_unique<layers::MaxPooling2D>();
+        case LSTM:
+            return std::make_unique<layers::LSTM>();
+        case Embedding:
+            return std::make_unique<layers::Embedding>();
+        case BatchNormalization:
+            return std::make_unique<layers::BatchNormalization>();
+        }
+        kassert(false);
+        return nullptr;
+    };
 
-    for (size_t i = 0; i < num_layers; ++i) {
-        unsigned layer_type = 0;
-        check(read_uint(file, layer_type));
-
-        auto layer = [layer_type]() -> std::unique_ptr<Layer> {
-            switch (layer_type) {
-            case Dense:
-                return std::make_unique<layers::Dense>();
-            case Conv1D:
-                return std::make_unique<layers::Conv1D>();
-            case Conv2D:
-                return std::make_unique<layers::Conv2D>();
-            case LocallyConnected1D:
-                return std::make_unique<layers::LocallyConnected1D>();
-            case LocallyConnected2D:
-                return std::make_unique<layers::LocallyConnected2D>();
-            case Flatten:
-                return std::make_unique<layers::Flatten>();
-            case ELU:
-                return std::make_unique<layers::ELU>();
-            case Activation:
-                return std::make_unique<layers::Activation>();
-            case MaxPooling2D:
-                return std::make_unique<layers::MaxPooling2D>();
-            case LSTM:
-                return std::make_unique<layers::LSTM>();
-            case Embedding:
-                return std::make_unique<layers::Embedding>();
-            case BatchNormalization:
-                return std::make_unique<layers::BatchNormalization>();
-            }
-            kassert(false);
-            return nullptr;
-        }();
-        check(layer);
-        check(layer->load_layer(file));
-
-        layers_.push_back(std::move(layer));
-    }
-    return true;
+    std::generate(layers_.begin(), layers_.end(), [&file, &make_layer]{
+        auto layer = make_layer(file.to_uint());
+        layer->load(file);
+        return layer;
+    });
 }
 
-bool Model::apply(const Tensor& in, Tensor& out) const noexcept {
-    Tensor temp_in, temp_out;
-
-    temp_in = in;
-    for (auto&& it : layers_) {
-        check(it->apply(temp_in, temp_out));
-        temp_in = temp_out;
-    }
-    out = temp_out;
-
-    return true;
+Tensor Model::operator()(const Tensor& in) const noexcept {
+    Tensor out = in;
+    for (auto&& layer : layers_)
+        out = (*layer)(out);
+    return out;
 }
 
 } // namespace keras

@@ -8,16 +8,14 @@
 namespace keras {
 namespace layers {
 
-bool BatchNormalization::load_layer(std::ifstream& file) noexcept {
-    check(weights_.load(file));
-    check(biases_.load(file));
-    return true;
+void BatchNormalization::load(Stream& file) noexcept {
+    weights_.load(file);
+    biases_.load(file);
 }
 
-bool BatchNormalization::apply(const Tensor& in, Tensor& out) const noexcept {
-    check(in.dims_.size() > 0);
-    out = in.fma(weights_, biases_);
-    return true;
+Tensor BatchNormalization::operator()(const Tensor& in) const noexcept {
+    kassert(in.ndim());
+    return in.fma(weights_, biases_);
 }
 
 } // namespace layers

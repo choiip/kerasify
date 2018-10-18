@@ -30,8 +30,8 @@ public:
     };
 
     virtual ~Model() = default;
-    virtual bool load_model(const std::string& filename) noexcept;
-    virtual bool apply(const Tensor& in, Tensor& out) const noexcept;
+    virtual void load(const std::string& filename) noexcept;
+    virtual Tensor operator()(const Tensor& in) const noexcept;
 };
 
 } // namespace keras

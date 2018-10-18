@@ -8,13 +8,13 @@
 namespace keras {
 namespace layers {
 
-bool ELU::load_layer(std::ifstream& file) noexcept {
-    check(read_float(file, alpha_));
-    return true;
+void ELU::load(Stream& file) noexcept {
+    file >> alpha_;
 }
 
-bool ELU::apply(const Tensor& in, Tensor& out) const noexcept {
-    check(in.dims_.size() > 0);
+Tensor ELU::operator()(const Tensor& in) const noexcept {
+    kassert(in.ndim());
+    Tensor out;
     out.data_.resize(in.size());
     out.dims_ = in.dims_;
 
@@ -23,7 +23,7 @@ bool ELU::apply(const Tensor& in, Tensor& out) const noexcept {
             return x;
         return alpha_ * std::expm1(x);
     });
-    return true;
+    return out;
 }
 
 } // namespace layers

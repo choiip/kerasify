@@ -62,7 +62,7 @@ public:
     void print() const noexcept;
     void print_shape() const noexcept;
 
-    bool load(std::ifstream& file, size_t dims = 1) noexcept;
+    void load(Stream& file, size_t dims = 1) noexcept;
 
     std::vector<size_t> dims_;
     std::vector<float> data_;

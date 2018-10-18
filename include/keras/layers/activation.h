@@ -24,8 +24,8 @@ public:
         SoftMax = 9
     };
 
-    bool load_layer(std::ifstream& file) noexcept override;
-    bool apply(const Tensor& in, Tensor& out) const noexcept override;
+    void load(Stream& file) noexcept override;
+    Tensor operator()(const Tensor& in) const noexcept override;
 
 private:
     activation_type activation_type_{Linear};

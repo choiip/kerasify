@@ -12,8 +12,8 @@ namespace layers {
 
 class MaxPooling2D final : public Layer {
 public:
-    bool load_layer(std::ifstream& file) noexcept override;
-    bool apply(const Tensor& in, Tensor& out) const noexcept override;
+    void load(Stream& file) noexcept override;
+    Tensor operator()(const Tensor& in) const noexcept override;
 
 private:
     unsigned pool_size_y_{0};

@@ -8,9 +8,8 @@
 namespace keras {
 namespace layers {
 
-bool Activation::load_layer(std::ifstream& file) noexcept {
-    unsigned activation = 0;
-    check(read_uint(file, activation));
+void Activation::load(Stream& file) noexcept {
+    unsigned activation = file.to_uint();
 
     switch (activation) {
     case Linear:
@@ -25,12 +24,12 @@ bool Activation::load_layer(std::ifstream& file) noexcept {
         activation_type_ = activation;
         break;
     default:
-        check(false);
+        kassert(false);
     }
-    return true;
 }
 
-bool Activation::apply(const Tensor& in, Tensor& out) const noexcept {
+Tensor Activation::operator()(const Tensor& in) const noexcept {
+    Tensor out;
     out.data_.resize(in.size());
     out.dims_ = in.dims_;
 
@@ -104,7 +103,7 @@ bool Activation::apply(const Tensor& in, Tensor& out) const noexcept {
         break;
         }
     }
-    return true;
+    return out;
 }
 
 } // namespace layers

@@ -12,12 +12,13 @@ namespace layers {
 
 class LSTM final : public Layer {
 public:
-    bool load_layer(std::ifstream& file) noexcept override;
-    bool apply(const Tensor& in, Tensor& out) const noexcept override;
+    void load(Stream& file) noexcept override;
+    Tensor operator()(const Tensor& in) const noexcept override;
 
 private:
-    bool step(const Tensor& x, Tensor& out, Tensor& ht_1, Tensor& ct_1) const
-        noexcept;
+    std::tuple<Tensor, Tensor>
+    step(const Tensor& x, const Tensor& ht_1, const Tensor& ct_1)
+         const noexcept;
 
     Tensor Wi_;
     Tensor Ui_;

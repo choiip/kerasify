@@ -8,20 +8,19 @@
 namespace keras {
 namespace layers {
 
-bool Dense::load_layer(std::ifstream& file) noexcept {
-    check(weights_.load(file, 2));
-    check(biases_.load(file));
-    check(activation_.load_layer(file));
-    return true;
+void Dense::load(Stream& file) noexcept {
+    weights_.load(file, 2);
+    biases_.load(file);
+    activation_.load(file);
 }
 
-bool Dense::apply(const Tensor& in, Tensor& out) const noexcept {
-    check(in.dims_.back() == weights_.dims_.back());
-    const auto ws = cast(weights_.dims_.back());
+Tensor Dense::operator()(const Tensor& in) const noexcept {
+    kassert(in.dims_.back() == weights_.dims_[1]);
+    const auto ws = cast(weights_.dims_[1]);
 
     Tensor tmp;
     tmp.dims_ = in.dims_;
-    tmp.dims_.back() = weights_.dims_.front();
+    tmp.dims_.back() = weights_.dims_[0];
     tmp.data_.reserve(tmp.size());
 
     auto tmp_ = tmp.begin();
@@ -31,8 +30,7 @@ bool Dense::apply(const Tensor& in, Tensor& out) const noexcept {
             *(tmp_++) = std::inner_product(w, w + ws, in_, *(bias_++));
     }
 
-    check(activation_.apply(tmp, out));
-    return true;
+    return activation_(tmp);
 }
 
 } // namespace layers
