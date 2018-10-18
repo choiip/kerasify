@@ -1,0 +1,13 @@
+image: ubuntu:18.04
+
+build:
+  script:
+    - apt update -qq
+    - apt install -y cmake clang clang-format python3-pip
+    - pip3 install keras tensorflow
+    - python3 make_tests.py
+    - mkdir build
+    - cd build
+    - cmake .. -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_BUILD_TYPE=Debug
+    - cmake --build .
+    - ./kerasify
