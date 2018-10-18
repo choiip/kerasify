@@ -7,28 +7,8 @@
 
 namespace keras {
 
-void Tensor::resize(size_t i) noexcept {
-    dims_ = {i};
-    data_.resize(i);
-}
-
-void Tensor::resize(size_t i, size_t j) noexcept {
-    dims_ = {i, j};
-    data_.resize(i * j);
-}
-
-void Tensor::resize(size_t i, size_t j, size_t k) noexcept {
-    dims_ = {i, j, k};
-    data_.resize(i * j * k);
-}
-
-void Tensor::resize(size_t i, size_t j, size_t k, size_t l) noexcept {
-    dims_ = {i, j, k, l};
-    data_.resize(i * j * k * l);
-}
-
 Tensor Tensor::unpack(size_t row) const noexcept {
-    kassert(dims_.size() >= 2);
+    kassert(ndim() >= 2);
     size_t pack_size = std::accumulate(dims_.begin() + 1, dims_.end(), 0u);
 
     auto base = row * pack_size;

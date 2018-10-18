@@ -14,22 +14,15 @@ namespace keras {
 class Tensor {
 public:
     Tensor() = default;
-    Tensor(size_t i) { resize(i); }
-    Tensor(size_t i, size_t j) { resize(i, j); }
-    Tensor(size_t i, size_t j, size_t k) { resize(i, j, k); }
-    Tensor(size_t i, size_t j, size_t k, size_t l) { resize(i, j, k, l); }
 
-    static auto empty(size_t i, size_t j) {
-        Tensor tensor;
-        tensor.dims_ = {i, j};
-        tensor.data_.reserve(i * j);
-        return tensor;
-    }
+    template <typename... Size>
+    Tensor(Size... sizes) { resize(static_cast<size_t>(sizes)...); }
 
-    void resize(size_t i) noexcept;
-    void resize(size_t i, size_t j) noexcept;
-    void resize(size_t i, size_t j, size_t k) noexcept;
-    void resize(size_t i, size_t j, size_t k, size_t l) noexcept;
+    template <typename... Size>
+    static auto empty(Size... sizes);
+
+    template <typename... Size>
+    void resize(Size... sizes) noexcept;
 
     inline size_t size() const noexcept;
     inline size_t ndim() const noexcept;
@@ -67,6 +60,20 @@ public:
     std::vector<size_t> dims_;
     std::vector<float> data_;
 };
+
+template <typename... Size>
+auto Tensor::empty(Size... sizes) {
+    Tensor tensor;
+    tensor.dims_ = std::vector<size_t>{static_cast<size_t>(sizes)...};
+    tensor.data_.reserve(tensor.size());
+    return tensor;
+}
+
+template <typename... Size>
+void Tensor::resize(Size... sizes) noexcept {
+    dims_ = std::vector<size_t>{static_cast<size_t>(sizes)...};
+    data_.resize(size());
+}
 
 size_t Tensor::size() const noexcept {
     size_t elements = 1;
