@@ -1,26 +1,17 @@
 #!/bin/python3
-import numpy as np
 import os
 import pprint
 import re
 
+import numpy as np
 from keras import backend as K
 from keras.models import Sequential
 from keras.layers import (
-    LocallyConnected1D, Conv2D, Dense, Flatten, Activation,
-    MaxPooling2D, Dropout, BatchNormalization
+    Activation, BatchNormalization, Conv2D, Dense, Dropout,
+    ELU, Embedding, Flatten, LocallyConnected1D, LSTM, MaxPooling2D,
 )
-from keras.layers.recurrent import LSTM
-from keras.layers.advanced_activations import ELU
-from keras.layers.embeddings import Embedding
-from tensorflow import ConfigProto, Session
 
 from kerasify import export_model
-
-config = ConfigProto()
-config.gpu_options.per_process_gpu_memory_fraction = 0.3
-config.gpu_options.allow_growth = True
-K.tensorflow_backend.set_session(Session(config=config))
 
 np.set_printoptions(precision=25, threshold=np.nan)
 
@@ -96,15 +87,15 @@ inline auto %s() {
 
 
 def output_testcase(model, test_x, test_y, name, eps):
-    print('Processing %s' % name)
+    print(f'Processing {name}')
     model.compile(loss='mse', optimizer='adam')
     model.fit(test_x, test_y, epochs=1, verbose=False)
     predict_y = model.predict(test_x).astype('f')
     print(model.summary())
 
-    export_model(model, 'models/%s.model' % name)
+    export_model(model, f'models/{name}.model')
 
-    with open('include/test/%s.h' % name, 'w') as f:
+    with open(f'include/test/{name}.h', 'w') as f:
         x_shape, x_data = c_array(test_x[0])
         y_shape, y_data = c_array(predict_y[0])
 
