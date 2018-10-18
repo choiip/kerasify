@@ -25,7 +25,7 @@ void Model::load(const std::string& filename) noexcept {
     kassert(file.is_open());
 
     layers_.reserve(file.to_uint());
-    
+
     auto make_layer = [](unsigned layer_type) -> std::unique_ptr<Layer> {
         switch (layer_type) {
         case Dense:
