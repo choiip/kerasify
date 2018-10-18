@@ -21,7 +21,7 @@ void Activation::load(Stream& file) noexcept {
     case Sigmoid:
     case Tanh:
     case SoftMax:
-        activation_type_ = activation;
+        activation_type_ = static_cast<activation_type>(activation);
         break;
     default:
         kassert(false);
@@ -84,7 +84,7 @@ Tensor Activation::operator()(const Tensor& in) const noexcept {
         });
         break;
     case SoftMax: {
-        size_t channels = cast(in.dims_.back());
+        auto channels = cast(in.dims_.back());
         kassert(channels > 1);
 
         Tensor tmp = in;
@@ -94,7 +94,8 @@ Tensor Activation::operator()(const Tensor& in) const noexcept {
 
         auto out_ = out.begin();
         for (auto t_ = tmp.begin(); t_ != tmp.end(); t_ += channels) {
-            auto norm = 1.f / std::reduce(t_, t_ + channels);
+            // why std::reduce not in libstdc++ yet?
+            auto norm = 1.f / std::accumulate(t_, t_ + channels, 0.f);
             std::transform(t_, t_ + channels, out_, [norm](float x) {
                 return norm * x;
             });
