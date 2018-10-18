@@ -9,7 +9,6 @@ Design goals:
 * No external dependencies, standard library, C++17 features OK.
 * Model stored on disk in binary format that can be quickly read.
 * Model stored in memory in contiguous block for better cache performance.
-* Doesn't throw exceptions, returns only bool on error.
 * Unit testable, rigorous unit tests.
 
 Currently implemented Keras layers:
@@ -18,7 +17,7 @@ Currently implemented Keras layers:
 * Dense, Conv1D, Conv2D, LocallyConnected1D
 * LSTM
 * BatchNormalization, MaxPooling
-* Activation: Linear, Relu, ELU, SoftPlus, SoftSign, Tanh, Sigmoid, HardSigmoid
+* Activation: ELU, HardSigmoid, Linear, Relu, Sigmoid, SoftMax, SoftPlus, SoftSign, Tanh
 
 Looking for more Keras/C++ libraries? Check out https://github.com/pplonski/keras2cpp/
 
@@ -28,20 +27,22 @@ make_model.py:
 
 ```python
 import numpy as np
-from keras.models import Sequential
+from keras import Sequential
 from keras.layers import Dense
 
 test_x = np.random.rand(10, 10).astype('f')
 test_y = np.random.rand(10).astype('f')
 
 model = Sequential([
-	Dense(1, input_dim=10)
+    Dense(1, input_dim=10)
 ])
 
 model.compile(loss='mse', optimizer='adam')
 model.fit(test_x, test_y, epochs=1, verbose=False)
 
-print model.predict(np.array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]))
+data = np.array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]])
+prediction = model.predict(data)
+print(prediction)
 
 from kerasify import export_model
 export_model(model, 'example.model')
@@ -58,15 +59,14 @@ using keras::Tensor;
 int main() {
     // Initialize model.
     Model model;
-    model.load_model("example.model");
+    model.load("example.model");
 
     // Create a 1D Tensor on length 10 for input data.
     Tensor in{10};
     in.data_ = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
     // Run prediction.
-    Tensor out;
-    model.apply(in, out);
+    Tensor out = model(in);
     out.print();
     return 0;
 }
