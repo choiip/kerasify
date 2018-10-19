@@ -9,7 +9,7 @@ namespace keras {
 namespace layers {
 
 void Activation::load(Stream& file) noexcept {
-    unsigned activation = file.to_uint();
+    unsigned activation = file.get<unsigned>();
 
     switch (activation) {
     case Linear:

@@ -33,7 +33,7 @@ void LSTM::load(Stream& file) noexcept {
     inner_activation_.load(file);
     activation_.load(file);
 
-    return_sequences_ = static_cast<bool>(file.to_uint());
+    return_sequences_ = static_cast<bool>(file.get<unsigned>());
 }
 
 Tensor LSTM::operator()(const Tensor& in) const noexcept {
@@ -42,11 +42,11 @@ Tensor LSTM::operator()(const Tensor& in) const noexcept {
     size_t out_dim = bo_.dims_[1];
     size_t steps = in.dims_[0];
 
-    Tensor c_tm1{1, out_dim};
+    auto c_tm1 = Tensor::empty(1, out_dim);
     c_tm1.fill(0.f);
 
     if (!return_sequences_) {
-        Tensor out{1, out_dim};
+        auto out = Tensor::empty(1, out_dim);
         out.fill(0.f);
         for (size_t s = 0; s < steps; ++s)
             std::tie(out, c_tm1) = step(in.select(s), out, c_tm1);
@@ -54,9 +54,9 @@ Tensor LSTM::operator()(const Tensor& in) const noexcept {
     }
 
     auto out = Tensor::empty(steps, out_dim);
-
-    Tensor last{1, out_dim};
+    auto last = Tensor::empty(1, out_dim);
     last.fill(0.f);
+    
     for (size_t s = 0; s < steps; ++s) {
         std::tie(last, c_tm1) = step(in.select(s), last, c_tm1);
         out.data_.insert(out.end(), last.begin(), last.end());

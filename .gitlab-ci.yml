@@ -10,4 +10,5 @@ build:
     - cd build
     - cmake .. -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_BUILD_TYPE=Debug
     - cmake --build .
-    - ./kerasify
+    - cd ..
+    - ./build/kerasify

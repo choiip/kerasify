@@ -57,8 +57,8 @@ Tensor Tensor::fma(const Tensor& scale, const Tensor& bias) const noexcept {
 }
 
 Tensor Tensor::dot(const Tensor& other) const noexcept {
-    kassert(dims_.size() == 2);
-    kassert(other.dims_.size() == 2);
+    kassert(ndim() == 2);
+    kassert(other.ndim() == 2);
     kassert(dims_[1] == other.dims_[1]);
 
     Tensor tmp{dims_[0], other.dims_[0]};
@@ -76,7 +76,7 @@ Tensor Tensor::dot(const Tensor& other) const noexcept {
 }
 
 void Tensor::print() const noexcept {
-    std::vector<size_t> steps(dims_.size());
+    std::vector<size_t> steps(ndim());
     std::partial_sum(dims_.rbegin(), dims_.rend(), steps.rbegin(),
                      std::multiplies<>());
 
@@ -111,7 +111,7 @@ void Tensor::load(Stream& file, size_t dims) noexcept {
     kassert(dims);
     dims_.reserve(dims);
     std::generate(dims_.begin(), dims_.end(), [&file]{
-        auto stride = file.to_uint();
+        auto stride = file.get<unsigned>();
         kassert(stride > 0);
         return stride;
     });

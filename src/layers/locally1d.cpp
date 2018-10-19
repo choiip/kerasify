@@ -4,6 +4,7 @@
  * MIT License, see LICENSE file.
  */
 #include "keras/layers/locally1d.h"
+#include <iterator>
 
 namespace keras {
 namespace layers {
@@ -22,27 +23,25 @@ Tensor LocallyConnected1D::operator()(const Tensor& in) const noexcept {
     auto& ww = weights_.dims_;
 
     size_t ksize = ww[2] / in.dims_[1];
-    size_t offset = ksize - 1;
-    kassert(in.dims_[0] - offset == ww[0]);
+    kassert(in.dims_[0] + 1 == ww[0] + ksize);
 
-    Tensor tmp{ww[0], ww[1]};
+    auto tmp = Tensor::empty(ww[0], ww[1]);
 
     auto is0 = cast(in.dims_[1]);
     auto ts0 = cast(ww[1]);
     auto ws0 = cast(ww[2] * ww[1]);
     auto ws1 = cast(ww[2]);
 
-    auto b_ptr = biases_.begin();
-    auto t_ptr = tmp.begin();
     auto i_ptr = in.begin();
+    auto b_ptr = biases_.begin();
+    auto t_ptr = std::back_insert_iterator(tmp);
 
     for (auto w_ = weights_.begin(); w_ < weights_.end();
-         w_ += ws0, b_ptr += ts0, t_ptr += ts0, i_ptr += is0) {
+         w_ += ws0, b_ptr += ts0, i_ptr += is0) {
         auto b_ = b_ptr;
-        auto t_ = t_ptr;
         auto i_ = i_ptr;
         for (auto w0 = w_; w0 < w_ + ws0; w0 += ws1)
-            *(t_++) = std::inner_product(w0, w0 + ws1, i_, *(b_++));
+            *(t_ptr++) = std::inner_product(w0, w0 + ws1, i_, *(b_++));
     }
     return activation_(tmp);
 }

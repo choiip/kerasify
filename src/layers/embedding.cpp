@@ -16,9 +16,7 @@ Tensor Embedding::operator()(const Tensor& in) const noexcept {
     size_t out_i = in.dims_[0];
     size_t out_j = weights_.dims_[1];
 
-    Tensor out;
-    out.data_.reserve(out_i * out_j);
-    out.dims_ = {out_i, out_j};
+    auto out = Tensor::empty(out_i, out_j);
 
     for (const auto& it : in.data_) {
         auto first = weights_.begin() + cast(it * out_j);

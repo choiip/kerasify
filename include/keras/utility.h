@@ -14,7 +14,7 @@
 
 #define cast(x) static_cast<ptrdiff_t>(x)
 
-#ifdef DEBUG
+// #ifdef DEBUG
 #define kassert_eq(x, y, eps) \
     { \
         auto x_ = static_cast<double>(x); \
@@ -32,10 +32,10 @@
             "ASSERT [%s:%d] '%s' failed\n", __FILE__, __LINE__, stringify(x)); \
         exit(-1); \
     }
-#else
-#define kassert(x) ;
-#define kassert_eq(x, y, eps) ;
-#endif
+// #else
+// #define kassert(x) ;
+// #define kassert_eq(x, y, eps) ;
+// #endif
 
 namespace keras {
 
@@ -49,15 +49,39 @@ double timeit(Function&& function, Args&&... args) noexcept {
     return std::chrono::duration<double>(end - begin).count();
 }
 
-class Stream: public std::fstream {
+class Stream: public std::ifstream {
+    template <typename T>
+    friend Stream& operator>>(Stream&, T&) noexcept;
+
+    template <typename T>
+    friend Stream& operator>>(Stream&, std::vector<T>&) noexcept;
+
 public:
-    using std::fstream::fstream;
+    using std::ifstream::ifstream;
 
-    unsigned to_uint() noexcept;
-    Stream& operator>>(unsigned&) noexcept;
-
-    Stream& operator>>(float&) noexcept;
-    Stream& operator>>(std::vector<float>&) noexcept;
+    template <typename T>
+    T get() noexcept {
+        T value;
+        *this >> value;
+        return value;
+    }
 };
+
+template <typename T>
+Stream& operator>>(Stream& ifs, T& value) noexcept {
+    ifs.read(reinterpret_cast<char*>(&value), sizeof(T));
+    kassert(ifs);
+    return ifs;
+}
+
+template <typename T>
+Stream& operator>>(Stream& ifs, std::vector<T>& vector) noexcept {
+    auto size = sizeof(T) * vector.size();
+    printf(" Read vector with size %zu\n", size);
+    ifs.read(reinterpret_cast<char*>(vector.data()), cast(size));
+    kassert(ifs);
+    return ifs;
+}
+
 
 } // namespace keras

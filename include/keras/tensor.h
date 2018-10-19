@@ -64,14 +64,14 @@ public:
 template <typename... Size>
 auto Tensor::empty(Size... sizes) {
     Tensor tensor;
-    tensor.dims_ = std::vector<size_t>{static_cast<size_t>(sizes)...};
+    tensor.dims_ = {static_cast<size_t>(sizes)...};
     tensor.data_.reserve(tensor.size());
     return tensor;
 }
 
 template <typename... Size>
 void Tensor::resize(Size... sizes) noexcept {
-    dims_ = std::vector<size_t>{static_cast<size_t>(sizes)...};
+    dims_ = {static_cast<size_t>(sizes)...};
     data_.resize(size());
 }
 
@@ -87,38 +87,38 @@ size_t Tensor::ndim() const noexcept {
 }
 
 void Tensor::flatten() noexcept {
-    kassert(ndims());
+    kassert(ndim());
     dims_ = {size()};
 }
 
 float& Tensor::operator()(size_t i) noexcept {
-    kassert(ndims() == 1);
+    kassert(ndim() == 1);
     kassert(i < dims_[0]);
     return data_[i];
 }
 
 float Tensor::operator()(size_t i) const noexcept {
-    kassert(ndims() == 1);
+    kassert(ndim() == 1);
     kassert(i < dims_[0]);
     return data_[i];
 }
 
 float& Tensor::operator()(size_t i, size_t j) noexcept {
-    kassert(ndims() == 2);
+    kassert(ndim() == 2);
     kassert(i < dims_[0]);
     kassert(j < dims_[1]);
     return data_[dims_[1] * i + j];
 }
 
 float Tensor::operator()(size_t i, size_t j) const noexcept {
-    kassert(ndims() == 2);
+    kassert(ndim() == 2);
     kassert(i < dims_[0]);
     kassert(j < dims_[1]);
     return data_[dims_[1] * i + j];
 }
 
 float& Tensor::operator()(size_t i, size_t j, size_t k) noexcept {
-    kassert(ndims() == 3);
+    kassert(ndim() == 3);
     kassert(i < dims_[0]);
     kassert(j < dims_[1]);
     kassert(k < dims_[2]);
@@ -126,7 +126,7 @@ float& Tensor::operator()(size_t i, size_t j, size_t k) noexcept {
 }
 
 float Tensor::operator()(size_t i, size_t j, size_t k) const noexcept {
-    kassert(ndims() == 3);
+    kassert(ndim() == 3);
     kassert(i < dims_[0]);
     kassert(j < dims_[1]);
     kassert(k < dims_[2]);
@@ -134,7 +134,7 @@ float Tensor::operator()(size_t i, size_t j, size_t k) const noexcept {
 }
 
 float& Tensor::operator()(size_t i, size_t j, size_t k, size_t l) noexcept {
-    kassert(ndims() == 4);
+    kassert(ndim() == 4);
     kassert(i < dims_[0]);
     kassert(j < dims_[1]);
     kassert(k < dims_[2]);
@@ -144,7 +144,7 @@ float& Tensor::operator()(size_t i, size_t j, size_t k, size_t l) noexcept {
 
 float Tensor::operator()(size_t i, size_t j, size_t k, size_t l) const
     noexcept {
-    kassert(ndims() == 4);
+    kassert(ndim() == 4);
     kassert(i < dims_[0]);
     kassert(j < dims_[1]);
     kassert(k < dims_[2]);

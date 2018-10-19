@@ -22,46 +22,59 @@ namespace keras {
 
 void Model::load(const std::string& filename) noexcept {
     Stream file(filename, std::ios::binary);
-    kassert(file.is_open());
-
-    layers_.reserve(file.to_uint());
+    kassert(file);
 
     auto make_layer = [](unsigned layer_type) -> std::unique_ptr<Layer> {
         switch (layer_type) {
         case Dense:
+            printf(" add Dense layer\n");
             return std::make_unique<layers::Dense>();
         case Conv1D:
+            printf(" add Conv1D layer\n");
             return std::make_unique<layers::Conv1D>();
         case Conv2D:
+            printf(" add Conv2D layer\n");
             return std::make_unique<layers::Conv2D>();
         case LocallyConnected1D:
+            printf(" add LocallyConnected1D layer\n");
             return std::make_unique<layers::LocallyConnected1D>();
         case LocallyConnected2D:
+            printf(" add LocallyConnected2D layer\n");
             return std::make_unique<layers::LocallyConnected2D>();
         case Flatten:
+            printf(" add Flatten layer\n");
             return std::make_unique<layers::Flatten>();
         case ELU:
+            printf(" add ELU layer\n");
             return std::make_unique<layers::ELU>();
         case Activation:
+            printf(" add Activation layer\n");
             return std::make_unique<layers::Activation>();
         case MaxPooling2D:
+            printf(" add MaxPooling2D layer\n");
             return std::make_unique<layers::MaxPooling2D>();
         case LSTM:
+            printf(" add LSTM layer\n");
             return std::make_unique<layers::LSTM>();
         case Embedding:
+            printf(" add Embedding layer\n");
             return std::make_unique<layers::Embedding>();
         case BatchNormalization:
+            printf(" add BatchNormalization layer\n");
             return std::make_unique<layers::BatchNormalization>();
         }
+        printf(" unknown layer\n");
         kassert(false);
         return nullptr;
     };
 
-    std::generate(layers_.begin(), layers_.end(), [&file, &make_layer]{
-        auto layer = make_layer(file.to_uint());
+    auto layers_count = file.get<unsigned>();
+    layers_.reserve(layers_count);
+    for (auto i = 0; i != layers_count; ++i) {
+        auto layer = make_layer(file.get<unsigned>());
         layer->load(file);
-        return layer;
-    });
+        layers_.push_back(layer);
+    }
 }
 
 Tensor Model::operator()(const Tensor& in) const noexcept {

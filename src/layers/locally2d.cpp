@@ -26,7 +26,7 @@ Tensor LocallyConnected2D::operator()(const Tensor& in) const noexcept {
     size_t offset = ksize - 1;
     kassert(in.dims_[0] - offset == ww[0]);
 
-    Tensor tmp{ww[0], ww[1]};
+    auto tmp = Tensor::empty(ww[0], ww[1]);
 
     auto is0 = cast(in.dims_[1]);
     auto ts0 = cast(ww[1]);

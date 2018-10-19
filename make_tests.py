@@ -69,15 +69,14 @@ inline auto %s() {
         model.load("models/%s.model");
     });
 
-    keras::Tensor predict = out;
-
+    keras::Tensor predicted;
     auto apply_time = keras::timeit([&]{
-        out = model(in);
+        predicted = model(in);
     });
 
-    for (size_t i = 0; i < out.dims_[0]; ++i) {
-        kassert_eq(out(i), predict(i), %s);
-    }
+    for (size_t i = 0; i < out.dims_[0]; ++i)
+        kassert_eq(out(i), predicted(i), %s);
+
     return std::make_tuple(load_time, apply_time);
 }
 
