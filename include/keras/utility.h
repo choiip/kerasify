@@ -14,7 +14,7 @@
 
 #define cast(x) static_cast<ptrdiff_t>(x)
 
-// #ifdef DEBUG
+#ifndef NDEBUG
 #define kassert_eq(x, y, eps) \
     { \
         auto x_ = static_cast<double>(x); \
@@ -32,10 +32,10 @@
             "ASSERT [%s:%d] '%s' failed\n", __FILE__, __LINE__, stringify(x)); \
         exit(-1); \
     }
-// #else
-// #define kassert(x) ;
-// #define kassert_eq(x, y, eps) ;
-// #endif
+#else
+#define kassert(x) ;
+#define kassert_eq(x, y, eps) ;
+#endif
 
 namespace keras {
 
