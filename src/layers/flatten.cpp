@@ -8,12 +8,11 @@
 namespace keras {
 namespace layers {
 
-void Flatten::load(Stream&) noexcept {}
+void Flatten::load(Stream&) {}
 
 Tensor Flatten::operator()(const Tensor& in) const noexcept {
     Tensor out = in;
-    out.flatten();
-    return out;
+    return out.flatten();
 }
 
 } // namespace layers

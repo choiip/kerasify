@@ -8,7 +8,7 @@
 namespace keras {
 namespace layers {
 
-void LocallyConnected2D::load(Stream& file) noexcept {
+void LocallyConnected2D::load(Stream& file) {
     weights_.load(file, 4);
     biases_.load(file);
     activation_.load(file);

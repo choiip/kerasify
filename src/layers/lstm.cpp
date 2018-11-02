@@ -9,7 +9,7 @@
 namespace keras {
 namespace layers {
 
-void LSTM::load(Stream& file) noexcept {
+void LSTM::load(Stream& file) {
     // Load Input Weights and Biases
     Wi_.load(file, 2);
     Ui_.load(file, 2);
@@ -42,21 +42,18 @@ Tensor LSTM::operator()(const Tensor& in) const noexcept {
     size_t out_dim = bo_.dims_[1];
     size_t steps = in.dims_[0];
 
-    auto c_tm1 = Tensor::empty(1, out_dim);
-    c_tm1.fill(0.f);
+    Tensor c_tm1{1, out_dim};
 
     if (!return_sequences_) {
-        auto out = Tensor::empty(1, out_dim);
-        out.fill(0.f);
+        Tensor out{1, out_dim};
         for (size_t s = 0; s < steps; ++s)
             std::tie(out, c_tm1) = step(in.select(s), out, c_tm1);
-        return out;
+        return out.flatten();
     }
 
     auto out = Tensor::empty(steps, out_dim);
-    auto last = Tensor::empty(1, out_dim);
-    last.fill(0.f);
-    
+    Tensor last{1, out_dim};
+
     for (size_t s = 0; s < steps; ++s) {
         std::tie(last, c_tm1) = step(in.select(s), last, c_tm1);
         out.data_.insert(out.end(), last.begin(), last.end());
@@ -72,8 +69,8 @@ LSTM::step(const Tensor& x, const Tensor& h_tm1, const Tensor& c_tm1)
     auto c_ = x.dot(Wc_) + h_tm1.dot(Uc_) + bc_;
     auto o_ = x.dot(Wo_) + h_tm1.dot(Uo_) + bo_;
 
-    auto cc = activation_((inner_activation_(f_) * c_tm1) +
-                          (inner_activation_(i_) * activation_(c_)));
+    auto cc = inner_activation_(f_) * c_tm1 +
+              inner_activation_(i_) * activation_(c_);
     auto out = inner_activation_(o_) * activation_(cc);
     return std::make_tuple(out, cc);
 }

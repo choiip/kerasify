@@ -9,7 +9,7 @@
 namespace keras {
 namespace layers {
 
-void Conv1D::load(Stream& file) noexcept {
+void Conv1D::load(Stream& file) {
     weights_.load(file, 3);
     biases_.load(file);
     activation_.load(file);
@@ -33,7 +33,7 @@ Tensor Conv1D::operator()(const Tensor& in) const noexcept {
 
     auto i_ptr = in.begin();
     auto b_ptr = biases_.begin();
-    auto t_ptr = std::back_insert_iterator(tmp);
+    auto t_ptr = std::back_inserter(tmp.data_);
 
     for (ptrdiff_t x = 0; x < tx; ++x) {
         auto b_ = b_ptr;

@@ -26,7 +26,7 @@ public:
 
     inline size_t size() const noexcept;
     inline size_t ndim() const noexcept;
-    inline void flatten() noexcept;
+    inline Tensor& flatten() noexcept;
 
     inline float& operator()(size_t) noexcept;
     inline float& operator()(size_t, size_t) noexcept;
@@ -55,7 +55,7 @@ public:
     void print() const noexcept;
     void print_shape() const noexcept;
 
-    void load(Stream& file, size_t dims = 1) noexcept;
+    void load(Stream& file, size_t dims = 1);
 
     std::vector<size_t> dims_;
     std::vector<float> data_;
@@ -86,9 +86,10 @@ size_t Tensor::ndim() const noexcept {
     return dims_.size();
 }
 
-void Tensor::flatten() noexcept {
+Tensor& Tensor::flatten() noexcept {
     kassert(ndim());
     dims_ = {size()};
+    return *this;
 }
 
 float& Tensor::operator()(size_t i) noexcept {

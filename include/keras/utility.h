@@ -77,7 +77,6 @@ Stream& operator>>(Stream& ifs, T& value) noexcept {
 template <typename T>
 Stream& operator>>(Stream& ifs, std::vector<T>& vector) noexcept {
     auto size = sizeof(T) * vector.size();
-    printf(" Read vector with size %zu\n", size);
     ifs.read(reinterpret_cast<char*>(vector.data()), cast(size));
     kassert(ifs);
     return ifs;

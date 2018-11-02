@@ -8,7 +8,7 @@
 namespace keras {
 namespace layers {
 
-void ELU::load(Stream& file) noexcept {
+void ELU::load(Stream& file) {
     file >> alpha_;
 }
 

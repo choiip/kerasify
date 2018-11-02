@@ -63,10 +63,10 @@ def write_tensor(f, data, dims=1):
 
 
 def export_activation(activation, f):
-    if activation in ACTIVATIONS:
+    try:
         f.write(struct.pack('I', ACTIVATIONS.index(activation) + 1))
-        return
-    raise NotImplementedError(activation)
+    except ValueError as exc:
+        raise NotImplementedError(activation) from exc
 
 
 @singledispatch

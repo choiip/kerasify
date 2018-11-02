@@ -30,7 +30,7 @@ public:
     };
 
     virtual ~Model() = default;
-    virtual void load(const std::string& filename) noexcept;
+    virtual void load(const std::string& filename);
     virtual Tensor operator()(const Tensor& in) const noexcept;
 };
 

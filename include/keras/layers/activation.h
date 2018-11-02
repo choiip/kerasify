@@ -24,7 +24,7 @@ public:
         SoftMax = 9
     };
 
-    void load(Stream& file) noexcept override;
+    void load(Stream& file) override;
     Tensor operator()(const Tensor& in) const noexcept override;
 
 private:

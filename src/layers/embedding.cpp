@@ -8,7 +8,7 @@
 namespace keras {
 namespace layers {
 
-void Embedding::load(Stream& file) noexcept {
+void Embedding::load(Stream& file) {
     weights_.load(file, 2);
 }
 

@@ -8,7 +8,7 @@
 namespace keras {
 namespace layers {
 
-void BatchNormalization::load(Stream& file) noexcept {
+void BatchNormalization::load(Stream& file) {
     weights_.load(file);
     biases_.load(file);
 }

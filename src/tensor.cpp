@@ -107,9 +107,9 @@ void Tensor::print_shape() const noexcept {
     printf(")\n");
 }
 
-void Tensor::load(Stream& file, size_t dims) noexcept {
+void Tensor::load(Stream& file, size_t dims) {
     kassert(dims);
-    dims_.reserve(dims);
+    dims_.resize(dims);
     std::generate(dims_.begin(), dims_.end(), [&file]{
         auto stride = file.get<unsigned>();
         kassert(stride > 0);

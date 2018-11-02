@@ -8,8 +8,8 @@
 namespace keras {
 namespace layers {
 
-void Activation::load(Stream& file) noexcept {
-    unsigned activation = file.get<unsigned>();
+void Activation::load(Stream& file) {
+    auto activation = file.get<unsigned>();
 
     switch (activation) {
     case Linear:

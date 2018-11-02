@@ -8,7 +8,7 @@
 namespace keras {
 namespace layers {
 
-void Dense::load(Stream& file) noexcept {
+void Dense::load(Stream& file) {
     weights_.load(file, 2);
     biases_.load(file);
     activation_.load(file);
@@ -23,7 +23,7 @@ Tensor Dense::operator()(const Tensor& in) const noexcept {
     tmp.dims_.back() = weights_.dims_[0];
     tmp.data_.reserve(tmp.size());
 
-    auto tmp_ = tmp.begin();
+    auto tmp_ = std::back_inserter(tmp.data_);
     for (auto in_ = in.begin(); in_ < in.end(); in_ += ws) {
         auto bias_ = biases_.begin();
         for (auto w = weights_.begin(); w < weights_.end(); w += ws)

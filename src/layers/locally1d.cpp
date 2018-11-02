@@ -9,7 +9,7 @@
 namespace keras {
 namespace layers {
 
-void LocallyConnected1D::load(Stream& file) noexcept {
+void LocallyConnected1D::load(Stream& file) {
     weights_.load(file, 3);
     biases_.load(file, 2);
     activation_.load(file);
@@ -34,7 +34,7 @@ Tensor LocallyConnected1D::operator()(const Tensor& in) const noexcept {
 
     auto i_ptr = in.begin();
     auto b_ptr = biases_.begin();
-    auto t_ptr = std::back_insert_iterator(tmp);
+    auto t_ptr = std::back_inserter(tmp.data_);
 
     for (auto w_ = weights_.begin(); w_ < weights_.end();
          w_ += ws0, b_ptr += ts0, i_ptr += is0) {
