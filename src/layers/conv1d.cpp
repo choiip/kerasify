@@ -1,19 +1,16 @@
 ﻿/*
- * Copyright (c) 2016 Robert W. Rose, 2018 Paul Maevskikh
+ * Copyright (c) 2016 Robert W. Rose
+ * Copyright (c) 2018 Paul Maevskikh
  *
  * MIT License, see LICENSE file.
  */
 #include "keras/layers/conv1d.h"
-#include <iterator>
 
 namespace keras {
 namespace layers {
 
-void Conv1D::load(Stream& file) {
-    weights_.load(file, 3);
-    biases_.load(file);
-    activation_.load(file);
-}
+Conv1D::Conv1D(Stream& file)
+: weights_(file, 3), biases_(file), activation_(file) {}
 
 Tensor Conv1D::operator()(const Tensor& in) const noexcept {
     // 'in' have shape (steps, features)

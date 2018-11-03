@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright (c) 2016 Robert W. Rose, 2018 Paul Maevskikh
+ * Copyright (c) 2016 Robert W. Rose
+ * Copyright (c) 2018 Paul Maevskikh
  *
  * MIT License, see LICENSE file.
  */
@@ -10,9 +11,8 @@
 namespace keras {
 namespace layers {
 
-class Activation final : public Layer {
-public:
-    enum activation_type {
+class Activation final : public Layer<Activation> {
+    enum _Type : unsigned {
         Linear = 1,
         Relu = 2,
         Elu = 3,
@@ -23,12 +23,11 @@ public:
         HardSigmoid = 8,
         SoftMax = 9
     };
+    _Type type_ {Linear};
 
-    void load(Stream& file) override;
+public:
+    Activation(Stream& file);
     Tensor operator()(const Tensor& in) const noexcept override;
-
-private:
-    activation_type activation_type_{Linear};
 };
 
 } // namespace layers

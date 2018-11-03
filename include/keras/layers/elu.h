@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright (c) 2016 Robert W. Rose, 2018 Paul Maevskikh
+ * Copyright (c) 2016 Robert W. Rose
+ * Copyright (c) 2018 Paul Maevskikh
  *
  * MIT License, see LICENSE file.
  */
@@ -10,13 +11,12 @@
 namespace keras {
 namespace layers {
 
-class ELU final : public Layer {
-public:
-    void load(Stream& file) override;
-    Tensor operator()(const Tensor& in) const noexcept override;
-
-private:
+class ELU final : public Layer<ELU> {
     float alpha_{1.f};
+
+public:
+    ELU(Stream& file);
+    Tensor operator()(const Tensor& in) const noexcept override;
 };
 
 } // namespace layers

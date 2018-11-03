@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright (c) 2016 Robert W. Rose, 2018 Paul Maevskikh
+ * Copyright (c) 2016 Robert W. Rose
+ * Copyright (c) 2018 Paul Maevskikh
  *
  * MIT License, see LICENSE file.
  */
@@ -10,16 +11,7 @@
 namespace keras {
 namespace layers {
 
-class LSTM final : public Layer {
-public:
-    void load(Stream& file) override;
-    Tensor operator()(const Tensor& in) const noexcept override;
-
-private:
-    std::tuple<Tensor, Tensor>
-    step(const Tensor& x, const Tensor& ht_1, const Tensor& ct_1)
-         const noexcept;
-
+class LSTM final : public Layer<LSTM> {
     Tensor Wi_;
     Tensor Ui_;
     Tensor bi_;
@@ -36,6 +28,14 @@ private:
     Activation inner_activation_;
     Activation activation_;
     bool return_sequences_{false};
+
+    std::tuple<Tensor, Tensor>
+    step(const Tensor& x, const Tensor& ht_1, const Tensor& ct_1)
+         const noexcept;
+
+public:
+    LSTM(Stream& file);
+    Tensor operator()(const Tensor& in) const noexcept override;
 };
 
 } // namespace layers

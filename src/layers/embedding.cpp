@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright (c) 2016 Robert W. Rose, 2018 Paul Maevskikh
+ * Copyright (c) 2016 Robert W. Rose
+ * Copyright (c) 2018 Paul Maevskikh
  *
  * MIT License, see LICENSE file.
  */
@@ -8,9 +9,7 @@
 namespace keras {
 namespace layers {
 
-void Embedding::load(Stream& file) {
-    weights_.load(file, 2);
-}
+Embedding::Embedding(Stream& file) : weights_(file, 2) {}
 
 Tensor Embedding::operator()(const Tensor& in) const noexcept {
     size_t out_i = in.dims_[0];

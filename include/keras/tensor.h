@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright (c) 2016 Robert W. Rose, 2018 Paul Maevskikh
+ * Copyright (c) 2016 Robert W. Rose
+ * Copyright (c) 2018 Paul Maevskikh
  *
  * MIT License, see LICENSE file.
  */
@@ -8,15 +9,20 @@
 #include "keras/utility.h"
 #include <algorithm>
 #include <numeric>
-#include <vector>
 
 namespace keras {
 class Tensor {
 public:
     Tensor() = default;
 
-    template <typename... Size>
-    Tensor(Size... sizes) { resize(static_cast<size_t>(sizes)...); }
+    template <
+        typename... Size,
+        typename = std::enable_if_t<(... && std::is_integral_v<Size>)>>
+    Tensor(Size... sizes) {
+        resize(static_cast<size_t>(sizes)...);
+    }
+
+    Tensor(Stream& file, size_t rank = 1);
 
     template <typename... Size>
     static auto empty(Size... sizes);
@@ -54,8 +60,6 @@ public:
 
     void print() const noexcept;
     void print_shape() const noexcept;
-
-    void load(Stream& file, size_t dims = 1);
 
     std::vector<size_t> dims_;
     std::vector<float> data_;

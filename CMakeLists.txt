@@ -46,7 +46,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g"
 
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} \
     -g -pg -no-pie \
-    -O3 -ffast-math -fexceptions -fno-rtti"
+    -O3 -ffast-math -fno-rtti"
     CACHE INTERNAL ""
 )
 set(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO
@@ -56,7 +56,7 @@ set(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO
 
 # rolled loops works faster here
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} \
-    -O3 -ffast-math -fexceptions -fno-rtti"
+    -O3 -ffast-math -fno-rtti"
     CACHE INTERNAL ""
 )
 
@@ -72,7 +72,7 @@ endif()
 
 set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} \
     -O3 -ffast-math -fno-math-errno -fno-unroll-loops \
-    -fno-exceptions -fno-rtti -fno-stack-protector -fno-ident \
+    -fno-rtti -fno-stack-protector -fno-ident \
     -fomit-frame-pointer -ffunction-sections -fdata-sections \
     -fmerge-all-constants"
     CACHE INTERNAL ""
@@ -82,7 +82,6 @@ set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} \
 
 project(kerasify)
 
-include_directories(SYSTEM "/usr/include/c++/7")
 include_directories(kerasify PRIVATE "./include")
 
 add_executable(kerasify "")
@@ -103,6 +102,7 @@ target_sources(kerasify PRIVATE
     src/model.cpp
     src/model_test.cpp
     src/tensor.cpp
+    src/utility.cpp
 )
 
 # find_package(Threads REQUIRED)

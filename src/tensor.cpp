@@ -1,11 +1,26 @@
 ﻿/*
- * Copyright (c) 2016 Robert W. Rose, 2018 Paul Maevskikh
+ * Copyright (c) 2016 Robert W. Rose
+ * Copyright (c) 2018 Paul Maevskikh
  *
  * MIT License, see LICENSE file.
  */
 #include "keras/tensor.h"
 
 namespace keras {
+
+Tensor::Tensor(Stream& file, size_t rank) : Tensor() {
+    kassert(rank);
+
+    dims_.reserve(rank);
+    std::generate_n(std::back_inserter(dims_), rank, [&file] {
+        unsigned stride = file;
+        kassert(stride > 0);
+        return stride;
+    });
+
+    data_.resize(size());
+    file.reads(reinterpret_cast<char*>(data_.data()), sizeof(float) * size());
+}
 
 Tensor Tensor::unpack(size_t row) const noexcept {
     kassert(ndim() >= 2);
@@ -61,7 +76,7 @@ Tensor Tensor::dot(const Tensor& other) const noexcept {
     kassert(other.ndim() == 2);
     kassert(dims_[1] == other.dims_[1]);
 
-    Tensor tmp{dims_[0], other.dims_[0]};
+    Tensor tmp {dims_[0], other.dims_[0]};
 
     auto ts = cast(tmp.dims_[1]);
     auto is = cast(dims_[1]);
@@ -77,8 +92,8 @@ Tensor Tensor::dot(const Tensor& other) const noexcept {
 
 void Tensor::print() const noexcept {
     std::vector<size_t> steps(ndim());
-    std::partial_sum(dims_.rbegin(), dims_.rend(), steps.rbegin(),
-                     std::multiplies<>());
+    std::partial_sum(
+        dims_.rbegin(), dims_.rend(), steps.rbegin(), std::multiplies<>());
 
     size_t count = 0;
     for (auto&& it : data_) {
@@ -105,18 +120,6 @@ void Tensor::print_shape() const noexcept {
             printf(", ");
     }
     printf(")\n");
-}
-
-void Tensor::load(Stream& file, size_t dims) {
-    kassert(dims);
-    dims_.resize(dims);
-    std::generate(dims_.begin(), dims_.end(), [&file]{
-        auto stride = file.get<unsigned>();
-        kassert(stride > 0);
-        return stride;
-    });
-    data_.resize(size());
-    file >> data_;
 }
 
 } // namespace keras

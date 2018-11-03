@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright (c) 2016 Robert W. Rose, 2018 Paul Maevskikh
+ * Copyright (c) 2016 Robert W. Rose
+ * Copyright (c) 2018 Paul Maevskikh
  *
  * MIT License, see LICENSE file.
  */
@@ -8,6 +9,9 @@
 #include <chrono>
 #include <cmath>
 #include <fstream>
+#include <functional>
+#include <tuple>
+#include <type_traits>
 #include <vector>
 
 #define stringify(x) #x
@@ -39,48 +43,36 @@
 
 namespace keras {
 
-template <typename Function, typename... Args>
-double timeit(Function&& function, Args&&... args) noexcept {
-    auto begin = std::chrono::high_resolution_clock::now();
+template <typename Callable, typename... Args>
+auto timeit(Callable&& callable, Args&&... args) {
+    using namespace std::chrono;
 
-    std::forward<Function>(function)(std::forward<Args>(args)...);
-
-    auto end = std::chrono::high_resolution_clock::now();
-    return std::chrono::duration<double>(end - begin).count();
+    auto begin = high_resolution_clock::now();
+    if constexpr (std::is_void_v<std::invoke_result_t<Callable, Args...>>)
+        return std::make_tuple(
+            (std::invoke(callable, args...), nullptr),
+            duration<double>(high_resolution_clock::now() - begin).count());
+    else
+        return std::make_tuple(
+            std::invoke(callable, args...),
+            duration<double>(high_resolution_clock::now() - begin).count());
 }
 
-class Stream: public std::ifstream {
-    template <typename T>
-    friend Stream& operator>>(Stream&, T&) noexcept;
-
-    template <typename T>
-    friend Stream& operator>>(Stream&, std::vector<T>&) noexcept;
+class Stream {
+    std::ifstream stream_;
 
 public:
-    using std::ifstream::ifstream;
+    Stream(const std::string& filename);
+    Stream& reads(char*, size_t);
 
-    template <typename T>
-    T get() noexcept {
+    template <
+        typename T,
+        typename = std::enable_if_t<std::is_default_constructible_v<T>>>
+    operator T() noexcept {
         T value;
-        *this >> value;
+        reads(reinterpret_cast<char*>(&value), sizeof(T));
         return value;
     }
 };
-
-template <typename T>
-Stream& operator>>(Stream& ifs, T& value) noexcept {
-    ifs.read(reinterpret_cast<char*>(&value), sizeof(T));
-    kassert(ifs);
-    return ifs;
-}
-
-template <typename T>
-Stream& operator>>(Stream& ifs, std::vector<T>& vector) noexcept {
-    auto size = sizeof(T) * vector.size();
-    ifs.read(reinterpret_cast<char*>(vector.data()), cast(size));
-    kassert(ifs);
-    return ifs;
-}
-
 
 } // namespace keras

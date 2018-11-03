@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright (c) 2016 Robert W. Rose, 2018 Paul Maevskikh
+ * Copyright (c) 2016 Robert W. Rose
+ * Copyright (c) 2018 Paul Maevskikh
  *
  * MIT License, see LICENSE file.
  */
@@ -8,11 +9,8 @@
 namespace keras {
 namespace layers {
 
-void Flatten::load(Stream&) {}
-
 Tensor Flatten::operator()(const Tensor& in) const noexcept {
-    Tensor out = in;
-    return out.flatten();
+    return Tensor(in).flatten();
 }
 
 } // namespace layers

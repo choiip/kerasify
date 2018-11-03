@@ -1,20 +1,17 @@
 ﻿/*
- * Copyright (c) 2016 Robert W. Rose, 2018 Paul Maevskikh
+ * Copyright (c) 2016 Robert W. Rose
+ * Copyright (c) 2018 Paul Maevskikh
  *
  * MIT License, see LICENSE file.
  */
 #pragma once
 
 #include "keras/layer.h"
-#include <memory>
 
 namespace keras {
 
-class Model {
-    std::vector<std::unique_ptr<Layer>> layers_;
-
-public:
-    enum layer_type {
+class Model : public Layer<Model> {
+    enum _LayerType : unsigned {
         Dense = 1,
         Conv1D = 2,
         Conv2D = 3,
@@ -28,10 +25,13 @@ public:
         Embedding = 11,
         BatchNormalization = 12,
     };
+    std::vector<std::unique_ptr<BaseLayer>> layers_;
 
-    virtual ~Model() = default;
-    virtual void load(const std::string& filename);
-    virtual Tensor operator()(const Tensor& in) const noexcept;
+    static std::unique_ptr<BaseLayer> make_layer(Stream&);
+
+public:
+    Model(Stream& file);
+    Tensor operator()(const Tensor& in) const noexcept override;
 };
 
 } // namespace keras

@@ -64,13 +64,8 @@ inline auto %(name)s() {
     target.data_ = %(y_data)s;
 #pragma GCC diagnostic pop
 
-    keras::Model model;
-    auto load_time = keras::timeit([&]{
-        model.load("%(path)s");
-    });
-
-    keras::Tensor output;
-    auto apply_time = keras::timeit([&]{ output = model(in); });
+    auto [model, load_time] = keras::timeit(keras::Model::load, "%(path)s");
+    auto [output, apply_time] = keras::timeit(model, in);
 
     for (size_t i = 0; i < target.dims_[0]; ++i)
         kassert_eq(target(i), output(i), %(eps)s);

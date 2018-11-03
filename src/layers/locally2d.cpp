@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright (c) 2016 Robert W. Rose, 2018 Paul Maevskikh
+ * Copyright (c) 2016 Robert W. Rose
+ * Copyright (c) 2018 Paul Maevskikh
  *
  * MIT License, see LICENSE file.
  */
@@ -8,11 +9,8 @@
 namespace keras {
 namespace layers {
 
-void LocallyConnected2D::load(Stream& file) {
-    weights_.load(file, 4);
-    biases_.load(file);
-    activation_.load(file);
-}
+LocallyConnected2D::LocallyConnected2D(Stream& file)
+: weights_(file, 4), biases_(file, 3), activation_(file) {}
 
 Tensor LocallyConnected2D::operator()(const Tensor& in) const noexcept {
     /*

@@ -58,8 +58,7 @@ using keras::Tensor;
 
 int main() {
     // Initialize model.
-    Model model;
-    model.load("example.model");
+    auto model = Model::load("example.model");
 
     // Create a 1D Tensor on length 10 for input data.
     Tensor in{10};

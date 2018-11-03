@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright (c) 2016 Robert W. Rose, 2018 Paul Maevskikh
+ * Copyright (c) 2016 Robert W. Rose
+ * Copyright (c) 2018 Paul Maevskikh
  *
  * MIT License, see LICENSE file.
  */
@@ -8,11 +9,8 @@
 namespace keras {
 namespace layers {
 
-void Conv2D::load(Stream& file) {
-    weights_.load(file, 4);
-    biases_.load(file);
-    activation_.load(file);
-}
+Conv2D::Conv2D(Stream& file)
+: weights_(file, 4), biases_(file), activation_(file) {}
 
 Tensor Conv2D::operator()(const Tensor& in) const noexcept {
     kassert(in.dims_[2] == weights_.dims_[3]);
@@ -21,8 +19,8 @@ Tensor Conv2D::operator()(const Tensor& in) const noexcept {
 
     size_t offset_y = ww[1] - 1;
     size_t offset_x = ww[2] - 1;
-    auto tmp = Tensor::empty(in.dims_[0] - offset_y,
-                             in.dims_[1] - offset_x, ww[0]);
+    auto tmp
+        = Tensor::empty(in.dims_[0] - offset_y, in.dims_[1] - offset_x, ww[0]);
 
     auto ws_ = cast(ww[3] * ww[2] * ww[1] * ww[0]);
     auto ws0 = cast(ww[3] * ww[2] * ww[1]);

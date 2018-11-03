@@ -1,4 +1,4 @@
-image: ubuntu:18.04
+image: ubuntu:18.10
 
 stages:
   - prepare
@@ -22,7 +22,7 @@ build:debug:
   stage: build
   script:
     - apt update -qq
-    - apt install -y cmake clang
+    - apt install -y cmake clang g++-8
     - mkdir build_debug
     - cd build_debug
     - cmake .. -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_BUILD_TYPE=Debug
@@ -65,4 +65,3 @@ test:release:
   dependencies:
     - setup_env
     - build:release
-

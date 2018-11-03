@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright (c) 2016 Robert W. Rose, 2018 Paul Maevskikh
+ * Copyright (c) 2016 Robert W. Rose
+ * Copyright (c) 2018 Paul Maevskikh
  *
  * MIT License, see LICENSE file.
  */
@@ -15,53 +16,44 @@
 #include "keras/layers/lstm.h"
 #include "keras/layers/maxpooling2d.h"
 #include "keras/layers/normalization.h"
-#include <limits>
-#include <utility>
 
 namespace keras {
 
-void Model::load(const std::string& filename) {
-    Stream file(filename, std::ios::binary);
-    if (!file)
-        throw std::runtime_error("Cannot open " + filename);
-
-    auto make_layer = [](unsigned layer_type) -> std::unique_ptr<Layer> {
-        switch (layer_type) {
-        case Dense:
-            return std::make_unique<layers::Dense>();
-        case Conv1D:
-            return std::make_unique<layers::Conv1D>();
-        case Conv2D:
-            return std::make_unique<layers::Conv2D>();
-        case LocallyConnected1D:
-            return std::make_unique<layers::LocallyConnected1D>();
-        case LocallyConnected2D:
-            return std::make_unique<layers::LocallyConnected2D>();
-        case Flatten:
-            return std::make_unique<layers::Flatten>();
-        case ELU:
-            return std::make_unique<layers::ELU>();
-        case Activation:
-            return std::make_unique<layers::Activation>();
-        case MaxPooling2D:
-            return std::make_unique<layers::MaxPooling2D>();
-        case LSTM:
-            return std::make_unique<layers::LSTM>();
-        case Embedding:
-            return std::make_unique<layers::Embedding>();
-        case BatchNormalization:
-            return std::make_unique<layers::BatchNormalization>();
-        }
-        return nullptr;
-    };
-
-    auto layers_count = file.get<unsigned>();
-    layers_.reserve(layers_count);
-    for (unsigned i = 0; i != layers_count; ++i) {
-        auto layer = make_layer(file.get<unsigned>());
-        layer->load(file);
-        layers_.push_back(std::move(layer));
+std::unique_ptr<BaseLayer> Model::make_layer(Stream& file) {
+    switch (static_cast<unsigned>(file)) {
+    case Dense:
+        return layers::Dense::make(file);
+    case Conv1D:
+        return layers::Conv1D::make(file);
+    case Conv2D:
+        return layers::Conv2D::make(file);
+    case LocallyConnected1D:
+        return layers::LocallyConnected1D::make(file);
+    case LocallyConnected2D:
+        return layers::LocallyConnected2D::make(file);
+    case Flatten:
+        return layers::Flatten::make(file);
+    case ELU:
+        return layers::ELU::make(file);
+    case Activation:
+        return layers::Activation::make(file);
+    case MaxPooling2D:
+        return layers::MaxPooling2D::make(file);
+    case LSTM:
+        return layers::LSTM::make(file);
+    case Embedding:
+        return layers::Embedding::make(file);
+    case BatchNormalization:
+        return layers::BatchNormalization::make(file);
     }
+    return nullptr;
+};
+
+Model::Model(Stream& file) {
+    auto count = static_cast<unsigned>(file);
+    layers_.reserve(count);
+    for (size_t i = 0; i != count; ++i)
+        layers_.push_back(make_layer(file));
 }
 
 Tensor Model::operator()(const Tensor& in) const noexcept {

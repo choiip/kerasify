@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright (c) 2016 Robert W. Rose, 2018 Paul Maevskikh
+ * Copyright (c) 2016 Robert W. Rose
+ * Copyright (c) 2018 Paul Maevskikh
  *
  * MIT License, see LICENSE file.
  */
@@ -8,10 +9,8 @@
 namespace keras {
 namespace layers {
 
-void Activation::load(Stream& file) {
-    auto activation = file.get<unsigned>();
-
-    switch (activation) {
+Activation::Activation(Stream& file) : type_(file) {
+    switch (type_) {
     case Linear:
     case Relu:
     case Elu:
@@ -21,19 +20,16 @@ void Activation::load(Stream& file) {
     case Sigmoid:
     case Tanh:
     case SoftMax:
-        activation_type_ = static_cast<activation_type>(activation);
-        break;
-    default:
-        kassert(false);
+        return;
     }
+    kassert(false);
 }
 
 Tensor Activation::operator()(const Tensor& in) const noexcept {
-    Tensor out;
-    out.data_.resize(in.size());
+    Tensor out {in.size()};
     out.dims_ = in.dims_;
 
-    switch (activation_type_) {
+    switch (type_) {
     case Linear:
         std::copy(in.begin(), in.end(), out.begin());
         break;
@@ -96,13 +92,12 @@ Tensor Activation::operator()(const Tensor& in) const noexcept {
         for (auto t_ = tmp.begin(); t_ != tmp.end(); t_ += channels) {
             // why std::reduce not in libstdc++ yet?
             auto norm = 1.f / std::accumulate(t_, t_ + channels, 0.f);
-            std::transform(t_, t_ + channels, out_, [norm](float x) {
-                return norm * x;
-            });
+            std::transform(
+                t_, t_ + channels, out_, [norm](float x) { return norm * x; });
             out_ += channels;
         }
         break;
-        }
+    }
     }
     return out;
 }

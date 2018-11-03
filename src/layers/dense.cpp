@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright (c) 2016 Robert W. Rose, 2018 Paul Maevskikh
+ * Copyright (c) 2016 Robert W. Rose
+ * Copyright (c) 2018 Paul Maevskikh
  *
  * MIT License, see LICENSE file.
  */
@@ -8,11 +9,8 @@
 namespace keras {
 namespace layers {
 
-void Dense::load(Stream& file) {
-    weights_.load(file, 2);
-    biases_.load(file);
-    activation_.load(file);
-}
+Dense::Dense(Stream& file)
+: weights_(file, 2), biases_(file), activation_(file) {}
 
 Tensor Dense::operator()(const Tensor& in) const noexcept {
     kassert(in.dims_.back() == weights_.dims_[1]);

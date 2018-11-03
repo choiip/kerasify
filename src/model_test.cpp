@@ -31,7 +31,7 @@ inline void basics() noexcept {
         const int i = 3;
         const int j = 5;
         const int k = 10;
-        Tensor t{i, j, k};
+        Tensor t {i, j, k};
 
         float c = 1.f;
         for (size_t ii = 0; ii < i; ++ii)
@@ -56,7 +56,7 @@ inline void basics() noexcept {
         const size_t j = 3;
         const size_t k = 4;
         const size_t l = 5;
-        Tensor t{i, j, k, l};
+        Tensor t {i, j, k, l};
 
         float c = 1.f;
         for (size_t ii = 0; ii < i; ++ii)
@@ -79,8 +79,8 @@ inline void basics() noexcept {
                     }
     }
     {
-        Tensor a{2, 2};
-        Tensor b{2, 2};
+        Tensor a {2, 2};
+        Tensor b {2, 2};
 
         a.data_ = {1.0, 2.0, 3.0, 5.0};
         b.data_ = {2.0, 5.0, 4.0, 1.0};
@@ -89,8 +89,8 @@ inline void basics() noexcept {
         kassert(result.data_ == std::vector<float>({3.0, 7.0, 7.0, 6.0}));
     }
     {
-        Tensor a{2, 2};
-        Tensor b{2, 2};
+        Tensor a {2, 2};
+        Tensor b {2, 2};
 
         a.data_ = {1.0, 2.0, 3.0, 5.0};
         b.data_ = {2.0, 5.0, 4.0, 1.0};
@@ -99,8 +99,8 @@ inline void basics() noexcept {
         kassert(result.data_ == std::vector<float>({2.0, 10.0, 12.0, 5.0}));
     }
     {
-        Tensor a{1, 2};
-        Tensor b{1, 2};
+        Tensor a {1, 2};
+        Tensor b {1, 2};
 
         a.data_ = {1.0, 2.0};
         b.data_ = {2.0, 5.0};
@@ -109,8 +109,8 @@ inline void basics() noexcept {
         kassert(result.data_ == std::vector<float>({12.0}));
     }
     {
-        Tensor a{2, 1};
-        Tensor b{2, 1};
+        Tensor a {2, 1};
+        Tensor b {2, 1};
 
         a.data_ = {1.0, 2.0};
         b.data_ = {2.0, 5.0};

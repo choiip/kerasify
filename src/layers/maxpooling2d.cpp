@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright (c) 2016 Robert W. Rose, 2018 Paul Maevskikh
+ * Copyright (c) 2016 Robert W. Rose
+ * Copyright (c) 2018 Paul Maevskikh
  *
  * MIT License, see LICENSE file.
  */
@@ -8,18 +9,15 @@
 namespace keras {
 namespace layers {
 
-void MaxPooling2D::load(Stream& file) {
-    file >> pool_size_y_ >> pool_size_x_;
-}
+MaxPooling2D::MaxPooling2D(Stream& file)
+: pool_size_y_(file), pool_size_x_(file) {}
 
 Tensor MaxPooling2D::operator()(const Tensor& in) const noexcept {
     kassert(in.ndim() == 3);
 
     const auto& iw = in.dims_;
 
-    Tensor out{iw[0] / pool_size_y_,
-               iw[1] / pool_size_x_,
-               iw[2]};
+    Tensor out {iw[0] / pool_size_y_, iw[1] / pool_size_x_, iw[2]};
     out.fill(-std::numeric_limits<float>::infinity());
 
     auto is0p = cast(iw[2] * iw[1] * pool_size_y_);

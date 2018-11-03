@@ -1,19 +1,16 @@
 ﻿/*
- * Copyright (c) 2016 Robert W. Rose, 2018 Paul Maevskikh
+ * Copyright (c) 2016 Robert W. Rose
+ * Copyright (c) 2018 Paul Maevskikh
  *
  * MIT License, see LICENSE file.
  */
 #include "keras/layers/locally1d.h"
-#include <iterator>
 
 namespace keras {
 namespace layers {
 
-void LocallyConnected1D::load(Stream& file) {
-    weights_.load(file, 3);
-    biases_.load(file, 2);
-    activation_.load(file);
-}
+LocallyConnected1D::LocallyConnected1D(Stream& file)
+: weights_(file, 3), biases_(file, 2), activation_(file) {}
 
 Tensor LocallyConnected1D::operator()(const Tensor& in) const noexcept {
     // 'in' have shape (steps, features)
