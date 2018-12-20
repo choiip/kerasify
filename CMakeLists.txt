@@ -86,6 +86,7 @@ include_directories(kerasify PRIVATE "./include")
 
 add_executable(kerasify "")
 target_sources(kerasify PRIVATE
+    src/io.cpp
     src/layer.cpp
     src/layers/activation.cpp
     src/layers/conv1d.cpp
@@ -102,7 +103,6 @@ target_sources(kerasify PRIVATE
     src/model.cpp
     src/model_test.cpp
     src/tensor.cpp
-    src/utility.cpp
 )
 
 # find_package(Threads REQUIRED)

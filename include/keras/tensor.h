@@ -6,6 +6,7 @@
  */
 #pragma once
 
+#include "keras/io.h"
 #include "keras/utility.h"
 #include <algorithm>
 #include <numeric>

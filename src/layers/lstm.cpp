@@ -5,7 +5,6 @@
  * MIT License, see LICENSE file.
  */
 #include "keras/layers/lstm.h"
-#include <tuple>
 
 namespace keras {
 namespace layers {

@@ -210,5 +210,5 @@ def export_model(model, filename):
         f.write(struct.pack('I', len(layers)))
 
         for layer in layers:
-            f.write(struct.pack('I', LAYERS.index(type(layer)) + 1))
+            f.write(struct.pack('I', LAYERS.index(type(layer))))
             export(layer, f)
