@@ -1,3 +1,9 @@
+"""
+Copyright (c) 2016 Robert W. Rose
+Copyright (c) 2018 Paul Maevskikh
+
+MIT License, see LICENSE file.
+"""
 import struct
 from functools import singledispatch
 
@@ -13,7 +19,7 @@ from keras.layers import (
     LSTM,
     Embedding,
     BatchNormalization,
-    )
+)
 
 LAYERS = (
     Dense,
@@ -50,7 +56,7 @@ def write_tensor(f, data, dims=1):
     for stride in data.shape[:dims]:
         f.write(struct.pack('I', stride))
 
-    data = data.flatten()
+    data = data.ravel()
     step = 1024
     written = 0
 
@@ -212,3 +218,4 @@ def export_model(model, filename):
         for layer in layers:
             f.write(struct.pack('I', LAYERS.index(type(layer))))
             export(layer, f)
+

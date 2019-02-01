@@ -1,7 +1,5 @@
 #!/bin/python3
 import os
-import pprint
-import re
 
 import numpy as np
 from keras import backend as K
@@ -12,8 +10,6 @@ from keras.layers import (
 )
 
 from kerasify import export_model
-
-np.set_printoptions(precision=25, threshold=np.nan)
 
 
 os.makedirs('include/test', exist_ok=True)
@@ -26,22 +22,13 @@ for path_ in os.listdir('models'):
 
 
 def c_array(a):
-    s = pprint.pformat(a.flatten())
+    def to_cpp(ndarray):
+        text = np.array2string(ndarray, separator=',', threshold=np.inf,
+                               floatmode='unique')
+        return text.replace('[', '{').replace(']', '}').replace(' ', '')
 
-    s = re.sub(r'[ \t\n]*', '', s)
-    s = re.sub(r'[ \t]*,[ \t]*', ', ', s)
-    s = re.sub(r'[ \t]*\][, \t]*', '} ', s)
-    s = re.sub(r'[ \t]*\[[ \t]*', '{', s)
-    s = s.replace('array(', '').replace(')', '')
-    s = re.sub(r'[, \t]*dtype=float32', '', s)
-    s = s.strip()
-
-    shape = ''
-    if a.shape:
-        shape = repr(a.shape)
-        shape = re.sub(r',*\)', '}', shape.replace('(', '{'))
-    else:
-        shape = '{1}'
+    s = to_cpp(a.ravel())
+    shape = to_cpp(np.asarray(a.shape)) if a.shape else '{1}'
     return shape, s
 
 
@@ -361,3 +348,4 @@ output_testcase(model, test_x, test_y, 'benchmark', '1e-3')
 
 
 os.system('clang-format -i --style=file include/test/*.h')
+
