@@ -1,4 +1,6 @@
-# Kerasify
+# Kerasify [![pipeline status](https://gitlab.com/arquolo/kerasify/badges/master/pipeline.svg)](https://gitlab.com/arquolo/kerasify/commits/master) ![last commit](https://img.shields.io/github/last-commit/arquolo/kerasify.svg?style=flat) [![license](https://img.shields.io/github/license/arquolo/kerasify.svg?style=flat)](https://github.com/arquolo/kerasify/blob/master/LICENSE) [![tag](https://img.shields.io/github/tag-date/arquolo/kerasify.svg?style=flat)](https://github.com/arquolo/kerasify/tags)
+
+### Kerasify is a small library for running trained Keras models from a C++ application. 
 
 Kerasify is a small library for running trained Keras models from a C++ application. 
 
@@ -99,6 +101,3 @@ Benchmark network loads in 0.022415s
 Benchmark network runs in 0.022597s
 ```
 
-# License
-
-MIT 
