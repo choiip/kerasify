@@ -17,8 +17,10 @@ Tensor MaxPooling2D::operator()(const Tensor& in) const noexcept {
 
     const auto& iw = in.dims_;
 
-    Tensor out {iw[0] / pool_size_y_, iw[1] / pool_size_x_, iw[2]};
-    out.fill(-std::numeric_limits<float>::infinity());
+    auto out = Tensor::empty(iw[0] / pool_size_y_, iw[1] / pool_size_x_, iw[2]);
+    std::generate_n(std::back_inserter(out.data_), out.size(), [] {
+        return -std::numeric_limits<float>::infinity();
+    });
 
     auto is0p = cast(iw[2] * iw[1] * pool_size_y_);
     auto is0 = cast(iw[2] * iw[1]);

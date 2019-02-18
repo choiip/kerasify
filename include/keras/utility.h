@@ -57,4 +57,9 @@ auto timeit(Callable&& callable, Args&&... args) {
         duration<double>(high_resolution_clock::now() - begin).count());
 }
 
+template <typename T, typename... Others>
+constexpr decltype(auto) front(T&& t, Others&&...) noexcept {
+    return std::forward<T>(t);
+}
+
 } // namespace keras

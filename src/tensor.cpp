@@ -22,23 +22,20 @@ Tensor::Tensor(Stream& file, size_t rank) : Tensor() {
     file.reads(reinterpret_cast<char*>(data_.data()), sizeof(float) * size());
 }
 
-Tensor Tensor::unpack(size_t row) const noexcept {
+Tensor Tensor::select(size_t row) const noexcept {
     kassert(ndim() >= 2);
-    size_t pack_size = std::accumulate(dims_.begin() + 1, dims_.end(), 0u);
+
+    Tensor x;
+    x.dims_ = std::vector<size_t>(dims_.begin() + 1, dims_.end());
+    x.dims_.insert(x.dims_.begin(), 1);
+
+    size_t pack_size = std::accumulate(
+        x.dims_.begin(), x.dims_.end(), 1u, std::multiplies<size_t>());
 
     auto base = row * pack_size;
     auto first = begin() + cast(base);
     auto last = begin() + cast(base + pack_size);
-
-    Tensor x;
-    x.dims_ = std::vector<size_t>(dims_.begin() + 1, dims_.end());
     x.data_ = std::vector<float>(first, last);
-    return x;
-}
-
-Tensor Tensor::select(size_t row) const noexcept {
-    auto x = unpack(row);
-    x.dims_.insert(x.dims_.begin(), 1);
     return x;
 }
 
@@ -58,15 +55,13 @@ Tensor Tensor::fma(const Tensor& scale, const Tensor& bias) const noexcept {
     kassert(dims_ == scale.dims_);
     kassert(dims_ == bias.dims_);
 
-    Tensor result;
-    result.dims_ = dims_;
-    result.data_.resize(data_.size());
+    auto result = Tensor::empty(*this);
 
     auto k_ = scale.begin();
     auto b_ = bias.begin();
-    auto r_ = result.begin();
-    for (auto x_ = begin(); x_ != end();)
-        *(r_++) = *(x_++) * *(k_++) + *(b_++);
+    auto r_ = std::back_inserter(result.data_);
+    for (auto i_ = begin(); i_ != end();)
+        *(++r_) = std::fma(*(i_++), *(k_++), *(b_++));
 
     return result;
 }
@@ -76,17 +71,14 @@ Tensor Tensor::dot(const Tensor& other) const noexcept {
     kassert(other.ndim() == 2);
     kassert(dims_[1] == other.dims_[1]);
 
-    Tensor tmp {dims_[0], other.dims_[0]};
+    auto tmp = Tensor::empty(dims_[0], other.dims_[0]);
+    auto step = cast(dims_[1]);
 
-    auto ts = cast(tmp.dims_[1]);
-    auto is = cast(dims_[1]);
+    auto t = std::back_inserter(tmp.data_);
+    for (auto i_ = begin(); i_ != end(); i_ += step)
+        for (auto o_ = other.begin(); o_ != other.end(); o_ += step)
+            *(++t) = std::inner_product(i_, i_ + step, o_, 0.f);
 
-    auto i_ = begin();
-    for (auto t0 = tmp.begin(); t0 != tmp.end(); t0 += ts, i_ += is) {
-        auto o_ = other.begin();
-        for (auto t1 = t0; t1 != t0 + ts; ++t1, o_ += is)
-            *t1 = std::inner_product(i_, i_ + is, o_, 0.f);
-    }
     return tmp;
 }
 
@@ -96,13 +88,13 @@ void Tensor::print() const noexcept {
         dims_.rbegin(), dims_.rend(), steps.rbegin(), std::multiplies<>());
 
     size_t count = 0;
-    for (auto&& it : data_) {
-        for (auto step : steps)
+    for (auto it : data_) {
+        for (size_t step : steps)
             if (count % step == 0)
                 printf("[");
         printf("%f", static_cast<double>(it));
         ++count;
-        for (auto step : steps)
+        for (size_t step : steps)
             if (count % step == 0)
                 printf("]");
         if (count != steps[0])
@@ -114,7 +106,7 @@ void Tensor::print() const noexcept {
 void Tensor::print_shape() const noexcept {
     printf("(");
     size_t count = 0;
-    for (auto&& dim : dims_) {
+    for (size_t dim : dims_) {
         printf("%zu", dim);
         if ((++count) != dims_.size())
             printf(", ");
