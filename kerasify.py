@@ -1,4 +1,4 @@
-"""
+﻿"""
 Copyright (c) 2016 Robert W. Rose
 Copyright (c) 2018 Paul Maevskikh
 
@@ -53,6 +53,8 @@ def write_tensor(f, data, dims=1):
     prevents memory explosion writing very large arrays to disk
     when calling struct.pack().
     """
+    f.write(struct.pack('I', dims))
+
     for stride in data.shape[:dims]:
         f.write(struct.pack('I', stride))
 

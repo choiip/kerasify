@@ -17,23 +17,18 @@
 #define cast(x) static_cast<ptrdiff_t>(x)
 
 #ifndef NDEBUG
+
+void _asserted_eq(float, float, float,
+                  std::string_view, int, std::string_view, std::string_view);
+
+void _asserted(bool,
+               std::string_view, int, std::string_view);
+
 #define kassert_eq(x, y, eps) \
-    { \
-        auto x_ = static_cast<double>(x); \
-        auto y_ = static_cast<double>(y); \
-        if (std::abs(x_ - y_) > eps) { \
-            printf( \
-                "ASSERT [%s:%d] %f isn't equal to %f ('%s' != '%s')\n", \
-                __FILE__, __LINE__, x_, y_, stringify(x), stringify(y)); \
-            exit(-1); \
-        } \
-    }
+    _asserted_eq(x, y, eps, __FILE__, __LINE__, stringify(x), stringify(y));
 #define kassert(x) \
-    if (!(x)) { \
-        printf( \
-            "ASSERT [%s:%d] '%s' failed\n", __FILE__, __LINE__, stringify(x)); \
-        exit(-1); \
-    }
+    _asserted(x, __FILE__, __LINE__, stringify(x));
+
 #else
 #define kassert(x) ;
 #define kassert_eq(x, y, eps) ;

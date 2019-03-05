@@ -67,6 +67,7 @@ Tensor Activation::operator()(const Tensor& in) const noexcept {
     }
     }
     kassert(false);
+    return in;
 }
 
 } // namespace layers

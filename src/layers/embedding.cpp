@@ -9,7 +9,7 @@
 namespace keras {
 namespace layers {
 
-Embedding::Embedding(Stream& file) : weights_(file, 2) {}
+Embedding::Embedding(Stream& file) : weights_(file) {}
 
 Tensor Embedding::operator()(const Tensor& in) const noexcept {
     size_t out_i = in.dims_[0];

@@ -10,18 +10,10 @@ namespace keras {
 namespace layers {
 
 LSTM::LSTM(Stream& file)
-: Wi_(file, 2)
-, Ui_(file, 2)
-, bi_(file, 2) // Input
-, Wf_(file, 2)
-, Uf_(file, 2)
-, bf_(file, 2) // Forget
-, Wc_(file, 2)
-, Uc_(file, 2)
-, bc_(file, 2) // State
-, Wo_(file, 2)
-, Uo_(file, 2)
-, bo_(file, 2) // Output
+: Wi_(file), Ui_(file), bi_(file) // Input
+, Wf_(file), Uf_(file), bf_(file) // Forget
+, Wc_(file), Uc_(file), bc_(file) // State
+, Wo_(file), Uo_(file), bo_(file) // Output
 , inner_activation_(file)
 , activation_(file)
 , return_sequences_(static_cast<unsigned>(file)) {}

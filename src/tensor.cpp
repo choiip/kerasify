@@ -6,20 +6,23 @@
  */
 #include "keras/tensor.h"
 
+#include <iostream>
+
 namespace keras {
 
-Tensor::Tensor(Stream& file, size_t rank) : Tensor() {
+Tensor::Tensor(Stream& file) : Tensor() {
+    auto rank = static_cast<unsigned>(file);
     kassert(rank);
 
     dims_.reserve(rank);
     std::generate_n(std::back_inserter(dims_), rank, [&file] {
-        unsigned stride = file;
+        auto stride = static_cast<unsigned>(file);
         kassert(stride > 0);
         return stride;
     });
 
     data_.resize(size());
-    file.reads(reinterpret_cast<char*>(data_.data()), sizeof(float) * size());
+    file.read(reinterpret_cast<char*>(data_.data()), sizeof(float) * size());
 }
 
 Tensor Tensor::select(size_t row) const noexcept {
@@ -30,7 +33,7 @@ Tensor Tensor::select(size_t row) const noexcept {
     x.dims_.insert(x.dims_.begin(), 1);
 
     size_t pack_size = std::accumulate(
-        x.dims_.begin(), x.dims_.end(), 1u, std::multiplies<size_t>());
+        x.dims_.begin(), x.dims_.end(), 1u, std::multiplies<>());
 
     auto base = row * pack_size;
     auto first = begin() + cast(base);
@@ -91,27 +94,27 @@ void Tensor::print() const noexcept {
     for (auto it : data_) {
         for (size_t step : steps)
             if (count % step == 0)
-                printf("[");
-        printf("%f", static_cast<double>(it));
+                std::cout << "[";
+        std::cout << it;
         ++count;
         for (size_t step : steps)
             if (count % step == 0)
-                printf("]");
+                std::cout << "]";
         if (count != steps[0])
-            printf(", ");
+            std::cout << ", ";
     }
-    printf("\n");
+    std::cout << std::endl;
 }
 
 void Tensor::print_shape() const noexcept {
-    printf("(");
+    std::cout << "(";
     size_t count = 0;
     for (size_t dim : dims_) {
-        printf("%zu", dim);
+        std::cout << dim;
         if ((++count) != dims_.size())
-            printf(", ");
+            std::cout << ", ";
     }
-    printf(")\n");
+    std::cout << ")" << std::endl;
 }
 
 } // namespace keras

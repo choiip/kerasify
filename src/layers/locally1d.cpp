@@ -10,7 +10,7 @@ namespace keras {
 namespace layers {
 
 LocallyConnected1D::LocallyConnected1D(Stream& file)
-: weights_(file, 3), biases_(file, 2), activation_(file) {}
+: weights_(file), biases_(file), activation_(file) {}
 
 Tensor LocallyConnected1D::operator()(const Tensor& in) const noexcept {
     // 'in' have shape (steps, features)

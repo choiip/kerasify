@@ -103,6 +103,7 @@ target_sources(kerasify PRIVATE
     src/model.cpp
     src/model_test.cpp
     src/tensor.cpp
+    src/utility.cpp
 )
 
 # find_package(Threads REQUIRED)

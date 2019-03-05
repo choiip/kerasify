@@ -19,14 +19,14 @@ public:
     Stream(const std::string&);
     ~Stream();
 
-    Stream& reads(char*, size_t);
+    Stream& read(char*, size_t);
 
     template <
         typename T,
         typename = std::enable_if_t<std::is_default_constructible_v<T>>>
     operator T() noexcept {
         T value;
-        reads(reinterpret_cast<char*>(&value), sizeof(T));
+        read(reinterpret_cast<char*>(&value), sizeof(T));
         return value;
     }
 };

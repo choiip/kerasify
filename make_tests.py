@@ -55,7 +55,7 @@ inline auto %(name)s() {
     auto [output, apply_time] = keras::timeit(model, in);
 
     for (size_t i = 0; i < target.dims_[0]; ++i)
-        kassert_eq(target(i), output(i), %(eps)s);
+        kassert_eq(target(i), output(i), %(eps)sf);
 
     return std::make_tuple(load_time, apply_time);
 }

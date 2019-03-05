@@ -10,7 +10,7 @@ namespace keras {
 namespace layers {
 
 Conv1D::Conv1D(Stream& file)
-: weights_(file, 3), biases_(file), activation_(file) {}
+: weights_(file), biases_(file), activation_(file) {}
 
 Tensor Conv1D::operator()(const Tensor& in) const noexcept {
     // 'in' have shape (steps, features)

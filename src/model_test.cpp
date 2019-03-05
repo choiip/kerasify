@@ -23,6 +23,8 @@
 #include "test/maxpool2d_3x3x3.h"
 #include "test/relu_10.h"
 
+#include <iostream>
+
 using namespace keras;
 
 namespace test {
@@ -45,8 +47,8 @@ inline void basics() noexcept {
         for (size_t ii = 0; ii < i; ++ii)
             for (size_t jj = 0; jj < j; ++jj)
                 for (size_t kk = 0; kk < k; ++kk) {
-                    kassert_eq(t(ii, jj, kk), c, 1e-9);
-                    kassert_eq(t.data_[cc], c, 1e-9);
+                    kassert_eq(t(ii, jj, kk), c, 1e-9f);
+                    kassert_eq(t.data_[cc], c, 1e-9f);
                     c += 1.f;
                     ++cc;
                 }
@@ -72,8 +74,8 @@ inline void basics() noexcept {
             for (size_t jj = 0; jj < j; ++jj)
                 for (size_t kk = 0; kk < k; ++kk)
                     for (size_t ll = 0; ll < l; ++ll) {
-                        kassert_eq(t(ii, jj, kk, ll), c, 1e-9);
-                        kassert_eq(t.data_[cc], c, 1e-9);
+                        kassert_eq(t(ii, jj, kk, ll), c, 1e-9f);
+                        kassert_eq(t.data_[cc], c, 1e-9f);
                         c += 1.f;
                         ++cc;
                     }
@@ -158,8 +160,9 @@ int main() {
         total_load_time += load_time;
         total_apply_time += apply_time;
     }
-    printf("Benchmark network loads in %fs\n", total_load_time / n);
-    printf("Benchmark network runs in %fs\n", total_apply_time / n);
-
+    std::cout << "Benchmark network loads in " << total_load_time / n
+              << std::endl
+              << "Benchmark network runs in " << total_apply_time / n
+              << std::endl;
     return 0;
 }
