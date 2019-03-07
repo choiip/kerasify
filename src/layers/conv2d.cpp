@@ -19,8 +19,9 @@ Tensor Conv2D::operator()(const Tensor& in) const noexcept {
 
     size_t offset_y = ww[1] - 1;
     size_t offset_x = ww[2] - 1;
-    auto tmp
-        = Tensor::empty(in.dims_[0] - offset_y, in.dims_[1] - offset_x, ww[0]);
+    auto tmp = Tensor::empty({in.dims_[0] - offset_y,
+                              in.dims_[1] - offset_x,
+                              ww[0]});
 
     auto ws_ = cast(ww[3] * ww[2] * ww[1] * ww[0]);
     auto ws0 = cast(ww[3] * ww[2] * ww[1]);

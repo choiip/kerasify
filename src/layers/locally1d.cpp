@@ -22,7 +22,7 @@ Tensor LocallyConnected1D::operator()(const Tensor& in) const noexcept {
     size_t ksize = ww[2] / in.dims_[1];
     kassert(in.dims_[0] + 1 == ww[0] + ksize);
 
-    auto tmp = Tensor::empty(ww[0], ww[1]);
+    auto tmp = Tensor::empty({ww[0], ww[1]});
 
     auto is0 = cast(in.dims_[1]);
     auto ts0 = cast(ww[1]);

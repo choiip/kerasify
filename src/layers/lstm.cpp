@@ -33,7 +33,7 @@ Tensor LSTM::operator()(const Tensor& in) const noexcept {
         return out.flatten();
     }
 
-    auto out = Tensor::empty(steps, out_dim);
+    auto out = Tensor::empty({steps, out_dim});
     Tensor last {1, out_dim};
 
     for (size_t s = 0; s < steps; ++s) {

@@ -19,17 +19,12 @@ namespace keras {
 class Tensor {
 public:
     Tensor() = default;
-
-    template <
-        typename... Size,
-        typename = std::enable_if_t<(... && std::is_integral_v<Size>)>>
-    Tensor(Size... sizes)
-    : dims_ {static_cast<size_t>(sizes)...}, data_(size()) {}
+    Tensor(std::initializer_list<size_t> sizes);
 
     Tensor(Stream& file);
 
-    template <typename... Size>
-    static auto empty(Size&&... sizes);
+    static Tensor empty(std::initializer_list<size_t> sizes);
+    static Tensor empty(Tensor const& other);
 
     inline size_t size() const noexcept;
     inline size_t ndim() const noexcept;
@@ -74,27 +69,13 @@ public:
     Tensor fma(const Tensor& scale, const Tensor& bias) const noexcept;
     Tensor dot(const Tensor& other) const noexcept;
 
-    void print() const noexcept;
     void print_shape() const noexcept;
 
     std::vector<size_t> dims_;
     std::vector<float> data_;
 };
 
-template <typename... Size>
-auto Tensor::empty(Size&&... sizes) {
-    Tensor tensor;
-    if constexpr (
-        (sizeof...(Size) == 1)
-        && std::is_same_v<
-               std::decay_t<std::tuple_element_t<0, std::tuple<Size...>>>,
-               Tensor>)
-        tensor.dims_ = front(sizes...).dims_;
-    else
-        tensor.dims_ = {static_cast<size_t>(sizes)...};
-    tensor.data_.reserve(tensor.size());
-    return tensor;
-}
+std::ostream& operator<<(std::ostream&, Tensor const&) noexcept;
 
 size_t Tensor::size() const noexcept {
     return std::accumulate(

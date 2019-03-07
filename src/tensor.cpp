@@ -10,6 +10,23 @@
 
 namespace keras {
 
+Tensor::Tensor(std::initializer_list<size_t> sizes)
+    : dims_ {sizes}, data_(size()) {}
+
+Tensor Tensor::empty(std::initializer_list<size_t> sizes) {
+    Tensor tensor;
+    tensor.dims_ = sizes;
+    tensor.data_.reserve(tensor.size());
+    return tensor;
+}
+
+Tensor Tensor::empty(Tensor const& other) {
+    Tensor tensor;
+    tensor.dims_ = other.dims_;
+    tensor.data_.reserve(tensor.size());
+    return tensor;
+}
+
 Tensor::Tensor(Stream& file) : Tensor() {
     auto rank = static_cast<unsigned>(file);
     kassert(rank);
@@ -74,7 +91,7 @@ Tensor Tensor::dot(const Tensor& other) const noexcept {
     kassert(other.ndim() == 2);
     kassert(dims_[1] == other.dims_[1]);
 
-    auto tmp = Tensor::empty(dims_[0], other.dims_[0]);
+    auto tmp = Tensor::empty({dims_[0], other.dims_[0]});
     auto step = cast(dims_[1]);
 
     auto t = std::back_inserter(tmp.data_);
@@ -85,25 +102,27 @@ Tensor Tensor::dot(const Tensor& other) const noexcept {
     return tmp;
 }
 
-void Tensor::print() const noexcept {
-    std::vector<size_t> steps(ndim());
-    std::partial_sum(
-        dims_.rbegin(), dims_.rend(), steps.rbegin(), std::multiplies<>());
+std::ostream& operator<<(std::ostream& os, Tensor const& t) noexcept {
+    std::vector<size_t> steps(t.ndim());
+    std::partial_sum(t.dims_.rbegin(), t.dims_.rend(),
+                     steps.rbegin(),
+                     std::multiplies<>());
 
     size_t count = 0;
-    for (auto it : data_) {
+    for (auto it : t.data_) {
         for (size_t step : steps)
             if (count % step == 0)
-                std::cout << "[";
-        std::cout << it;
+                os << "[";
+        os << it;
         ++count;
         for (size_t step : steps)
             if (count % step == 0)
-                std::cout << "]";
+                os << "]";
         if (count != steps[0])
-            std::cout << ", ";
+            os << ", ";
     }
-    std::cout << std::endl;
+    os << std::endl;
+    return os;
 }
 
 void Tensor::print_shape() const noexcept {

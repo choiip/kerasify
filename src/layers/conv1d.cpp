@@ -21,7 +21,7 @@ Tensor Conv1D::operator()(const Tensor& in) const noexcept {
     auto& ww = weights_.dims_;
 
     size_t offset = ww[1] - 1;
-    auto tmp = Tensor::empty(in.dims_[0] - offset, ww[0]);
+    auto tmp = Tensor::empty({in.dims_[0] - offset, ww[0]});
 
     auto ws0 = cast(ww[2] * ww[1]);
     auto ws1 = cast(ww[2]);
