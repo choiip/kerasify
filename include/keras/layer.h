@@ -6,30 +6,33 @@
  */
 #pragma once
 
+#include "keras/io.h"
 #include "keras/tensor.h"
+
+#include <string>
 
 namespace keras {
 
-class BaseLayer {
+class LayerBase {
 public:
-    BaseLayer() = default;
-    BaseLayer(Stream&) : BaseLayer() {}
+    LayerBase() = default;
+    LayerBase(Stream&) : LayerBase() {}
 
-    BaseLayer(BaseLayer&&) = default;
-    BaseLayer& operator=(BaseLayer&&) = default;
+    LayerBase(LayerBase&&) = default;
+    LayerBase& operator=(LayerBase&&) = default;
 
-    virtual ~BaseLayer();
+    virtual ~LayerBase();
     virtual Tensor operator()(const Tensor& in) const noexcept = 0;
 };
 
 template <typename Derived>
-class Layer : public BaseLayer {
+class Layer : public LayerBase {
 public:
-    using BaseLayer::BaseLayer;
+    using LayerBase::LayerBase;
 
-    static Derived load(const std::string& filename) {
-        Stream file(filename);
-        return Derived(file);
+    static Derived load(std::string const& filename) {
+        Stream file {filename};
+        return {file};
     }
 };
 

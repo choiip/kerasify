@@ -38,10 +38,10 @@ using types = std::tuple<
 } // namespace layers
 
 template <size_t... I>
-std::unique_ptr<BaseLayer>
+std::unique_ptr<LayerBase>
 _make_layer(std::index_sequence<I...>, Stream& file) {
     auto id = static_cast<unsigned>(file);
-    std::unique_ptr<BaseLayer> layer;
+    std::unique_ptr<LayerBase> layer;
 
     bool found = (... || [&]() {
         if (id != I)

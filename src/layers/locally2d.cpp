@@ -9,9 +9,6 @@
 namespace keras {
 namespace layers {
 
-LocallyConnected2D::LocallyConnected2D(Stream& file)
-: weights_(file), biases_(file), activation_(file) {}
-
 Tensor LocallyConnected2D::operator()(const Tensor& in) const noexcept {
     /*
     // 'in' have shape (x, y, features)

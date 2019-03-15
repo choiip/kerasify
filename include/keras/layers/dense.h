@@ -6,18 +6,14 @@
  */
 #pragma once
 
-#include "keras/layers/activation.h"
+#include "keras/layer_weights.h"
 
 namespace keras {
 namespace layers {
 
-class Dense final : public Layer<Dense> {
-    Tensor weights_;
-    Tensor biases_;
-    Activation activation_;
-
+class Dense final : public Layer<Dense>, public LayerWeights {
 public:
-    Dense(Stream& file);
+    using LayerWeights::LayerWeights;
     Tensor operator()(const Tensor& in) const noexcept override;
 };
 

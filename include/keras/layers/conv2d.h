@@ -6,18 +6,14 @@
  */
 #pragma once
 
-#include "keras/layers/activation.h"
+#include "keras/layer_weights.h"
 
 namespace keras {
 namespace layers {
 
-class Conv2D final : public Layer<Conv2D> {
-    Tensor weights_;
-    Tensor biases_;
-    Activation activation_;
-
+class Conv2D final : public Layer<Conv2D>, public LayerWeights {
 public:
-    Conv2D(Stream& file);
+    using LayerWeights::LayerWeights;
     Tensor operator()(const Tensor& in) const noexcept override;
 };
 

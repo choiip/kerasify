@@ -6,20 +6,20 @@
  */
 #pragma once
 
-#include <memory>
+#include <fstream>
+#include <string>
 #include <type_traits>
+#include <vector>
 
 namespace keras {
 
-class Stream {
-    class _Impl;
-    std::unique_ptr<_Impl> impl_;
+class Stream: public std::ifstream {
+    using _Base = std::ifstream;
+
+    Stream& read(char*, size_t);
 
 public:
     Stream(const std::string&);
-    ~Stream();
-
-    Stream& read(char*, size_t);
 
     template <
         typename T,
@@ -28,6 +28,11 @@ public:
         T value;
         read(reinterpret_cast<char*>(&value), sizeof(T));
         return value;
+    }
+
+    template <typename T>
+    Stream& operator>>(std::vector<T>& v) {
+        return read(reinterpret_cast<char*>(v.data()), sizeof(T) * v.size());
     }
 };
 

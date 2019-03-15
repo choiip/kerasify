@@ -6,18 +6,15 @@
  */
 #pragma once
 
-#include "keras/layers/activation.h"
+#include "keras/layer_weights.h"
 
 namespace keras {
 namespace layers {
 
-class LocallyConnected2D final : public Layer<LocallyConnected2D> {
-    Tensor weights_;
-    Tensor biases_;
-    Activation activation_;
-
+class LocallyConnected2D final : public Layer<LocallyConnected2D>,
+                                 public LayerWeights {
 public:
-    LocallyConnected2D(Stream& file);
+    using LayerWeights::LayerWeights;
     Tensor operator()(const Tensor& in) const noexcept override;
 };
 

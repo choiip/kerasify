@@ -6,12 +6,16 @@
  */
 #pragma once
 
+#include "keras/io.h"
 #include "keras/layer.h"
+
+#include <memory>
+#include <vector>
 
 namespace keras {
 
 class Model final : public Layer<Model> {
-    std::vector<std::unique_ptr<BaseLayer>> layers_;
+    std::vector<std::unique_ptr<LayerBase>> layers_;
 
 public:
     Model(Stream& file);

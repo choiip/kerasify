@@ -8,10 +8,12 @@
 
 #include "keras/io.h"
 #include "keras/utility.h"
+
 #include <algorithm>
+#include <array>
 #include <numeric>
 
-#define INLINE_ANY_RETURN(prefix, function, body, nonconst) \
+#define INLINED_METHOD(prefix, function, body, nonconst) \
     prefix nonconst function noexcept { body } \
     prefix function const noexcept { body }
 
@@ -36,26 +38,28 @@ public:
         kassert(ndim() == count);
 
         std::array<size_t, count> indexes = {ixs...};
-        kassert(std::inner_product(indexes.begin(), indexes.end(), dims_.begin(), true,
+        kassert(std::inner_product(indexes.begin(), indexes.end(),
+                                   dims_.begin(), true,
                                    [](size_t x, size_t y) { return x && y; },
                                    [](size_t i, size_t d) { return i < d; }));
         if constexpr (count == 1)
             return indexes.back();
         else {
             std::array<size_t, count-1> strides;
-            std::partial_sum(dims_.rbegin(), dims_.rend()-1, strides.rbegin(), std::multiplies<size_t>());
-
-            return std::inner_product(strides.begin(), strides.end(), indexes.begin(),
+            std::partial_sum(dims_.rbegin(), dims_.rend() - 1, strides.rbegin(),
+                             std::multiplies<size_t>());
+            return std::inner_product(strides.begin(), strides.end(),
+                                      indexes.begin(),
                                       indexes.back());
         }
     }
 
-    INLINE_ANY_RETURN(template<typename...Ixs> float,
-                      operator()(Ixs... indexes),
-                      { return data_[get_offset<Ixs...>(indexes...)]; },
-                      &)
-    INLINE_ANY_RETURN(inline auto, begin(), { return data_.begin(); }, )
-    INLINE_ANY_RETURN(inline auto, end(), { return data_.end(); }, )
+    INLINED_METHOD(template<typename...Ixs> float,
+                   operator()(Ixs... indexes),
+                   { return data_[get_offset<Ixs...>(indexes...)]; },
+                   &)
+    INLINED_METHOD(inline auto, begin(), { return data_.begin(); }, )
+    INLINED_METHOD(inline auto, end(), { return data_.end(); }, )
 
     inline void fill(float value) noexcept;
 
@@ -114,3 +118,5 @@ inline Tensor operator*(Tensor lhs, const Tensor& rhs) noexcept {
 }
 
 } // namespace keras
+
+#undef INLINED_METHOD

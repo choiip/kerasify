@@ -88,6 +88,7 @@ add_executable(kerasify "")
 target_sources(kerasify PRIVATE
     src/io.cpp
     src/layer.cpp
+    src/layer_weights.cpp
     src/layers/activation.cpp
     src/layers/conv1d.cpp
     src/layers/conv2d.cpp

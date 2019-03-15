@@ -4,10 +4,11 @@
  *
  * MIT License, see LICENSE file.
  */
-#include "keras/layer.h"
+#include "keras/layer_weights.h"
 
 namespace keras {
 
-LayerBase::~LayerBase() = default;
+LayerWeights::LayerWeights(Stream& file)
+    : weights_(file), biases_(file), activation_(file) {}
 
 } // namespace keras

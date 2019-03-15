@@ -9,9 +9,6 @@
 namespace keras {
 namespace layers {
 
-Conv2D::Conv2D(Stream& file)
-: weights_(file), biases_(file), activation_(file) {}
-
 Tensor Conv2D::operator()(const Tensor& in) const noexcept {
     kassert(in.dims_[2] == weights_.dims_[3]);
 

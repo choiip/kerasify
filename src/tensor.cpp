@@ -11,7 +11,7 @@
 namespace keras {
 
 Tensor::Tensor(std::initializer_list<size_t> sizes)
-    : dims_ {sizes}, data_(size()) {}
+: dims_ {sizes}, data_(size()) {}
 
 Tensor Tensor::empty(std::initializer_list<size_t> sizes) {
     Tensor tensor;
@@ -39,7 +39,7 @@ Tensor::Tensor(Stream& file) : Tensor() {
     });
 
     data_.resize(size());
-    file.read(reinterpret_cast<char*>(data_.data()), sizeof(float) * size());
+    file >> data_;
 }
 
 Tensor Tensor::select(size_t row) const noexcept {
@@ -59,19 +59,19 @@ Tensor Tensor::select(size_t row) const noexcept {
     return x;
 }
 
-Tensor& Tensor::operator+=(const Tensor& other) noexcept {
+Tensor& Tensor::operator+=(Tensor const& other) noexcept {
     kassert(dims_ == other.dims_);
     std::transform(begin(), end(), other.begin(), begin(), std::plus<>());
     return *this;
 }
 
-Tensor& Tensor::operator*=(const Tensor& other) noexcept {
+Tensor& Tensor::operator*=(Tensor const& other) noexcept {
     kassert(dims_ == other.dims_);
     std::transform(begin(), end(), other.begin(), begin(), std::multiplies<>());
     return *this;
 }
 
-Tensor Tensor::fma(const Tensor& scale, const Tensor& bias) const noexcept {
+Tensor Tensor::fma(Tensor const& scale, Tensor const& bias) const noexcept {
     kassert(dims_ == scale.dims_);
     kassert(dims_ == bias.dims_);
 
@@ -86,7 +86,7 @@ Tensor Tensor::fma(const Tensor& scale, const Tensor& bias) const noexcept {
     return result;
 }
 
-Tensor Tensor::dot(const Tensor& other) const noexcept {
+Tensor Tensor::dot(Tensor const& other) const noexcept {
     kassert(ndim() == 2);
     kassert(other.ndim() == 2);
     kassert(dims_[1] == other.dims_[1]);
@@ -104,9 +104,8 @@ Tensor Tensor::dot(const Tensor& other) const noexcept {
 
 std::ostream& operator<<(std::ostream& os, Tensor const& t) noexcept {
     std::vector<size_t> steps(t.ndim());
-    std::partial_sum(t.dims_.rbegin(), t.dims_.rend(),
-                     steps.rbegin(),
-                     std::multiplies<>());
+    std::partial_sum(
+        t.dims_.rbegin(), t.dims_.rend(), steps.rbegin(), std::multiplies<>());
 
     size_t count = 0;
     for (auto it : t.data_) {
