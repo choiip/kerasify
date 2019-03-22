@@ -66,10 +66,10 @@ Model::Model(Stream& file) {
             file));
 }
 
-Tensor Model::operator()(const Tensor& in) const noexcept {
+Tensor Model::forward(const Tensor& in) const noexcept {
     Tensor out = in;
     for (auto&& layer : layers_)
-        out = (*layer)(out);
+        out = layer->forward(out);
     return out;
 }
 

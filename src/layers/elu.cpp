@@ -11,7 +11,7 @@ namespace layers {
 
 ELU::ELU(Stream& file) : alpha_(file) {}
 
-Tensor ELU::operator()(const Tensor& in) const noexcept {
+Tensor ELU::forward(const Tensor& in) const noexcept {
     kassert(in.ndim());
     return in.map(
         [this](float x) { return (x < 0.f ? alpha_ * std::expm1(x) : x); });

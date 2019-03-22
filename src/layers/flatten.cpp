@@ -9,7 +9,7 @@
 namespace keras {
 namespace layers {
 
-Tensor Flatten::operator()(const Tensor& in) const noexcept {
+Tensor Flatten::forward(const Tensor& in) const noexcept {
     return Tensor(in).flatten();
 }
 

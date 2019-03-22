@@ -35,7 +35,7 @@ class LSTM final : public Layer<LSTM> {
 
 public:
     LSTM(Stream& file);
-    Tensor operator()(const Tensor& in) const noexcept override;
+    Tensor forward(const Tensor& in) const noexcept override;
 };
 
 } // namespace layers

@@ -25,7 +25,7 @@ Activation::Activation(Stream& file) : type_(file) {
     kassert(false);
 }
 
-Tensor Activation::operator()(const Tensor& in) const noexcept {
+Tensor Activation::forward(const Tensor& in) const noexcept {
     switch (type_) {
     case Linear:
         return in;

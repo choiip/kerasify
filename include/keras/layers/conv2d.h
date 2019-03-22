@@ -14,7 +14,7 @@ namespace layers {
 class Conv2D final : public Layer<Conv2D>, public LayerWeights {
 public:
     using LayerWeights::LayerWeights;
-    Tensor operator()(const Tensor& in) const noexcept override;
+    Tensor forward(const Tensor& in) const noexcept override;
 };
 
 } // namespace layers

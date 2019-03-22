@@ -14,7 +14,7 @@ namespace layers {
 class Flatten final : public Layer<Flatten> {
 public:
     using Layer<Flatten>::Layer;
-    Tensor operator()(const Tensor& in) const noexcept override;
+    Tensor forward(const Tensor& in) const noexcept override;
 };
 
 } // namespace layers

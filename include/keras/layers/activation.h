@@ -27,7 +27,7 @@ class Activation final : public Layer<Activation> {
 
 public:
     Activation(Stream& file);
-    Tensor operator()(const Tensor& in) const noexcept override;
+    Tensor forward(const Tensor& in) const noexcept override;
 };
 
 } // namespace layers

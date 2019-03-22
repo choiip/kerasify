@@ -9,7 +9,7 @@
 namespace keras {
 namespace layers {
 
-Tensor Conv2D::operator()(const Tensor& in) const noexcept {
+Tensor Conv2D::forward(const Tensor& in) const noexcept {
     kassert(in.dims_[2] == weights_.dims_[3]);
 
     auto& ww = weights_.dims_;

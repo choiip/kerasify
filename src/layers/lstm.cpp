@@ -18,7 +18,7 @@ LSTM::LSTM(Stream& file)
 , activation_(file)
 , return_sequences_(static_cast<unsigned>(file)) {}
 
-Tensor LSTM::operator()(const Tensor& in) const noexcept {
+Tensor LSTM::forward(const Tensor& in) const noexcept {
     // Assume 'bo_' always keeps the output shape and we will always
     // receive one single sample.
     size_t out_dim = bo_.dims_[1];

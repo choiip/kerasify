@@ -9,7 +9,7 @@
 namespace keras {
 namespace layers {
 
-Tensor LocallyConnected1D::operator()(const Tensor& in) const noexcept {
+Tensor LocallyConnected1D::forward(const Tensor& in) const noexcept {
     // 'in' have shape (steps, features)
     // 'tmp' have shape (new_steps, outputs)
     // 'weights' have shape (new_steps, outputs, kernel*features)

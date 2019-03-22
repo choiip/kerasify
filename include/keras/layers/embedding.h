@@ -16,7 +16,7 @@ class Embedding final : public Layer<Embedding> {
 
 public:
     Embedding(Stream& file);
-    Tensor operator()(const Tensor& in) const noexcept override;
+    Tensor forward(const Tensor& in) const noexcept override;
 };
 
 } // namespace layers

@@ -19,7 +19,7 @@ class Model final : public Layer<Model> {
 
 public:
     Model(Stream& file);
-    Tensor operator()(const Tensor& in) const noexcept override;
+    Tensor forward(const Tensor& in) const noexcept override;
 };
 
 } // namespace keras

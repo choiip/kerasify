@@ -9,7 +9,7 @@
 namespace keras {
 namespace layers {
 
-Tensor Conv1D::operator()(const Tensor& in) const noexcept {
+Tensor Conv1D::forward(const Tensor& in) const noexcept {
     // 'in' have shape (steps, features)
     // 'tmp' have shape (new_steps, outputs)
     // 'weights' have shape (outputs, kernel, features)

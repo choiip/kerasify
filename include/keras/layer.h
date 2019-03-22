@@ -18,11 +18,8 @@ public:
     LayerBase() = default;
     LayerBase(Stream&) : LayerBase() {}
 
-    LayerBase(LayerBase&&) = default;
-    LayerBase& operator=(LayerBase&&) = default;
-
     virtual ~LayerBase();
-    virtual Tensor operator()(const Tensor& in) const noexcept = 0;
+    virtual Tensor forward(Tensor const& in) const noexcept = 0;
 };
 
 template <typename Derived>
@@ -33,6 +30,10 @@ public:
     static Derived load(std::string const& filename) {
         Stream file {filename};
         return {file};
+    }
+
+    Tensor operator()(Tensor const& in) const {
+        return static_cast<Derived const*>(this)->forward(in);
     }
 };
 

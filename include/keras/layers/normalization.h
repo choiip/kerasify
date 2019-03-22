@@ -17,7 +17,7 @@ class BatchNormalization final : public Layer<BatchNormalization> {
 
 public:
     BatchNormalization(Stream& file);
-    Tensor operator()(const Tensor& in) const noexcept override;
+    Tensor forward(const Tensor& in) const noexcept override;
 };
 
 } // namespace layers

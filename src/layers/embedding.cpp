@@ -11,7 +11,7 @@ namespace layers {
 
 Embedding::Embedding(Stream& file) : weights_(file) {}
 
-Tensor Embedding::operator()(const Tensor& in) const noexcept {
+Tensor Embedding::forward(const Tensor& in) const noexcept {
     size_t out_i = in.dims_[0];
     size_t out_j = weights_.dims_[1];
 

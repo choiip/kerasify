@@ -14,7 +14,7 @@ namespace layers {
 class Dense final : public Layer<Dense>, public LayerWeights {
 public:
     using LayerWeights::LayerWeights;
-    Tensor operator()(const Tensor& in) const noexcept override;
+    Tensor forward(const Tensor& in) const noexcept override;
 };
 
 } // namespace layers

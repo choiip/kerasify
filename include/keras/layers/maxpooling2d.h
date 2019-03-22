@@ -17,7 +17,7 @@ class MaxPooling2D final : public Layer<MaxPooling2D> {
 
 public:
     MaxPooling2D(Stream& file);
-    Tensor operator()(const Tensor& in) const noexcept override;
+    Tensor forward(const Tensor& in) const noexcept override;
 };
 
 } // namespace layers

@@ -9,7 +9,7 @@
 namespace keras {
 namespace layers {
 
-Tensor Dense::operator()(const Tensor& in) const noexcept {
+Tensor Dense::forward(const Tensor& in) const noexcept {
     kassert(in.dims_.back() == weights_.dims_[1]);
     const auto ws = cast(weights_.dims_[1]);
 

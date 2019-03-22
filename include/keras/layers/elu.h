@@ -16,7 +16,7 @@ class ELU final : public Layer<ELU> {
 
 public:
     ELU(Stream& file);
-    Tensor operator()(const Tensor& in) const noexcept override;
+    Tensor forward(const Tensor& in) const noexcept override;
 };
 
 } // namespace layers

@@ -15,7 +15,7 @@ class LocallyConnected2D final : public Layer<LocallyConnected2D>,
                                  public LayerWeights {
 public:
     using LayerWeights::LayerWeights;
-    Tensor operator()(const Tensor& in) const noexcept override;
+    Tensor forward(const Tensor& in) const noexcept override;
 };
 
 } // namespace layers

@@ -12,7 +12,7 @@ namespace layers {
 MaxPooling2D::MaxPooling2D(Stream& file)
 : pool_size_y_(file), pool_size_x_(file) {}
 
-Tensor MaxPooling2D::operator()(const Tensor& in) const noexcept {
+Tensor MaxPooling2D::forward(const Tensor& in) const noexcept {
     kassert(in.ndim() == 3);
 
     const auto& iw = in.dims_;
