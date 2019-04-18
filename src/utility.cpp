@@ -9,7 +9,7 @@
 
 void _asserted_eq(
     float x, float y, float eps,
-    std::string_view file, int lineno, std::string_view xs, std::string_view ys
+    const char* file, int lineno, const char* xs, const char* ys
 ) {
     if (std::abs(x - y) <= eps)
         return;
@@ -21,7 +21,7 @@ void _asserted_eq(
     std::exit(-1);
 }
 
-void _asserted(bool x, std::string_view file, int lineno, std::string_view xs) {
+void _asserted(bool x, const char* file, int lineno, const char* xs) {
     if (x)
         return;
 

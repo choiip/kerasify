@@ -7,7 +7,9 @@ enable_language(CXX)
 # set(CMAKE_C_COMPILER   "/usr/bin/clang")
 # set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
@@ -40,9 +42,9 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   )
 endif()
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g"
-    CACHE INTERNAL ""
-)
+# set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g"
+#     CACHE INTERNAL ""
+# )
 
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} \
     -g -pg -no-pie \
@@ -82,9 +84,10 @@ set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} \
 
 project(kerasify)
 
-include_directories(kerasify PRIVATE "./include")
-
 add_executable(kerasify "")
+
+target_include_directories(kerasify PRIVATE include)
+
 target_sources(kerasify PRIVATE
     src/io.cpp
     src/layer.cpp

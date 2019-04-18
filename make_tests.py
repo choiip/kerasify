@@ -2,9 +2,9 @@
 import os
 
 import numpy as np
-from keras import backend as K
-from keras.models import Sequential
-from keras.layers import (
+from tensorflow.keras import backend as K
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import (
     Activation, BatchNormalization, Conv2D, Dense, Dropout,
     ELU, Embedding, Flatten, LocallyConnected1D, LSTM, MaxPooling2D,
 )
@@ -51,12 +51,15 @@ inline auto %(name)s() {
     target.data_ = %(y_data)s;
 #pragma GCC diagnostic pop
 
-    auto [model, load_time] = keras::timeit(keras::Model::load, "%(path)s");
-    auto [output, apply_time] = keras::timeit(model, in);
+    auto load_result = keras::timeit(keras::Model::load, "%(path)s");
+    auto apply_result = keras::timeit(std::get<0>(load_result), in);
 
     for (size_t i = 0; i < target.dims_[0]; ++i)
-        kassert_eq(target(i), output(i), %(eps)sf);
+        kassert_eq(target(i), std::get<0>(apply_result)(i), %(eps)sf);
 
+    auto load_time = std::get<1>(load_result);
+    auto apply_time = std::get<1>(apply_result);
+    
     return std::make_tuple(load_time, apply_time);
 }
 

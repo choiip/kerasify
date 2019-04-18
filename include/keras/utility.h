@@ -19,15 +19,13 @@
 #ifndef NDEBUG
 
 void _asserted_eq(float, float, float,
-                  std::string_view, int, std::string_view, std::string_view);
+                  const char*, int, const char*, const char*);
 
 void _asserted(bool,
-               std::string_view, int, std::string_view);
+               const char*, int, const char*);
 
-#define kassert_eq(x, y, eps) \
-    _asserted_eq(x, y, eps, __FILE__, __LINE__, stringify(x), stringify(y));
-#define kassert(x) \
-    _asserted(x, __FILE__, __LINE__, stringify(x));
+#define kassert_eq(x, y, eps) _asserted_eq(x, y, eps, __FILE__, __LINE__, stringify(x), stringify(y));
+#define kassert(x) _asserted(x, __FILE__, __LINE__, stringify(x));
 
 #else
 #define kassert(x) ;
@@ -41,12 +39,8 @@ auto timeit(Callable&& callable, Args&&... args) {
     using namespace std::chrono;
 
     auto begin = high_resolution_clock::now();
-    auto result = [&]() {
-        if constexpr (std::is_void_v<std::invoke_result_t<Callable, Args...>>)
-            return (std::invoke(callable, args...), nullptr);
-        else
-            return std::invoke(callable, args...);
-    }();
+    auto result = callable(std::forward<Args>(args)...);
+
     return std::make_tuple(
         std::move(result),
         duration<double>(high_resolution_clock::now() - begin).count());

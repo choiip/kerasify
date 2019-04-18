@@ -21,7 +21,25 @@ namespace keras {
 
 namespace layers {
 
-using types = std::tuple<
+template <typename T>
+std::unique_ptr<LayerBase> make(Stream& file) {
+    return std::make_unique<T>(file);
+}
+template <typename... T>
+class Factory {
+public:
+    std::unique_ptr<LayerBase> operator()(unsigned index, Stream& file) {
+        static constexpr std::unique_ptr<LayerBase> (*factories[])(Stream&) = {
+            &make<T>...
+        };
+        if (sizeof...(T) <= index) {
+            throw std::range_error("type index out of range");
+        }
+        return (factories[index])(file);
+    }
+};
+
+using factory = Factory<
     Dense,               //0
     Conv1D,              //1
     Conv2D,              //2
@@ -39,31 +57,16 @@ using types = std::tuple<
 
 template <size_t... I>
 std::unique_ptr<LayerBase>
-_make_layer(std::index_sequence<I...>, Stream& file) {
+_make_layer(Stream& file) {
     auto id = static_cast<unsigned>(file);
-    std::unique_ptr<LayerBase> layer;
-
-    bool found = (... || [&]() {
-        if (id != I)
-            return false;
-        layer = std::move(
-            std::make_unique<
-                std::decay_t<std::tuple_element_t<I, layers::types>>>(file));
-        return true;
-    }());
-
-    if (!found)
-        throw std::domain_error("Layer not implemented");
-    return layer;
+    return layers::factory()(id, file);
 }
 
 Model::Model(Stream& file) {
     auto count = static_cast<unsigned>(file);
     layers_.reserve(count);
     for (size_t i = 0; i != count; ++i)
-        layers_.push_back(_make_layer(
-            std::make_index_sequence<std::tuple_size_v<layers::types>>(),
-            file));
+        layers_.push_back(_make_layer(file));
 }
 
 Tensor Model::forward(const Tensor& in) const noexcept {

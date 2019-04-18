@@ -16,8 +16,7 @@ Tensor LocallyConnected1D::forward(const Tensor& in) const noexcept {
     // 'biases' have shape (new_steps, outputs)
     auto& ww = weights_.dims_;
 
-    size_t ksize = ww[2] / in.dims_[1];
-    kassert(in.dims_[0] + 1 == ww[0] + ksize);
+    kassert(in.dims_[0] + 1 == ww[0] + ww[2] / in.dims_[1]);
 
     auto tmp = Tensor::empty({ww[0], ww[1]});
 

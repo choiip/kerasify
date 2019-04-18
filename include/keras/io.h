@@ -23,7 +23,7 @@ public:
 
     template <
         typename T,
-        typename = std::enable_if_t<std::is_default_constructible_v<T>>>
+        typename = std::enable_if_t<std::is_default_constructible<T>::value>>
     operator T() noexcept {
         T value;
         read(reinterpret_cast<char*>(&value), sizeof(T));

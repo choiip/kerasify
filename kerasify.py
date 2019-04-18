@@ -8,7 +8,7 @@ import struct
 from functools import singledispatch
 
 import numpy as np
-from keras.layers import (
+from tensorflow.keras.layers import (
     Dense,
     Conv1D, Conv2D,
     LocallyConnected1D, LocallyConnected2D,

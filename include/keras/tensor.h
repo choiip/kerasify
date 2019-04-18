@@ -42,7 +42,7 @@ public:
                                    dims_.begin(), true,
                                    [](size_t x, size_t y) { return x && y; },
                                    [](size_t i, size_t d) { return i < d; }));
-        if constexpr (count == 1)
+        if (count == 1)
             return indexes.back();
         else {
             std::array<size_t, count-1> strides;

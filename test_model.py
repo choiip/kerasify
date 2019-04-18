@@ -1,8 +1,8 @@
 #!/bin/python3
 import json
-from keras import backend as K
-from keras.models import Sequential
-from keras.layers import (
+from tensorflow.keras import backend as K
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import (
     LocallyConnected1D, Conv2D, Dense, Flatten, Activation,
     MaxPooling2D, Dropout, BatchNormalization
 )

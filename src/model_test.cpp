@@ -156,9 +156,9 @@ int main() {
     double total_apply_time = 0.0;
 
     for (size_t i = 0; i < n; ++i) {
-        auto [load_time, apply_time] = test::benchmark();
-        total_load_time += load_time;
-        total_apply_time += apply_time;
+        auto benchmark_result = test::benchmark();
+        total_load_time += std::get<0>(benchmark_result);
+        total_apply_time += std::get<1>(benchmark_result);
     }
     std::cout << "Benchmark network loads in " << total_load_time / n
               << std::endl
