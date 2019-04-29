@@ -19,6 +19,9 @@ from tensorflow.keras.layers import (
     LSTM,
     Embedding,
     BatchNormalization,
+    LeakyReLU,
+    UpSampling2D,
+    Concatenate,
 )
 
 LAYERS = (
@@ -32,6 +35,9 @@ LAYERS = (
     LSTM,
     Embedding,
     BatchNormalization,
+    LeakyReLU,
+    UpSampling2D,
+    Concatenate,
 )
 
 ACTIVATIONS = (
@@ -44,6 +50,7 @@ ACTIVATIONS = (
     'tanh',
     'hard_sigmoid',
     'softmax',
+    'selu',
 )
 
 
@@ -141,11 +148,16 @@ def _(layer, f):
 def _(layer, f):
     # shape: (outputs, rows, cols, depth)
     weights = layer.get_weights()[0].transpose(3, 0, 1, 2)
-    biases = layer.get_weights()[1]
+    if layer.use_bias:
+        biases = layer.get_weights()[1]
+    else:
+        biases = None
+
     activation = layer.get_config()['activation']
 
     write_tensor(f, weights, 4)
-    write_tensor(f, biases)
+    if biases is not None:
+        write_tensor(f, biases)
     export_activation(activation, f)
 
 
@@ -211,10 +223,28 @@ def _(layer, f):
     write_tensor(f, weights, 2)
 
 
+@export.register(LeakyReLU)
+def _(layer, f):
+    f.write(struct.pack('f', layer.alpha))
+
+
+@export.register(UpSampling2D)
+def _(layer, f):
+    size = layer.get_config()['size']
+
+    f.write(struct.pack('I', size[0]))
+    f.write(struct.pack('I', size[1]))
+
+
+@export.register(Concatenate)
+def _(layer, f):
+    pass
+
+
 def export_model(model, filename):
     with open(filename, 'wb') as f:
         layers = [layer for layer in model.layers
-                  if type(layer).__name__ not in ['Dropout']]
+                  if type(layer).__name__ not in ['Dropout'] and type(layer).__name__ not in ['InputLayer']]
         f.write(struct.pack('I', len(layers)))
 
         for layer in layers:
